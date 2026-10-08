@@ -1,0 +1,14 @@
+{
+  "name": "tienda-express-backend",
+  "version": "1.0.0",
+  "description": "Backend para carrito de compras Tienda Express",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["shopping-cart", "node", "api"],
+  "author": "",
+  "license": "ISC"
+}
+
