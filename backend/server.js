@@ -83,6 +83,7 @@ const MIME_TYPES = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
+  '.mp4': 'video/mp4',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon'
 };
@@ -180,6 +181,7 @@ const server = http.createServer(async (req, res) => {
             productId: product.id,
             name: product.name,
             price: product.price,
+            image: product.image,
             icon: product.icon,
             quantity: quantity
           });
@@ -369,4 +371,3 @@ server.listen(PORT, () => {
   console.log(`👗 Servidor de Sauz Store iniciado en http://localhost:${PORT}`);
   console.log(`📦 Catálogo de moda cargado: ${products.length} prendas`);
 });
-

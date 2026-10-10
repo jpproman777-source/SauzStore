@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { ProductCard } from '../components/ProductCard';
 
-export const Home = ({ setActivePage, onCategorySelect }) => {
-  const { products, loadingProducts } = useCart();
+export const Home = ({ setActivePage, onCategorySelect, onProductSelect }) => {
+  const { products, loadingProducts, formatMoney } = useCart();
+  const productsTrackRef = useRef(null);
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
 
   const handleCategoryClick = (cat) => {
     if (onCategorySelect) onCategorySelect(cat);
@@ -11,211 +14,152 @@ export const Home = ({ setActivePage, onCategorySelect }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleScrollDown = () => {
-    window.scrollTo({
-      top: window.innerHeight - 60,
+  useEffect(() => {
+    const track = productsTrackRef.current;
+    if (!track) return undefined;
+
+    const updateScrollButtons = () => {
+      setCanScrollPrev(track.scrollLeft > 1);
+      setCanScrollNext(track.scrollLeft + track.clientWidth < track.scrollWidth - 1);
+    };
+
+    updateScrollButtons();
+    track.addEventListener('scroll', updateScrollButtons, { passive: true });
+    window.addEventListener('resize', updateScrollButtons);
+
+    return () => {
+      track.removeEventListener('scroll', updateScrollButtons);
+      window.removeEventListener('resize', updateScrollButtons);
+    };
+  }, [products.length]);
+
+  const scrollProducts = (direction) => {
+    const track = productsTrackRef.current;
+    const firstCard = track?.firstElementChild;
+    if (!track || !firstCard) return;
+
+    const gap = parseFloat(window.getComputedStyle(track).columnGap) || 0;
+    track.scrollBy({
+      left: direction * (firstCard.getBoundingClientRect().width + gap),
       behavior: 'smooth'
     });
   };
 
-  const featuredProducts = products.slice(0, 4);
-
   return (
-    <main className="home-main">
-      {/* HERO: Pantalla completa estilo imagen de referencia (Etiqueta Negra / EN Sport) */}
-      <section className="hero hero-cover" aria-label="Sauz Sport">
-        {/* Video principal de la colección */}
-        <div className="hero-media-wrapper">
-          <iframe
-            className="hero-video"
-            src="https://www.youtube-nocookie.com/embed/_xJCX9pHoaA?autoplay=1&mute=1&loop=1&playlist=_xJCX9pHoaA&controls=0&rel=0&playsinline=1"
-            title="Video de la colección Sauz Store"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            loading="eager"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          />
+    <main className="minimal-home">
+      {/* HERO SECTION */}
+      <section className="minimal-hero" aria-label="Sauz Store">
+        <div className="minimal-hero-media">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-label="Video de la colección Sauz Store"
+          >
+            <source src="/sauz-store-banner.mp4" type="video/mp4" />
+          </video>
         </div>
 
-        {/* Capa de contraste y gradiente de lujo */}
-        <div className="hero-dark-overlay" aria-hidden="true" />
-
-        {/* Declaración central prominente (inspirada en "EN SPORT") */}
-        <div className="hero-center-box">
-          <div className="hero-brand-statement">
-            <span className="brand-statement-main">SAUZ</span>
-            <span className="brand-statement-accent">STORE</span>
-          </div>
-
-          <p className="hero-brand-subtitle">
-            EDICIÓN URBANA & PERFORMANCE · COLECCIÓN 2026
-          </p>
-
-          <div className="hero-actions">
-            <button
-              type="button"
-              className="btn btn-light hero-collection-btn"
+        <div className="minimal-hero-content">
+          <h1 className="minimal-hero-logo" style={{ display: 'none' }}>sauzstore</h1>
+          
+          <div className="minimal-hero-bottom-left" style={{ bottom: '80px', left: '60px', gap: '10px' }}>
+            <h2 style={{ fontSize: '3rem', fontWeight: '900', margin: '0', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-color)', textShadow: '0 4px 15px rgba(0, 0, 0, 0.78)' }}>
+              LO ULTIMO
+            </h2>
+            <span style={{ fontSize: '0.85rem', fontWeight: '700', letterSpacing: '2px', color: 'var(--text-color)', textTransform: 'uppercase', marginBottom: '10px', textShadow: '0 2px 5px rgba(0, 0, 0, 0.78)' }}>
+              NUEVA COLECCIÓN DISPONIBLE
+            </span>
+            <button 
+              className="minimal-btn-outline"
               onClick={() => {
                 setActivePage('catalog');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
+              style={{ borderRadius: '30px', borderColor: 'var(--text-color)', color: 'var(--text-color)', padding: '10px 24px', fontSize: '0.75rem', marginTop: '10px' }}
             >
               VER COLECCIÓN
             </button>
           </div>
-
-          {/* Indicador de desplazamiento hacia abajo */}
-          <button
-            type="button"
-            className="hero-scroll-cue"
-            onClick={handleScrollDown}
-            aria-label="Deslizar hacia abajo para ver el catálogo y menú"
-          >
-            <span className="scroll-cue-text">DESLIZA PARA EXPLORAR</span>
-            <span className="scroll-cue-arrow">↓</span>
-          </button>
         </div>
       </section>
 
-      {/* CATEGORÍAS */}
-      <section className="section" id="homeCategories">
-        <div className="wrap">
-          <div className="section-head">
-            <div>
-              <h2>Comprar por categoría</h2>
-              <p>Explora nuestras líneas de confección pesada y corte relajado.</p>
-            </div>
-            <button
-              type="button"
-              className="link-underline"
-              onClick={() => {
-                if (onCategorySelect) onCategorySelect('Todas');
-                setActivePage('catalog');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            >
-              Ver todo
-            </button>
+      {/* PRODUCT GRID */}
+      <section className="minimal-products-section">
+        <div className="minimal-products-heading">
+          <div>
+            <span className="minimal-products-kicker">SAUZ STORE / COLECCIÓN</span>
+            <p>Desliza para descubrir todas las prendas disponibles</p>
           </div>
-
-          <div className="cat-grid">
-            <div
-              className="cat-tile"
-              onClick={() => handleCategoryClick('Camisetas')}
-              role="button"
-              tabIndex={0}
-            >
-              <span className="cat-emoji" aria-hidden="true">👕</span>
-              <span className="cat-name">Camisetas</span>
-              <span className="cat-count">Heavy Cotton 240 GSM</span>
+          {!loadingProducts && products.length > 0 && (
+            <div className="minimal-carousel-controls" role="group" aria-label="Controles de productos">
+              <button
+                type="button"
+                className="minimal-carousel-arrow"
+                onClick={() => scrollProducts(-1)}
+                disabled={!canScrollPrev}
+                aria-label="Ver prendas anteriores"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                className="minimal-carousel-arrow"
+                onClick={() => scrollProducts(1)}
+                disabled={!canScrollNext}
+                aria-label="Ver más prendas"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </button>
             </div>
-
-            <div
-              className="cat-tile"
-              onClick={() => handleCategoryClick('Chaquetas')}
-              role="button"
-              tabIndex={0}
-            >
-              <span className="cat-emoji" aria-hidden="true">🧥</span>
-              <span className="cat-name">Chaquetas</span>
-              <span className="cat-count">Denim & Oversize</span>
-            </div>
-
-            <div
-              className="cat-tile"
-              onClick={() => handleCategoryClick('Pantalones')}
-              role="button"
-              tabIndex={0}
-            >
-              <span className="cat-emoji" aria-hidden="true">👖</span>
-              <span className="cat-name">Pantalones</span>
-              <span className="cat-count">Cargo Streetwear</span>
-            </div>
-
-            <div
-              className="cat-tile"
-              onClick={() => handleCategoryClick('Accesorios')}
-              role="button"
-              tabIndex={0}
-            >
-              <span className="cat-emoji" aria-hidden="true">🧢</span>
-              <span className="cat-name">Accesorios</span>
-              <span className="cat-count">Gorras bordadas</span>
-            </div>
-          </div>
+          )}
+        </div>
+        <div
+          className="minimal-products-grid"
+          ref={productsTrackRef}
+          role="region"
+          aria-label="Todas las prendas disponibles"
+          tabIndex={0}
+        >
+          {loadingProducts ? (
+            <p>Cargando prendas...</p>
+          ) : products.length === 0 ? (
+            <p>No hay prendas disponibles en este momento.</p>
+          ) : (
+            products.map((p) => (
+              <div key={p.id} className="minimal-product-card">
+                <div 
+                  className="minimal-product-img-wrapper"
+                  onClick={() => onProductSelect && onProductSelect(p.id)}
+                >
+                  <img src={p.image} alt={p.name} />
+                </div>
+                <div className="minimal-product-info">
+                  <h3 className="minimal-product-title">{p.name.toUpperCase()}</h3>
+                  <p className="minimal-product-price">{formatMoney(p.price)}</p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </section>
 
-      {/* PRENDAS DESTACADAS */}
-      <section className="section section-alt">
-        <div className="wrap">
-          <div className="section-head">
-            <div>
-              <h2>Lo más nuevo</h2>
-              <p>Prendas recién añadidas a la colección Sauz Sport.</p>
-            </div>
-            <button
-              type="button"
-              className="link-underline"
-              onClick={() => {
-                if (onCategorySelect) onCategorySelect('Todas');
-                setActivePage('catalog');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            >
-              Ver catálogo completo
-            </button>
-          </div>
-
-          <div className="products-grid" id="featuredGrid">
-            {loadingProducts ? (
-              <p className="grid-msg">Cargando prendas...</p>
-            ) : featuredProducts.length === 0 ? (
-              <p className="grid-msg">No hay prendas disponibles en este momento.</p>
-            ) : (
-              featuredProducts.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* BENEFICIOS */}
-      <section className="section">
-        <div className="wrap">
-          <div className="feature-grid">
-            <div className="feature">
-              <h3>Envío gratis</h3>
-              <p>En todos los pedidos a nivel nacional, directo a tu puerta.</p>
-            </div>
-            <div className="feature">
-              <h3>3 cuotas sin interés</h3>
-              <p>Paga con tarjeta de crédito o débito con total seguridad y respaldo.</p>
-            </div>
-            <div className="feature">
-              <h3>30 días para cambios</h3>
-              <p>Garantía de satisfacción y cambios inmedios de talla sin costo.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FRASE DE MARCA */}
-      <section className="section section-dark">
-        <div className="wrap band">
-          <h2>Cortes amplios, telas pesadas y detalles que se notan.</h2>
-          <button
-            type="button"
-            className="btn btn-light"
-            onClick={() => {
-              setActivePage('about');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-          >
-            Conoce Sauz
-          </button>
-        </div>
+      {/* NEWSLETTER SECTION */}
+      <section className="minimal-newsletter">
+        <h2 className="minimal-newsletter-title">NO TODOS PUEDEN TENER PRENDAS LIMITADAS..</h2>
+        <p className="minimal-newsletter-desc">
+          ÚNETE A NUESTRA LISTA DE CORREOS PARA ENTERARTE DE LA NUEVA COLECCIÓN Y NO PERDÉRTELA.
+        </p>
+        <form className="minimal-newsletter-form" onSubmit={(e) => { e.preventDefault(); alert('¡Suscrito!'); }}>
+          <input type="email" placeholder="Tu Correo" required />
+          <button type="submit">SUSCRIBIRSE</button>
+        </form>
       </section>
     </main>
   );

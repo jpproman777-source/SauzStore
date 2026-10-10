@@ -4,9 +4,9 @@
     "name": "Camisa Jordan",
     "category": "Camisetas",
     "description": "Camiseta oversize con corte relajado y estética vintage de marca.",
-    "price": 50.0,
+    "price": 65000,
     "icon": "👕",
-    "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80",
+    "image": "/Productos/jordan_Blanca.png",
     "stock": 14
   },
   {
@@ -14,9 +14,9 @@
     "name": "Camisa Hellstar Negra",
     "category": "Camisetas",
     "description": "Prenda sobria con acabado premium y estampado oscuro de alto impacto.",
-    "price": 30.0,
+    "price": 50000,
     "icon": "👕",
-    "image": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80",
+    "image": "/Productos/hellstart_negra.png",
     "stock": 20
   },
   {
@@ -24,9 +24,9 @@
     "name": "Camisa Jordan Negra",
     "category": "Camisetas",
     "description": "Diseño de manga larga con ajuste holgado y look urbano moderno.",
-    "price": 40.0,
+    "price": 70000,
     "icon": "👕",
-    "image": "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=900&q=80",
+    "image": "/Productos/Jordan_negra.png",
     "stock": 17
   },
   {
@@ -34,9 +34,9 @@
     "name": "Camisa estampada Moon",
     "category": "Camisetas",
     "description": "Estampado gráfico estilo retro con algodón resistente a diario.",
-    "price": 50.0,
+    "price": 75000,
     "icon": "👕",
-    "image": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80",
+    "image": "/Productos/moon.png",
     "stock": 11
   },
   {
@@ -44,9 +44,9 @@
     "name": "Camisa Undg",
     "category": "Camisetas",
     "description": "Combinación de paleta neutral con acabado premium y corte relajado.",
-    "price": 50.0,
+    "price": 80000,
     "icon": "👕",
-    "image": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80",
+    "image": "/Productos/Ungd.png",
     "stock": 15
   },
   {
@@ -54,9 +54,9 @@
     "name": "Camisa Letras-Negra",
     "category": "Camisetas",
     "description": "Estilo gráfico con letras y composición contrastante para un look punchy.",
-    "price": 35.0,
+    "price": 55000,
     "icon": "👕",
-    "image": "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=80",
+    "image": "/Productos/letras_negra.png",
     "stock": 18
   },
   {
@@ -64,9 +64,9 @@
     "name": "Hoodie Monastery",
     "category": "Sudaderas",
     "description": "Hoodie negro de lujo con tela gruesa y acabado premium para uso diario.",
-    "price": 50.0,
+    "price": 120000,
     "icon": "🧥",
-    "image": "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80",
+    "image": "/Productos/Monastery_lado1.png",
     "stock": 13
   },
   {
@@ -74,9 +74,9 @@
     "name": "Hoodie Estrella",
     "category": "Sudaderas",
     "description": "Sudadera con estampado llamativo y capucha de gran caída.",
-    "price": 115.0,
+    "price": 130000,
     "icon": "🧥",
-    "image": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=900&q=80",
+    "image": "/Productos/hoodie_negro.png",
     "stock": 9
   },
   {
@@ -84,9 +84,9 @@
     "name": "Hoodie Blanco Estrella",
     "category": "Sudaderas",
     "description": "Versión clara con luminosidad moderna, ideal para looks minimalistas.",
-    "price": 130.0,
+    "price": 135000,
     "icon": "🧥",
-    "image": "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=900&q=80",
+    "image": "/Productos/hoddie_blanco3.png",
     "stock": 10
   },
   {
@@ -94,9 +94,9 @@
     "name": "Hoodie Negro Estampado",
     "category": "Sudaderas",
     "description": "Tela gruesa con grafismo frontal y diseño de marca contemporáneo.",
-    "price": 100.0,
+    "price": 125000,
     "icon": "🧥",
-    "image": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=80",
+    "image": "/Productos/hoodie_negro2.png",
     "stock": 12
   },
   {
@@ -104,9 +104,9 @@
     "name": "Hoodie Blanco Angel",
     "category": "Sudaderas",
     "description": "Relajado, cómodo y muy versátil para capas casuales y de streetwear.",
-    "price": 150.0,
+    "price": 140000,
     "icon": "🧥",
-    "image": "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=900&q=80",
+    "image": "/Productos/hodie_Blanco2.png",
     "stock": 8
   },
   {
@@ -114,9 +114,9 @@
     "name": "Hoodie Hugo",
     "category": "Sudaderas",
     "description": "Sudadera tipo oversize con estampado destacado y estética retro.",
-    "price": 135.0,
+    "price": 138000,
     "icon": "🧥",
-    "image": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=80",
+    "image": "/Productos/Hugo_sueter.png",
     "stock": 6
   }
 ]
