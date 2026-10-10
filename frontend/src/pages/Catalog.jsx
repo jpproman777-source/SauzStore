@@ -2,11 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { useCart } from '../context/CartContext';
 import { ProductCard } from '../components/ProductCard';
 
-const CATEGORIES = ['Todas', 'Camisetas', 'Chaquetas', 'Pantalones', 'Vestidos', 'Sudaderas', 'Accesorios'];
-
-export const Catalog = ({ selectedCategory, setSelectedCategory, searchQuery, setSearchQuery }) => {
+export const Catalog = ({ selectedCategory, setSelectedCategory, searchQuery, setSearchQuery, onProductSelect }) => {
   const { products, loadingProducts } = useCart();
   const [sortBy, setSortBy] = useState('relevant'); // 'relevant' | 'price-asc' | 'price-desc' | 'name'
+  const categories = useMemo(
+    () => ['Todas', ...new Set(products.map((product) => product.category).filter(Boolean))],
+    [products]
+  );
 
   // Filtrado y ordenamiento de prendas
   const filteredProducts = useMemo(() => {
@@ -41,7 +43,7 @@ export const Catalog = ({ selectedCategory, setSelectedCategory, searchQuery, se
   }, [products, selectedCategory, searchQuery, sortBy]);
 
   return (
-    <main>
+    <main className="catalog-main">
       {/* Encabezado de página */}
       <section className="page-head" aria-label="Encabezado del catálogo">
         <div className="wrap">
@@ -53,25 +55,34 @@ export const Catalog = ({ selectedCategory, setSelectedCategory, searchQuery, se
       </section>
 
       {/* Contenido del catálogo */}
-      <section className="section">
+      <section className="minimal-products-section">
         <div className="wrap">
           {/* Barra de herramientas / filtros */}
-          <div className="toolbar">
+          <div className="toolbar" style={{ marginBottom: '40px' }}>
             <div className="chips" role="group" aria-label="Filtrar por categoría">
-              {CATEGORIES.map((cat) => (
+              {categories.map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   className={`chip ${selectedCategory === cat ? 'active' : ''}`}
                   onClick={() => setSelectedCategory(cat)}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    border: '1px solid var(--border-color)',
+                    background: selectedCategory === cat ? 'var(--text-color)' : 'transparent',
+                    color: selectedCategory === cat ? 'var(--bg-color)' : 'var(--text-color)',
+                    cursor: 'pointer',
+                    marginRight: '10px'
+                  }}
                 >
                   {cat}
                 </button>
               ))}
             </div>
 
-            <div className="toolbar-right">
-              <span className="result-count">
+            <div className="toolbar-right" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+              <span className="result-count" style={{ color: 'var(--text-color)' }}>
                 {filteredProducts.length} {filteredProducts.length === 1 ? 'prenda' : 'prendas'}
               </span>
 
@@ -80,6 +91,13 @@ export const Catalog = ({ selectedCategory, setSelectedCategory, searchQuery, se
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 aria-label="Ordenar prendas"
+                style={{
+                  padding: '8px',
+                  background: 'var(--panel-bg)',
+                  color: 'var(--text-color)',
+                  border: '1px solid var(--border-color)',
+                  outline: 'none'
+                }}
               >
                 <option value="relevant">Relevancia</option>
                 <option value="price-asc">Menor precio</option>
@@ -91,13 +109,13 @@ export const Catalog = ({ selectedCategory, setSelectedCategory, searchQuery, se
 
           {/* Banner de búsqueda activa */}
           {searchQuery && (
-            <div className="query-banner">
+            <div className="query-banner" style={{ marginBottom: '20px', color: 'var(--text-color)' }}>
               <span>
-                Resultados para: <strong>"{searchQuery}"</strong>
+                Resultados para: <strong style={{ color: 'var(--text-color)' }}>"{searchQuery}"</strong>
               </span>
               <button
                 type="button"
-                className="link-underline"
+                style={{ marginLeft: '20px', background: 'none', border: 'none', color: 'var(--text-color)', textDecoration: 'underline', cursor: 'pointer' }}
                 onClick={() => setSearchQuery('')}
               >
                 Limpiar búsqueda
@@ -106,15 +124,15 @@ export const Catalog = ({ selectedCategory, setSelectedCategory, searchQuery, se
           )}
 
           {/* Grid de prendas */}
-          <div className="products-grid">
+          <div className="minimal-products-grid">
             {loadingProducts ? (
-              <p className="grid-msg">Cargando catálogo...</p>
+              <p style={{ color: 'var(--text-color)' }}>Cargando catálogo...</p>
             ) : filteredProducts.length === 0 ? (
-              <div className="grid-msg">
-                <p>No se encontraron prendas con los filtros seleccionados.</p>
+              <div>
+                <p style={{ color: 'var(--text-color)' }}>No se encontraron prendas con los filtros seleccionados.</p>
                 <button
                   type="button"
-                  className="btn btn-outline"
+                  className="minimal-btn-outline"
                   onClick={() => {
                     setSelectedCategory('Todas');
                     setSearchQuery('');
@@ -125,7 +143,7 @@ export const Catalog = ({ selectedCategory, setSelectedCategory, searchQuery, se
               </div>
             ) : (
               filteredProducts.map((p) => (
-                <ProductCard key={p.id} product={p} />
+                <ProductCard key={p.id} product={p} onProductSelect={onProductSelect} />
               ))
             )}
           </div>

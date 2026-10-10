@@ -1,6 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const CartContext = createContext();
+const copFormatter = new Intl.NumberFormat('es-CO', {
+  style: 'currency',
+  currency: 'COP',
+  maximumFractionDigits: 0
+});
 
 export const useCart = () => {
   const context = useContext(CartContext);
@@ -28,7 +33,7 @@ export const CartProvider = ({ children }) => {
 
   // Formato de moneda
   const formatMoney = (amount) => {
-    return `$${Number(amount || 0).toFixed(2)}`;
+    return copFormatter.format(Number(amount || 0));
   };
 
   // Notificaciones Toast

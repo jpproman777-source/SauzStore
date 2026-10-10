@@ -12,6 +12,16 @@ export const SupportChat = () => {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([{ id: 'welcome', from: 'bot', text: '¡Hola! Soy el asistente de Sauz Store. ¿Necesitas ayuda con un cambio, devolución o pedido?' }]);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const send = (text) => {
     const value = text.trim();
@@ -21,8 +31,10 @@ export const SupportChat = () => {
     setInput('');
   };
 
+  if (!isScrolled) return null;
+
   return (
-    <aside className="support-chat" aria-label="Asistente de atención al cliente">
+    <aside className="support-chat" aria-label="Asistente de atención al cliente" style={{ position: 'fixed', bottom: '30px', left: '30px', right: 'auto', zIndex: 9998 }}>
       {open && (
         <section className="support-chat-panel" aria-label="Chat de soporte">
           <header className="support-chat-header">

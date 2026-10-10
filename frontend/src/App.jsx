@@ -10,15 +10,23 @@ import { Home } from './pages/Home';
 import { Catalog } from './pages/Catalog';
 import { About } from './pages/About';
 import { Location } from './pages/Location';
+import { ProductDetail } from './pages/ProductDetail';
 
 export const App = () => {
-  const [activePage, setActivePage] = useState('home'); // 'home' | 'catalog' | 'about' | 'location'
+  const [activePage, setActivePage] = useState('home'); // 'home' | 'catalog' | 'about' | 'location' | 'productDetail'
   const [selectedCategory, setSelectedCategory] = useState('Todas');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedProductId, setSelectedProductId] = useState(null);
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
     setActivePage('catalog');
+  };
+
+  const handleProductSelect = (productId) => {
+    setSelectedProductId(productId);
+    setActivePage('productDetail');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -36,6 +44,7 @@ export const App = () => {
         <Home
           setActivePage={setActivePage}
           onCategorySelect={handleCategorySelect}
+          onProductSelect={handleProductSelect}
         />
       )}
 
@@ -45,6 +54,14 @@ export const App = () => {
           setSelectedCategory={setSelectedCategory}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          onProductSelect={handleProductSelect}
+        />
+      )}
+
+      {activePage === 'productDetail' && selectedProductId && (
+        <ProductDetail
+          productId={selectedProductId}
+          setActivePage={setActivePage}
         />
       )}
 
