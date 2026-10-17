@@ -217,7 +217,6 @@ const server = http.createServer(async (req, res) => {
         }
 
         if (newQuantity <= 0) {
-          // Si la cantidad es 0 o menor, se remueve del carrito
           const removedItem = cart.splice(itemIndex, 1)[0];
           return sendJSON(res, 200, {
             success: true,
@@ -359,7 +358,7 @@ server.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
     console.error(`\n⚠️  El puerto ${PORT} ya está siendo utilizado por otro proceso.`);
     console.error(`💡 Solución rápida:`);
-    console.error(`   1. Liberar el puerto ejecutando: fuser -k ${PORT}/tcp  (o npx kill-port ${PORT})`);
+    console.error(`   1. Liberar el puerto ejecutando: npx kill-port ${PORT}`);
     console.error(`   2. O arrancar en otro puerto: PORT=${Number(PORT) + 1} npm run dev\n`);
   } else {
     console.error('Error en el servidor:', err);
@@ -371,3 +370,5 @@ server.listen(PORT, () => {
   console.log(`👗 Servidor de Sauz Store iniciado en http://localhost:${PORT}`);
   console.log(`📦 Catálogo de moda cargado: ${products.length} prendas`);
 });
+
+module.exports = server;

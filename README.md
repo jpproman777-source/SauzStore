@@ -1,92 +1,69 @@
-# 👗 Sauz Store - Tienda de Ropa & Moda Urbana (React + Node.js)
+# 👗 Sauz Store - Proyecto Oficial (Java 17 Hexagonal + React 18)
 
-E-commerce moderno y modular para **Sauz Store**, construido con **React + Vite** en el frontend y **Node.js** en el backend. Presenta un diseño minimalista en **Negro y Dorado**, catálogo de ropa a pantalla completa, bolsa de compras deslizante (drawer no invasivo) y pasarela de pago completa.
+Proyecto académico y profesional para **Sauz Store**, integrando un **Backend oficial en Java 17 con Arquitectura Hexagonal y POO pura** y un **Frontend moderno en React 18 + Vite**.
 
 ---
 
-## 📁 Estructura del Proyecto
+## 📁 Estructura del Repositorio
 
 ```text
-prueba/
-├── backend/
+SauzStore/
+├── backend/                                 # BACKEND OFICIAL EN JAVA (Maven + H2 Database)
+│   ├── pom.xml                              # Configuración Maven (Java 17, H2 Database)
+│   ├── src/main/java/app/                   # Código fuente Java con Arquitectura Hexagonal
+│   │   ├── App.java                         # Punto de entrada principal (main)
+│   │   ├── domain/                          # Entidades POO (Person, Customer, Product, Sale, SaleItem)
+│   │   ├── repository/                      # Implementaciones de persistencia con H2
+│   │   ├── service/                         # Servicios y puertos (inputport / outputport)
+│   │   ├── view/                            # Vistas de consola
+│   │   └── userinterface/                   # Menú interactivo UserInterface
 │   ├── data/
-│   │   └── products.json          # Catálogo de prendas Sauz Store
-│   ├── package.json               # Configuración del servidor Node.js
-│   └── server.js                  # Servidor HTTP, API REST (/api/*) y estáticos
+│   │   └── products.json                    # Datos de productos para sincronización
+│   ├── server.js                            # Servidor API HTTP para la interfaz web
+│   └── README.md                            # Documentación del backend Java
 │
-├── frontend/                      # Aplicación React + Vite
-│   ├── index.html                 # Entrada HTML de Vite
-│   ├── package.json               # Dependencias (React, Vite, etc.)
-│   ├── vite.config.js             # Configuración de Vite y proxy para /api
-│   └── src/
-│       ├── main.jsx               # Montaje de la aplicación React
-│       ├── App.jsx                # Enrutador de vistas y modales globales
-│       ├── styles.css             # Sistema de diseño en Negro y Dorado
-│       ├── context/
-│       │   └── CartContext.jsx    # Estado global del carrito y checkout
-│       ├── components/
-│       │   ├── Header.jsx         # Ticker animado, navegación y bolsa
-│       │   ├── Footer.jsx         # Pie de página y enlaces rápidos
-│       │   ├── ProductCard.jsx    # Tarjeta de prenda con selector
-│       │   ├── CartDrawer.jsx     # Bolsa de compras deslizable
-│       │   ├── CheckoutModal.jsx  # Pasarela de pago con tarjeta, Nequi y efectivo
-│       │   ├── ReceiptModal.jsx   # Ticket digital de compra confirmada
-│       │   └── Toast.jsx          # Notificación emergente
-│       └── pages/
-│           ├── Home.jsx           # Inicio con video hero de modelos
-│           ├── Catalog.jsx        # Catálogo con filtros por categoría y búsqueda
-│           ├── About.jsx          # Quiénes somos: historia y pilares
-│           └── Location.jsx       # Ubicación: mapa, horarios y WhatsApp
+├── frontend/                                # FRONTEND WEB (React 18 + Vite)
+│   ├── src/
+│   │   ├── components/                      # Componentes UI (Header, Drawer, Modales, Toast)
+│   │   ├── context/CartContext.jsx          # Estado global del carrito y compras
+│   │   ├── pages/                           # Páginas (Home, Catalog, ProductDetail, About, Location)
+│   │   └── styles.css                       # Diseño Negro y Dorado
+│   ├── package.json                         # Dependencias de React y Vite
+│   └── README.md                            # Documentación del frontend
 │
-├── .gitignore                     # Exclusión de node_modules y logs
-├── package.json                   # Scripts de ejecución raíz
-└── README.md
+├── diagramas_uml/                           # DIAGRAMAS UML EN ALTA RESOLUCIÓN
+│   ├── 1_diagrama_de_clases.png             # Diagrama de Clases Java (Herencia Person -> Customer)
+│   ├── 1_diagrama_de_clases.svg             # Vectorial del Diagrama de Clases
+│   ├── 2_diagrama_de_secuencia.png          # Secuencia de registro de venta
+│   ├── 3_diagrama_de_casos_de_uso.png       # Casos de uso
+│   └── 4_diagrama_de_arquitectura.png       # Arquitectura del sistema
+│
+├── DIAGRAMAS_UML.md                         # Especificación técnica y guion para exposición
+├── package.json                             # Scripts de ejecución
+└── README.md                                # Documentación general
 ```
 
 ---
 
-## 🚀 Cómo Iniciar la Aplicación
+## 🧱 Pilares de la POO en el Backend Java
 
-### 1. Iniciar el Servidor Backend (API en el puerto 3000)
-En una terminal:
+* **Herencia directa:** `public class Customer extends Person` en el paquete `app.domain`.
+* **Encapsulamiento:** Atributos privados con validación en constructores y métodos getters/setters.
+* **Composición:** `Sale` compone fuertemente a `SaleItem` (`getTotal()` calcula la sumatoria de subtotales).
+* **Abstracción & Desacoplamiento:** Interfaces en `inputport` y `outputport` para aislar la base de datos de la lógica de negocio.
+
+---
+
+## 🚀 Comandos de Ejecución
+
+### 1. Correr el Backend Java:
+* Abrir la carpeta [`backend/`](backend/) en **IntelliJ IDEA**, **Eclipse** o **VS Code**.
+* Ejecutar [`src/main/java/app/App.java`](backend/src/main/java/app/App.java).
+
+### 2. Correr la Aplicación Web (Frontend + API):
+Desde la raíz del proyecto:
 ```bash
-cd backend
-npm start
-```
-*(O desde la raíz: `node backend/server.js`)*
-
-Verás el mensaje:
-```text
-👗 Servidor de Sauz Store iniciado en http://localhost:3000
-📦 Catálogo de moda cargado: 8 prendas
-```
-
-### 2. Iniciar el Frontend en React (Vite en el puerto 5173)
-En otra terminal:
-```bash
-cd frontend
-npm install
 npm run dev
 ```
-
-Abre en tu navegador:
-👉 **[http://localhost:5173](http://localhost:5173)**
-
-*Nota: Vite cuenta con proxy configurado automáticamente para conectar con la API de `http://localhost:3000/api` sin problemas de CORS.*
-
----
-
-## ✨ Características de la Arquitectura React
-
-1. **Componentes Modulares**: Código limpio, dividido en piezas reutilizables y fáciles de modificar.
-2. **Contexto Global (`CartContext`)**: La bolsa de compras y el estado de los pedidos se sincronizan en tiempo real entre todas las páginas.
-3. **Páginas Integradas**:
-   - **Inicio (`Home.jsx`)**: Hero con video en bucle de modelos exhibiendo prendas, categorías visuales y destacados.
-   - **Catálogo (`Catalog.jsx`)**: Filtros dinámicos por categoría (*Todas, Camisetas, Chaquetas, Pantalones, Vestidos, Sudaderas, Accesorios*), búsqueda en tiempo real y ordenamiento por precio o nombre.
-   - **Quiénes Somos (`About.jsx`)**: Manifiesto de diseño, historia y pilares de confección de la marca.
-   - **Ubicación (`Location.jsx`)**: Datos de la tienda Flagship en Medellín, horarios y mapa interactivo.
-4. **Pasarela de Pago Completa**:
-   - Tarjeta Débito/Crédito con vista previa interactiva en tiempo real.
-   - Nequi / Daviplata / Bancolombia con datos de transferencia.
-   - Pago en Efectivo Contra Entrega.
-   - Ticket digital de confirmación con código oficial `SAUZ-XXXXXX`.
+* **Frontend:** [http://localhost:5173](http://localhost:5173)
+* **API:** [http://localhost:3000](http://localhost:3000)
