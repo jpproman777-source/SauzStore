@@ -80,7 +80,7 @@ export const App = () => {
       />
 
       {/* Componentes Globales de Comercio */}
-      <CartDrawer />
+      <CartDrawer setActivePage={setActivePage} />
       <CheckoutModal />
       <ReceiptModal />
       <Toast />

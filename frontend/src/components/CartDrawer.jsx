@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 
-export const CartDrawer = () => {
+export const CartDrawer = ({ setActivePage }) => {
   const {
     cart,
     isCartOpen,
@@ -35,11 +35,13 @@ export const CartDrawer = () => {
     }
   };
 
+  const hasItems = Array.isArray(cart?.items) && cart.items.length > 0;
+
   return (
     <>
 
       {/* 2. Premium Side Drawer */}
-      {isCartOpen && cart.count > 0 && (
+      {isCartOpen && (
         <>
           {/* Backdrop */}
           <div
@@ -96,50 +98,80 @@ export const CartDrawer = () => {
 
             {/* Items List */}
             <div style={{ flex: 1, padding: '20px 40px', overflowY: 'auto' }}>
-              {cart.items.map((item) => (
-                <div key={item.productId} style={{ display: 'flex', gap: '20px', marginBottom: '25px', paddingBottom: '25px', borderBottom: '1px solid var(--border-color)' }}>
-                  <div style={{ width: '80px', height: '100px', backgroundColor: 'var(--panel-bg)', borderRadius: '0px', overflow: 'hidden' }}>
-                    <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }} />
+              {!hasItems ? (
+                <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', color: 'var(--text-color)', gap: '16px' }}>
+                  <div style={{ fontSize: '3rem', opacity: 0.8 }}>👜</div>
+                  <div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: '600', letterSpacing: '2px', textTransform: 'uppercase' }}>Tu bolsa está vacía</div>
+                    <div style={{ marginTop: '10px', fontSize: '0.9rem', opacity: 0.8 }}>Aún no agregaste prendas a tu compra.</div>
                   </div>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingTop: '5px' }}>
-                    <div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-color)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>{item.name}</div>
-                      <div style={{ fontSize: '0.9rem', color: 'var(--text-color)', fontWeight: '400', letterSpacing: '1px' }}>{formatMoney(item.price)}</div>
-                    </div>
-                    
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' }}>
-                      {/* Quantity controls */}
-                      <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border-color)', borderRadius: '0px' }}>
-                        <button 
-                          style={{ padding: '5px 12px', background: 'transparent', color: 'var(--text-color)', border: 'none', borderRight: '1px solid var(--border-color)', cursor: 'pointer', fontSize: '1rem', transition: 'color 0.2s' }}
-                          onClick={() => {
-                            if (item.quantity > 1) updateQuantity(item.productId, item.quantity - 1);
-                            else removeItem(item.productId);
-                          }}
-                          onMouseOver={(e) => e.target.style.color = 'var(--gold-accent)'}
-                          onMouseOut={(e) => e.target.style.color = 'var(--text-color)'}
-                        >-</button>
-                        <span style={{ padding: '0 15px', fontSize: '0.85rem', color: 'var(--text-color)', minWidth: '40px', textAlign: 'center' }}>{item.quantity}</span>
-                        <button 
-                          style={{ padding: '5px 12px', background: 'transparent', color: 'var(--text-color)', border: 'none', borderLeft: '1px solid var(--border-color)', cursor: 'pointer', fontSize: '1rem', transition: 'color 0.2s' }}
-                          onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                          onMouseOver={(e) => e.target.style.color = 'var(--gold-accent)'}
-                          onMouseOut={(e) => e.target.style.color = 'var(--text-color)'}
-                        >+</button>
-                      </div>
-
-                      <button 
-                        onClick={() => removeItem(item.productId)}
-                        style={{ background: 'transparent', color: 'var(--text-color)', border: 'none', padding: '5px', cursor: 'pointer', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1px', transition: 'color 0.2s' }}
-                        onMouseOver={(e) => e.target.style.color = 'var(--gold-accent)'}
-                        onMouseOut={(e) => e.target.style.color = 'var(--text-color)'}
-                      >
-                        REMOVER
-                      </button>
-                    </div>
-                  </div>
+                  <button
+                    onClick={() => {
+                      setIsCartOpen(false);
+                      setActivePage?.('catalog');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    style={{
+                      marginTop: '10px',
+                      padding: '14px 24px',
+                      backgroundColor: 'var(--gold-accent)',
+                      color: 'var(--bg-color)',
+                      border: 'none',
+                      fontWeight: '600',
+                      fontSize: '0.8rem',
+                      textTransform: 'uppercase',
+                      letterSpacing: '2px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Ver colección
+                  </button>
                 </div>
-              ))}
+              ) : (
+                cart.items.map((item) => (
+                  <div key={item.productId} style={{ display: 'flex', gap: '20px', marginBottom: '25px', paddingBottom: '25px', borderBottom: '1px solid var(--border-color)' }}>
+                    <div style={{ width: '80px', height: '100px', backgroundColor: 'var(--panel-bg)', borderRadius: '0px', overflow: 'hidden' }}>
+                      <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }} />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingTop: '5px' }}>
+                      <div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-color)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>{item.name}</div>
+                        <div style={{ fontSize: '0.9rem', color: 'var(--text-color)', fontWeight: '400', letterSpacing: '1px' }}>{formatMoney(item.price)}</div>
+                      </div>
+                      
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border-color)', borderRadius: '0px' }}>
+                          <button 
+                            style={{ padding: '5px 12px', background: 'transparent', color: 'var(--text-color)', border: 'none', borderRight: '1px solid var(--border-color)', cursor: 'pointer', fontSize: '1rem', transition: 'color 0.2s' }}
+                            onClick={() => {
+                              if (item.quantity > 1) updateQuantity(item.productId, item.quantity - 1);
+                              else removeItem(item.productId);
+                            }}
+                            onMouseOver={(e) => e.target.style.color = 'var(--gold-accent)'}
+                            onMouseOut={(e) => e.target.style.color = 'var(--text-color)'}
+                          >-</button>
+                          <span style={{ padding: '0 15px', fontSize: '0.85rem', color: 'var(--text-color)', minWidth: '40px', textAlign: 'center' }}>{item.quantity}</span>
+                          <button 
+                            style={{ padding: '5px 12px', background: 'transparent', color: 'var(--text-color)', border: 'none', borderLeft: '1px solid var(--border-color)', cursor: 'pointer', fontSize: '1rem', transition: 'color 0.2s' }}
+                            onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                            onMouseOver={(e) => e.target.style.color = 'var(--gold-accent)'}
+                            onMouseOut={(e) => e.target.style.color = 'var(--text-color)'}
+                          >+</button>
+                        </div>
+
+                        <button 
+                          onClick={() => removeItem(item.productId)}
+                          style={{ background: 'transparent', color: 'var(--text-color)', border: 'none', padding: '5px', cursor: 'pointer', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1px', transition: 'color 0.2s' }}
+                          onMouseOver={(e) => e.target.style.color = 'var(--gold-accent)'}
+                          onMouseOut={(e) => e.target.style.color = 'var(--text-color)'}
+                        >
+                          REMOVER
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Footer & Total */}
@@ -151,22 +183,28 @@ export const CartDrawer = () => {
               
               <button
                 onClick={handleCheckoutClick}
+                disabled={!hasItems}
                 style={{
                   width: '100%',
                   padding: '18px',
-                  backgroundColor: 'var(--gold-accent)',
-                  color: 'var(--bg-color)',
+                  backgroundColor: hasItems ? 'var(--gold-accent)' : 'rgba(255,255,255,0.15)',
+                  color: hasItems ? 'var(--bg-color)' : 'rgba(255,255,255,0.6)',
                   border: 'none',
                   borderRadius: '0px',
                   fontWeight: '600',
                   fontSize: '0.9rem',
                   textTransform: 'uppercase',
                   letterSpacing: '3px',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.3s ease'
+                  cursor: hasItems ? 'pointer' : 'not-allowed',
+                  transition: 'background-color 0.3s ease',
+                  opacity: hasItems ? 1 : 0.7
                 }}
-                onMouseOver={(e) => e.target.style.backgroundColor = 'var(--gold-light)'}
-                onMouseOut={(e) => e.target.style.backgroundColor = 'var(--gold-accent)'}
+                onMouseOver={(e) => {
+                  if (hasItems) e.target.style.backgroundColor = 'var(--gold-light)';
+                }}
+                onMouseOut={(e) => {
+                  if (hasItems) e.target.style.backgroundColor = 'var(--gold-accent)';
+                }}
               >
                 FINALIZAR COMPRA
               </button>
