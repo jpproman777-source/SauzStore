@@ -31,14 +31,6 @@ SauzStore/
 │   ├── package.json                         # Dependencias de React y Vite
 │   └── README.md                            # Documentación del frontend
 │
-├── diagramas_uml/                           # DIAGRAMAS UML EN ALTA RESOLUCIÓN
-│   ├── 1_diagrama_de_clases.png             # Diagrama de Clases Java (Herencia Person -> Customer)
-│   ├── 1_diagrama_de_clases.svg             # Vectorial del Diagrama de Clases
-│   ├── 2_diagrama_de_secuencia.png          # Secuencia de registro de venta
-│   ├── 3_diagrama_de_casos_de_uso.png       # Casos de uso
-│   └── 4_diagrama_de_arquitectura.png       # Arquitectura del sistema
-│
-├── DIAGRAMAS_UML.md                         # Especificación técnica y guion para exposición
 ├── package.json                             # Scripts de ejecución
 └── README.md                                # Documentación general
 ```
