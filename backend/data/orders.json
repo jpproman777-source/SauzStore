@@ -1,0 +1,141 @@
+[
+  {
+    "orderId": "SAUZ-MVLLTE6W",
+    "date": "23/10/2026, 6:31 p. m.",
+    "timestamp": 1792798295588,
+    "customer": {
+      "name": "Administrador Sauz",
+      "email": "admin@sauzstore.com",
+      "phone": "+57 312 987 6543",
+      "address": "Calle 10 # 40-20, Local 101 (porteria)",
+      "city": "Medellín"
+    },
+    "payment": {
+      "method": "card",
+      "label": "Tarjeta de Crédito / Débito (terminada en 1212)",
+      "status": "Aprobado exitosamente"
+    },
+    "items": [
+      {
+        "productId": 1,
+        "name": "Camisa Jordan",
+        "price": 65000,
+        "image": "/Productos/jordan_Blanca.png",
+        "icon": "👕",
+        "quantity": 1
+      }
+    ],
+    "subtotal": 65000,
+    "tax": 10400,
+    "total": 75400,
+    "count": 1,
+    "orderStatus": "En proceso"
+  },
+  {
+    "orderId": "SAUZ-L9X8Y1",
+    "date": "20/10/2026, 14:30",
+    "timestamp": 1792510200000,
+    "customer": {
+      "name": "Mateo Gómez",
+      "email": "cliente@sauzstore.com",
+      "phone": "+57 300 123 4567",
+      "address": "Calle 10 # 42-15 Apto 502, El Poblado",
+      "city": "Medellín"
+    },
+    "payment": {
+      "method": "card",
+      "label": "Tarjeta de Crédito / Débito (terminada en 4242)",
+      "status": "Aprobado exitosamente"
+    },
+    "items": [
+      {
+        "productId": 7,
+        "name": "Hoodie Monastery",
+        "price": 120000,
+        "quantity": 1,
+        "image": "/Productos/Monastery_lado1.png"
+      },
+      {
+        "productId": 1,
+        "name": "Camisa Jordan",
+        "price": 65000,
+        "quantity": 2,
+        "image": "/Productos/jordan_Blanca.png"
+      }
+    ],
+    "subtotal": 250000,
+    "tax": 40000,
+    "total": 290000,
+    "count": 3,
+    "orderStatus": "Entregado"
+  },
+  {
+    "orderId": "SAUZ-M4K7Z9",
+    "date": "22/10/2026, 18:15",
+    "timestamp": 1792695300000,
+    "customer": {
+      "name": "Valeria Restrepo",
+      "email": "valeria.r@gmail.com",
+      "phone": "+57 310 456 7890",
+      "address": "Carrera 43A # 1Sur-180",
+      "city": "Envigado"
+    },
+    "payment": {
+      "method": "transfer",
+      "label": "Transferencia Bancolombia / Nequi",
+      "status": "Aprobado exitosamente"
+    },
+    "items": [
+      {
+        "productId": 11,
+        "name": "Hoodie Blanco Angel",
+        "price": 140000,
+        "quantity": 1,
+        "image": "/Productos/hodie_Blanco2.png"
+      }
+    ],
+    "subtotal": 140000,
+    "tax": 22400,
+    "total": 162400,
+    "count": 1,
+    "orderStatus": "Enviado"
+  },
+  {
+    "orderId": "SAUZ-P2Q5W8",
+    "date": "23/10/2026, 11:40",
+    "timestamp": 1792758000000,
+    "customer": {
+      "name": "Camilo Sánchez",
+      "email": "camilo.urbano@hotmail.com",
+      "phone": "+57 321 889 0012",
+      "address": "Calle 80 # 11-45",
+      "city": "Bogotá"
+    },
+    "payment": {
+      "method": "cash",
+      "label": "Pago Contra Entrega en Efectivo",
+      "status": "Pendiente al recibir"
+    },
+    "items": [
+      {
+        "productId": 2,
+        "name": "Camisa Hellstar Negra",
+        "price": 50000,
+        "quantity": 1,
+        "image": "/Productos/hellstart_negra.png"
+      },
+      {
+        "productId": 8,
+        "name": "Hoodie Estrella",
+        "price": 130000,
+        "quantity": 1,
+        "image": "/Productos/hoodie_negro.png"
+      }
+    ],
+    "subtotal": 180000,
+    "tax": 28800,
+    "total": 208800,
+    "count": 2,
+    "orderStatus": "En proceso"
+  }
+]

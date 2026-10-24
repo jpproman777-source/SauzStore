@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 export const CheckoutModal = () => {
   const {
@@ -9,6 +10,7 @@ export const CheckoutModal = () => {
     formatMoney,
     processCheckout
   } = useCart();
+  const { user } = useAuth();
 
   const [paymentMethod, setPaymentMethod] = useState('card'); // 'card' | 'transfer' | 'cash'
   const [loading, setLoading] = useState(false);
@@ -19,9 +21,23 @@ export const CheckoutModal = () => {
     email: '',
     phone: '',
     address: '',
-    city: '',
+    city: 'Medellín',
     notes: ''
   });
+
+  // Autocompletar con los datos del usuario conectado
+  useEffect(() => {
+    if (user && isCheckoutOpen) {
+      setFormData((prev) => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone,
+        address: user.address || prev.address,
+        city: user.city || prev.city || 'Medellín'
+      }));
+    }
+  }, [user, isCheckoutOpen]);
 
   // Datos de tarjeta
   const [cardData, setCardData] = useState({
@@ -133,7 +149,14 @@ export const CheckoutModal = () => {
         <form className="modal-body" onSubmit={handleSubmit}>
           {/* Paso 1: Datos de Entrega */}
           <div className="checkout-step">
-            <h4>📍 1. Datos de Entrega</h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <h4 style={{ margin: 0 }}>📍 1. Datos de Entrega</h4>
+              {user && (
+                <span style={{ fontSize: '0.72rem', backgroundColor: '#e0f2fe', color: '#0369a1', padding: '3px 8px', borderRadius: '12px', fontWeight: '700' }}>
+                  ✓ Datos cargados de tu cuenta ({user.name.split(' ')[0]})
+                </span>
+              )}
+            </div>
             <div className="form-grid">
               <div className="form-group full">
                 <label htmlFor="name">Nombre Completo *</label>
@@ -329,7 +352,7 @@ export const CheckoutModal = () => {
                 <div className="cash-box">
                   <h5>Pago en Efectivo Contra Entrega</h5>
                   <p>Pagas en efectivo al mensajero en el momento exacto en que recibas tus prendas en tu puerta.</p>
-                  <small style={{ color: 'var(--gold)' }}>Ten preparado el monto exacto para agilizar la entrega.</small>
+                  <small style={{ color: '#111111' }}>Ten preparado el monto exacto para agilizar la entrega.</small>
                 </div>
               </div>
             )}
