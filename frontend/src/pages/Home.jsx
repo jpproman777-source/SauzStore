@@ -65,11 +65,11 @@ export const Home = ({ setActivePage, onCategorySelect, onProductSelect }) => {
         <div className="minimal-hero-content">
           <h1 className="minimal-hero-logo" style={{ display: 'none' }}>sauzstore</h1>
           
-          <div className="minimal-hero-bottom-left" style={{ bottom: '80px', left: '60px', gap: '10px' }}>
-            <h2 style={{ fontSize: '3rem', fontWeight: '900', margin: '0', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-color)', textShadow: '0 4px 15px rgba(0, 0, 0, 0.78)' }}>
-              LO ULTIMO
+          <div className="minimal-hero-bottom-left" style={{ bottom: '70px', left: '50px', gap: '8px' }}>
+            <h2 style={{ fontSize: '3.2rem', fontWeight: '900', margin: '0', letterSpacing: '2px', textTransform: 'uppercase', color: '#ffffff', textShadow: '0 4px 20px rgba(0, 0, 0, 0.85)', lineHeight: 1.05 }}>
+              SAUZ STORE
             </h2>
-            <span style={{ fontSize: '0.85rem', fontWeight: '700', letterSpacing: '2px', color: 'var(--text-color)', textTransform: 'uppercase', marginBottom: '10px', textShadow: '0 2px 5px rgba(0, 0, 0, 0.78)' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: '700', letterSpacing: '3px', color: '#ffffff', textTransform: 'uppercase', marginBottom: '12px', textShadow: '0 2px 10px rgba(0, 0, 0, 0.85)' }}>
               NUEVA COLECCIÓN DISPONIBLE
             </span>
             <button 
@@ -78,7 +78,30 @@ export const Home = ({ setActivePage, onCategorySelect, onProductSelect }) => {
                 setActivePage('catalog');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              style={{ borderRadius: '30px', borderColor: 'var(--text-color)', color: 'var(--text-color)', padding: '10px 24px', fontSize: '0.75rem', marginTop: '10px' }}
+              style={{ 
+                borderRadius: '30px', 
+                border: '1.5px solid #ffffff', 
+                color: '#ffffff', 
+                background: 'rgba(0,0,0,0.3)',
+                backdropFilter: 'blur(8px)',
+                padding: '12px 28px', 
+                fontSize: '0.75rem', 
+                fontWeight: '700',
+                letterSpacing: '2px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                textShadow: '0 2px 6px rgba(0,0,0,0.6)'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = '#ffffff';
+                e.currentTarget.style.color = '#111111';
+                e.currentTarget.style.textShadow = 'none';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'rgba(0,0,0,0.3)';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.textShadow = '0 2px 6px rgba(0,0,0,0.6)';
+              }}
             >
               VER COLECCIÓN
             </button>

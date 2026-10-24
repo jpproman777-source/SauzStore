@@ -7,7 +7,7 @@
     "price": 65000,
     "icon": "👕",
     "image": "/Productos/jordan_Blanca.png",
-    "stock": 14
+    "stock": 28
   },
   {
     "id": 2,
@@ -17,7 +17,7 @@
     "price": 50000,
     "icon": "👕",
     "image": "/Productos/hellstart_negra.png",
-    "stock": 20
+    "stock": 22
   },
   {
     "id": 3,

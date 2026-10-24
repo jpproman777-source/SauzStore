@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Administrador Sauz",
+    "email": "admin@sauzstore.com",
+    "password": "admin123",
+    "role": "admin",
+    "phone": "+57 312 987 6543",
+    "address": "Calle 10 # 40-20, Local 101",
+    "city": "Medellín"
+  },
+  {
+    "id": 2,
+    "name": "Mateo Gómez",
+    "email": "cliente@sauzstore.com",
+    "password": "cliente123",
+    "role": "cliente",
+    "phone": "+57 300 123 4567",
+    "address": "Calle 10 # 42-15 Apto 502, El Poblado",
+    "city": "Medellín"
+  }
+]
+

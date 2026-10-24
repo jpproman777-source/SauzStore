@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 
 export const ProductDetail = ({ productId, setActivePage }) => {
@@ -23,7 +23,7 @@ export const ProductDetail = ({ productId, setActivePage }) => {
 
   const handleAdd = async () => {
     setAdding(true);
-    await addToCart(product.id, 1, selectedSize); // Passing size assuming cart can handle it or just ignoring it
+    await addToCart(product.id, 1, selectedSize);
     setAdding(false);
     setIsCartOpen(true);
   };
@@ -49,6 +49,9 @@ export const ProductDetail = ({ productId, setActivePage }) => {
     setOpenAccordion(openAccordion === section ? null : section);
   };
 
+  const isOutOfStock = product.stock === 0;
+  const isLowStock = product.stock > 0 && product.stock <= 5;
+
   return (
     <main className="product-detail-page">
       <div className="product-detail-container">
@@ -56,8 +59,24 @@ export const ProductDetail = ({ productId, setActivePage }) => {
         {/* LEFT COLUMN: Title, Price & Accordions */}
         <div className="detail-col left-col">
           <h1 className="detail-title">{product.name}</h1>
-          <p className="detail-price">{formatMoney(product.price)}</p>
+          <p className="detail-price" style={{ marginBottom: '8px' }}>{formatMoney(product.price)}</p>
           
+          {/* Indicador de Stock */}
+          <div style={{ marginBottom: '25px' }}>
+            <span
+              style={{
+                fontSize: '0.78rem',
+                fontWeight: '700',
+                padding: '4px 10px',
+                borderRadius: '12px',
+                backgroundColor: isOutOfStock ? '#fee2e2' : (isLowStock ? '#fef3c7' : '#dcfce7'),
+                color: isOutOfStock ? '#dc2626' : (isLowStock ? '#b45309' : '#15803d')
+              }}
+            >
+              {isOutOfStock ? '❌ Agotado temporalmente' : (isLowStock ? `⚠️ ¡Últimas ${product.stock} unidades disponibles!` : `✓ En stock (${product.stock} disponibles)`)}
+            </span>
+          </div>
+
           <div className="accordions">
             <div className="accordion-item">
               <button className="accordion-btn" onClick={() => toggleAccordion('details')}>
@@ -76,8 +95,8 @@ export const ProductDetail = ({ productId, setActivePage }) => {
                 <span>{openAccordion === 'shipping' ? '−' : '+'}</span>
               </button>
               <div className={`accordion-content ${openAccordion === 'shipping' ? 'open' : ''}`}>
-                <p>Envío estándar gratis a nivel nacional en todos los pedidos.</p>
-                <p>Entrega en 2-5 días hábiles. Opciones exprés disponibles al finalizar compra.</p>
+                <p>Envío estándar gratis a nivel nacional en todos los pedidos superiores a $200.000 COP.</p>
+                <p>Entrega en 24 a 48h en Medellín y 2 a 4 días hábiles en el resto del país.</p>
               </div>
             </div>
             
@@ -87,7 +106,7 @@ export const ProductDetail = ({ productId, setActivePage }) => {
                 <span>{openAccordion === 'returns' ? '−' : '+'}</span>
               </button>
               <div className={`accordion-content ${openAccordion === 'returns' ? 'open' : ''}`}>
-                <p>30 días para devoluciones sin costo. Las prendas deben estar sin usar y con etiquetas originales.</p>
+                <p>30 días de garantía total para cambios sin costo. Las prendas deben estar sin usar y con etiquetas originales.</p>
               </div>
             </div>
           </div>
@@ -126,16 +145,21 @@ export const ProductDetail = ({ productId, setActivePage }) => {
           <button 
             className="add-to-cart-massive"
             onClick={handleAdd}
-            disabled={adding || product.stock === 0}
+            disabled={adding || isOutOfStock}
+            style={{
+              backgroundColor: isOutOfStock ? '#9ca3af' : '#111111',
+              color: '#ffffff',
+              cursor: isOutOfStock ? 'not-allowed' : 'pointer'
+            }}
           >
-            {adding ? 'AGREGANDO...' : product.stock === 0 ? 'AGOTADO' : `AÑADIR AL CARRITO — ${formatMoney(product.price)}`}
+            {adding ? 'AGREGANDO...' : isOutOfStock ? 'AGOTADO' : `AÑADIR AL CARRITO — ${formatMoney(product.price)}`}
           </button>
           
           <div className="payment-icons-display">
             <span className="pay-icon visa">VISA</span>
             <span className="pay-icon mc">MC</span>
             <span className="pay-icon amex">AMEX</span>
-            <span className="pay-icon pyp">PAYPAL</span>
+            <span className="pay-icon pyp">NEQUI</span>
           </div>
         </div>
 
@@ -143,4 +167,3 @@ export const ProductDetail = ({ productId, setActivePage }) => {
     </main>
   );
 };
-

@@ -18,6 +18,8 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const [orders, setOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
   const [cart, setCart] = useState({
     items: [],
     subtotal: 0,
@@ -44,7 +46,7 @@ export const CartProvider = ({ children }) => {
     }, duration);
   }, []);
 
-  // Carga inicial de productos
+  // Carga de productos
   const fetchProducts = useCallback(async () => {
     setLoadingProducts(true);
     try {
@@ -59,6 +61,24 @@ export const CartProvider = ({ children }) => {
       setLoadingProducts(false);
     }
   }, [showToast]);
+
+  // Carga de pedidos
+  const fetchOrders = useCallback(async (clientEmail = null) => {
+    setLoadingOrders(true);
+    try {
+      const url = clientEmail ? `/api/orders?email=${encodeURIComponent(clientEmail)}` : '/api/orders';
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setOrders(data.orders || []);
+      return data.orders || [];
+    } catch (err) {
+      console.error('Error al cargar pedidos:', err);
+      return [];
+    } finally {
+      setLoadingOrders(false);
+    }
+  }, []);
 
   // Carga inicial del carrito
   const fetchCart = useCallback(async () => {
@@ -77,7 +97,8 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     fetchProducts();
     fetchCart();
-  }, [fetchProducts, fetchCart]);
+    fetchOrders();
+  }, [fetchProducts, fetchCart, fetchOrders]);
 
   // Bloquear scroll cuando el drawer o modal están abiertos
   useEffect(() => {
@@ -100,7 +121,7 @@ export const CartProvider = ({ children }) => {
       if (!res.ok) throw new Error(data.error || 'Error al agregar prenda');
       setCart(data.cart);
       showToast(`✨ ${data.message || 'Prenda agregada a la bolsa'}`);
-      setIsCartOpen(true); // Abrir el drawer automáticamente para feedback visual
+      setIsCartOpen(true);
       return data;
     } catch (err) {
       showToast(`❌ ${err.message}`);
@@ -160,7 +181,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Procesar Checkout
+  // Procesar Checkout (descuenta stock en tiempo real)
   const processCheckout = async (customer, payment) => {
     try {
       const res = await fetch('/api/checkout', {
@@ -172,6 +193,12 @@ export const CartProvider = ({ children }) => {
       if (!res.ok) throw new Error(data.error || 'Error al procesar compra');
 
       setCart(data.cart);
+      if (data.products) {
+        setProducts(data.products);
+      } else {
+        fetchProducts();
+      }
+      fetchOrders();
       setIsCheckoutOpen(false);
       setOrderCompleted(data.order);
       showToast('🎉 ¡Compra realizada exitosamente!');
@@ -182,11 +209,122 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  // Reabastecer stock de un producto existente ("Llegaron productos al slot")
+  const restockProduct = async (productId, amount) => {
+    try {
+      const res = await fetch('/api/products/restock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, amount })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al reabastecer stock');
+      if (data.products) {
+        setProducts(data.products);
+      } else {
+        fetchProducts();
+      }
+      showToast(`📦 ${data.message}`);
+      return data;
+    } catch (err) {
+      showToast(`❌ ${err.message}`);
+      throw err;
+    }
+  };
+
+  // Crear nuevo slot de producto en inventario
+  const createNewProduct = async (productData) => {
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(productData)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al crear producto');
+      if (data.products) {
+        setProducts(data.products);
+      } else {
+        fetchProducts();
+      }
+      showToast(data.message);
+      return data;
+    } catch (err) {
+      showToast(err.message);
+      throw err;
+    }
+  };
+
+  // Actualizar datos de un producto (Admin)
+  const updateProduct = async (productId, updatedData) => {
+    try {
+      const res = await fetch(`/api/products/${productId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al actualizar producto');
+      if (data.products) {
+        setProducts(data.products);
+      } else {
+        fetchProducts();
+      }
+      showToast(data.message || 'Producto actualizado con éxito');
+      return data;
+    } catch (err) {
+      showToast(err.message);
+      throw err;
+    }
+  };
+
+  // Eliminar slot de producto
+  const deleteProduct = async (productId) => {
+    try {
+      const res = await fetch(`/api/products/${productId}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al eliminar producto');
+      if (data.products) {
+        setProducts(data.products);
+      } else {
+        fetchProducts();
+      }
+      showToast(data.message);
+      return data;
+    } catch (err) {
+      showToast(err.message);
+      throw err;
+    }
+  };
+
+  // Actualizar estado de una orden (Admin)
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderStatus: newStatus })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al actualizar pedido');
+      fetchOrders();
+      showToast(`Pedido ${orderId}: ${newStatus}`);
+      return data;
+    } catch (err) {
+      showToast(err.message);
+      throw err;
+    }
+  };
+
   return (
     <CartContext.Provider
       value={{
         products,
         loadingProducts,
+        orders,
+        loadingOrders,
         cart,
         formatMoney,
         isCartOpen,
@@ -202,7 +340,13 @@ export const CartProvider = ({ children }) => {
         removeItem,
         clearCart,
         processCheckout,
-        refreshProducts: fetchProducts
+        refreshProducts: fetchProducts,
+        fetchOrders,
+        restockProduct,
+        createNewProduct,
+        updateProduct,
+        deleteProduct,
+        updateOrderStatus
       }}
     >
       {children}

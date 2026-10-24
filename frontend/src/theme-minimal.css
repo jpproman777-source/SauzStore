@@ -34,14 +34,16 @@ body {
 
 .minimal-header.transparent {
   background-color: transparent;
-  color: var(--text-color);
+  color: #ffffff !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
 }
 
 .minimal-header.solid {
-  background-color: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  color: #666666;
-  border-bottom: 1px solid var(--border-color);
+  background-color: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  color: #111111;
+  border-bottom: 1px solid #e5e5e5;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
 .minimal-header-inner {
@@ -132,7 +134,8 @@ body {
   content: '';
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: transparent;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.7) 100%);
+  pointer-events: none;
   z-index: 1;
 }
 
@@ -895,4 +898,305 @@ body {
   background-color: var(--bg-color) !important;
   color: var(--text-color) !important;
   border: 1px solid var(--border-color) !important;
+}
+
+/* =======================================================================
+   SUITE DE MICRO-ANIMACIONES & INTERACTIVIDAD MODERNA (PANEL ADMIN)
+   ======================================================================= */
+
+/* 1. Transición suave al cambiar de sección/tab */
+@keyframes adminViewEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.admin-view-animated {
+  animation: adminViewEnter 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 2. Navegación lateral (Sidebar) */
+.admin-nav-item {
+  position: relative;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer;
+}
+
+.admin-nav-item:hover {
+  background-color: #F4F4F5 !important;
+  color: #0A0A0A !important;
+  transform: translateX(4px) !important;
+}
+
+.admin-nav-item:active {
+  transform: scale(0.98) translateX(2px) !important;
+}
+
+.admin-nav-item.active {
+  background-color: #0A0A0A !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14) !important;
+}
+
+/* 3. Tarjetas KPI de Resumen Ejecutivo */
+.admin-kpi-card {
+  position: relative;
+  background-color: #FFFFFF;
+  border: 1px solid #E7E7E7;
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  cursor: default;
+}
+
+.admin-kpi-card:hover {
+  transform: translateY(-4px);
+  border-color: #171717;
+  box-shadow: 0 14px 28px -8px rgba(0, 0, 0, 0.08), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+}
+
+.admin-kpi-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #0A0A0A;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-kpi-card:hover::after {
+  transform: scaleX(1);
+}
+
+/* 4. Botones primarios y secundarios */
+.admin-btn-primary {
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer;
+}
+
+.admin-btn-primary:hover {
+  background-color: #262626 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16) !important;
+}
+
+.admin-btn-primary:active {
+  transform: translateY(0) scale(0.98) !important;
+}
+
+.admin-btn-secondary {
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer;
+}
+
+.admin-btn-secondary:hover {
+  background-color: #F4F4F5 !important;
+  border-color: #A3A3A3 !important;
+  color: #0A0A0A !important;
+  transform: translateY(-1px) !important;
+}
+
+.admin-btn-secondary:active {
+  transform: translateY(0) scale(0.98) !important;
+}
+
+/* 5. Filas de tablas con hover suave y botones de acción que se revelan */
+.admin-table-row {
+  transition: background-color 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.admin-table-row:hover {
+  background-color: #F8F9FA !important;
+}
+
+.admin-row-action-btn {
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+.admin-table-row:hover .admin-row-action-btn {
+  opacity: 1 !important;
+}
+
+.admin-row-action-btn:hover {
+  transform: scale(1.15) !important;
+  background-color: #EAEAEA !important;
+}
+
+/* 6. Tarjetas interactivas de Productos e Inventario con zoom fotográfico */
+.admin-card-interactive {
+  transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: default;
+}
+
+.admin-card-interactive:hover {
+  transform: translateY(-4px) !important;
+  border-color: #171717 !important;
+  box-shadow: 0 14px 30px -8px rgba(0, 0, 0, 0.09) !important;
+}
+
+.admin-card-interactive .card-img-zoom {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.admin-card-interactive:hover .card-img-zoom {
+  transform: scale(1.06) !important;
+}
+
+/* 7. Entradas de formulario y buscador con focus suave */
+.admin-input-focus {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
+}
+
+.admin-input-focus:hover {
+  border-color: #A3A3A3 !important;
+}
+
+.admin-input-focus:focus {
+  border-color: #0A0A0A !important;
+  box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.08) !important;
+  outline: none !important;
+}
+
+/* 8. Píldoras de filtro y botones de modo de gráfica */
+.chart-mode-pill, .admin-filter-pill {
+  border: 1px solid #E7E7E7;
+  background-color: #FFFFFF;
+  color: #737373;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chart-mode-pill:hover, .admin-filter-pill:hover {
+  color: #171717;
+  border-color: #A3A3A3;
+  background-color: #F8F8F8;
+  transform: translateY(-1px);
+}
+
+.chart-mode-pill.active, .admin-filter-pill.active {
+  background-color: #0A0A0A !important;
+  color: #FFFFFF !important;
+  border-color: #0A0A0A !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 9. Lista de ranking y prendas más vendidas */
+.admin-ranking-item {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  border-radius: 6px;
+  padding: 8px 12px !important;
+  cursor: pointer;
+}
+
+.admin-ranking-item:hover {
+  background-color: #F8F8F8 !important;
+  transform: translateX(4px) !important;
+}
+
+.admin-ranking-item .ranking-img {
+  transition: transform 0.25s ease !important;
+}
+
+.admin-ranking-item:hover .ranking-img {
+  transform: scale(1.08) !important;
+}
+
+/* 10. Modales y Ventanas emergentes */
+@keyframes modalBackdropFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalDialogPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.admin-modal-backdrop {
+  animation: modalBackdropFade 0.2s ease forwards;
+}
+
+.admin-modal-card {
+  animation: modalDialogPop 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 11. Gráfica: Radar Halo Pulsante y Tooltip */
+@keyframes chartPulseHalo {
+  0% {
+    r: 6;
+    opacity: 0.8;
+  }
+  50% {
+    r: 16;
+    opacity: 0.2;
+  }
+  100% {
+    r: 22;
+    opacity: 0;
+  }
+}
+
+.chart-pulse-ring {
+  animation: chartPulseHalo 1.8s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+  transform-origin: center;
+}
+
+.chart-tooltip-container {
+  background: rgba(10, 10, 10, 0.94);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 14px 34px -4px rgba(0, 0, 0, 0.45);
+  color: #FFFFFF;
+  font-family: 'Inter', -apple-system, sans-serif;
+  min-width: 175px;
+  pointer-events: none;
+}
+
+.chart-pulse-badge {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #22C55E;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  animation: badgeBreathe 2s infinite;
+}
+
+@keyframes badgeBreathe {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
 }
