@@ -1,3 +1,4 @@
+import { ProductImage } from './ProductImage';
 import React, { useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 
@@ -131,7 +132,7 @@ export const CartDrawer = ({ setActivePage }) => {
                 cart.items.map((item) => (
                   <div key={item.productId} style={{ display: 'flex', gap: '20px', marginBottom: '25px', paddingBottom: '25px', borderBottom: '1px solid var(--border-color)' }}>
                     <div style={{ width: '80px', height: '100px', backgroundColor: 'var(--panel-bg)', borderRadius: '0px', overflow: 'hidden' }}>
-                      <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }} />
+                      <ProductImage src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }} />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingTop: '5px' }}>
                       <div>

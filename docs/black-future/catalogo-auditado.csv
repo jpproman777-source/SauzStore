@@ -1,0 +1,13 @@
+id,nombre_existente,categoria,precio_COP_existente,stock_existente,imagen_local,estado_comercial,modelo_oficial,SKU,color,tallas,fuente_oficial,verificacion_oficial
+1,Camisa Jordan,Camisetas,65000,28,/Productos/jordan_Blanca.png,comercial existente,,,,,,pendiente: faltan CSV e identificadores oficiales
+2,Camisa Hellstar Negra,Camisetas,50000,57,/Productos/hellstart_negra.png,comercial existente,,,,,,pendiente: faltan CSV e identificadores oficiales
+3,Camisa Jordan Negra,Camisetas,70000,17,/Productos/Jordan_negra.png,comercial existente,,,,,,pendiente: faltan CSV e identificadores oficiales
+4,Camisa estampada Moon,Camisetas,75000,11,/Productos/moon.png,comercial existente,,,,,,pendiente: faltan CSV e identificadores oficiales
+5,Camisa Undg,Camisetas,80000,15,/Productos/Ungd.png,comercial existente,,,,,,pendiente: faltan CSV e identificadores oficiales
+6,Camisa Letras-Negra,Camisetas,55000,18,/Productos/letras_negra.png,comercial existente,,,,,,pendiente: faltan CSV e identificadores oficiales
+7,Hoodie Monastery,Sudaderas,120000,13,/Productos/Monastery_lado1.png,comercial existente,,,,,,pendiente: faltan CSV e identificadores oficiales
+8,Hoodie Estrella,Sudaderas,130000,9,/Productos/hoodie_negro.png,comercial existente,,,,,,pendiente: faltan CSV e identificadores oficiales
+9,Hoodie Blanco Estrella,Sudaderas,135000,10,/Productos/hoddie_blanco3.png,comercial existente,,,,,,pendiente: faltan CSV e identificadores oficiales
+10,Hoodie Negro Estampado,Sudaderas,125000,12,/Productos/hoodie_negro2.png,comercial existente,,,,,,pendiente: faltan CSV e identificadores oficiales
+11,Hoodie Blanco Angel,Sudaderas,140000,8,/Productos/hodie_Blanco2.png,comercial existente,,,,,,pendiente: faltan CSV e identificadores oficiales
+12,Hoodie Hugo,Sudaderas,138000,6,/Productos/Hugo_sueter.png,comercial existente,,,,,,pendiente: faltan CSV e identificadores oficiales

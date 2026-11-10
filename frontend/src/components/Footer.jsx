@@ -1,6 +1,10 @@
 import React from 'react';
+import { BrandLogo } from './BrandLogo';
+import { useCart } from '../context/CartContext';
 
 export const Footer = ({ setActivePage, onCategorySelect }) => {
+  const { products } = useCart();
+  const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
   const handleNav = (page) => {
     setActivePage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -18,18 +22,14 @@ export const Footer = ({ setActivePage, onCategorySelect }) => {
     <footer className="site-footer">
       <div className="wrap footer-grid">
         <div className="footer-brand">
-          <span className="brand">SAUZ STORE</span>
+          <div className="bf-footer-brand"><BrandLogo/><span className="brand">SAUZ STORE</span></div>
           <p>Moda urbana y streetwear en telas premium, diseñada para destacar con actitud y autenticidad.</p>
         </div>
 
         <div className="footer-col">
           <h4>Colección</h4>
           <ul>
-            <li><button type="button" className="footer-link-btn" onClick={() => handleCategory('Camisetas')}>Camisetas</button></li>
-            <li><button type="button" className="footer-link-btn" onClick={() => handleCategory('Chaquetas')}>Chaquetas</button></li>
-            <li><button type="button" className="footer-link-btn" onClick={() => handleCategory('Pantalones')}>Pantalones</button></li>
-            <li><button type="button" className="footer-link-btn" onClick={() => handleCategory('Sudaderas')}>Sudaderas</button></li>
-            <li><button type="button" className="footer-link-btn" onClick={() => handleCategory('Accesorios')}>Accesorios</button></li>
+            {categories.map(cat => <li key={cat}><button type="button" className="footer-link-btn" onClick={() => handleCategory(cat)}>{cat}</button></li>)}
           </ul>
         </div>
 

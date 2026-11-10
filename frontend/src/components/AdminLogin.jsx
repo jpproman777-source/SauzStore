@@ -99,9 +99,9 @@ export const AdminLogin = ({ setActivePage }) => {
         minHeight: '100vh',
         width: '100%',
         display: 'flex',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'var(--bf-secondary)',
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-        color: '#171717'
+        color: 'var(--bf-text)'
       }}
     >
       {/* ==============================================================
@@ -110,7 +110,7 @@ export const AdminLogin = ({ setActivePage }) => {
       <div
         style={{
           flex: '1 1 50%',
-          backgroundColor: '#0A0A0A',
+          backgroundColor: 'var(--bf-secondary)',
           position: 'relative',
           display: 'flex',
           flexDirection: 'column',
@@ -151,7 +151,7 @@ export const AdminLogin = ({ setActivePage }) => {
               style={{
                 width: '10px',
                 height: '10px',
-                backgroundColor: '#FFFFFF',
+                backgroundColor: 'var(--bf-secondary)',
                 borderRadius: '50%',
                 display: 'inline-block'
               }}
@@ -162,13 +162,13 @@ export const AdminLogin = ({ setActivePage }) => {
                 fontWeight: '700',
                 letterSpacing: '3px',
                 textTransform: 'uppercase',
-                color: '#FFFFFF'
+                color: 'var(--bf-text)'
               }}
             >
               SAUZ STORE
             </span>
           </div>
-          <span style={{ fontSize: '0.72rem', letterSpacing: '1.5px', textTransform: 'uppercase', color: '#737373', fontWeight: '500' }}>
+          <span style={{ fontSize: '0.72rem', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--bf-muted)', fontWeight: '500' }}>
             Haute Streetwear · Colombia
           </span>
         </div>
@@ -184,7 +184,7 @@ export const AdminLogin = ({ setActivePage }) => {
               backgroundColor: 'rgba(255, 255, 255, 0.08)',
               border: '1px solid rgba(255, 255, 255, 0.12)',
               borderRadius: '6px',
-              color: '#F6F6F6',
+              color: 'var(--bf-text)',
               fontSize: '0.72rem',
               fontWeight: '600',
               letterSpacing: '1.2px',
@@ -201,7 +201,7 @@ export const AdminLogin = ({ setActivePage }) => {
               fontSize: 'clamp(1.9rem, 3.2vw, 2.75rem)',
               fontWeight: '800',
               lineHeight: 1.15,
-              color: '#FFFFFF',
+              color: 'var(--bf-text)',
               letterSpacing: '-0.03em',
               margin: '0 0 18px 0'
             }}
@@ -213,7 +213,7 @@ export const AdminLogin = ({ setActivePage }) => {
             style={{
               fontSize: '0.95rem',
               lineHeight: 1.6,
-              color: '#A3A3A3',
+              color: 'var(--bf-muted)',
               margin: 0,
               fontWeight: '400'
             }}
@@ -233,7 +233,7 @@ export const AdminLogin = ({ setActivePage }) => {
             justifyContent: 'space-between',
             alignItems: 'center',
             fontSize: '0.75rem',
-            color: '#737373'
+            color: 'var(--bf-muted)'
           }}
         >
           <span>Sauz Store Colombia © {new Date().getFullYear()}</span>
@@ -251,7 +251,7 @@ export const AdminLogin = ({ setActivePage }) => {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: 'clamp(28px, 4.5vw, 64px)',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'var(--bf-secondary)',
           overflowY: 'auto'
         }}
       >
@@ -266,7 +266,7 @@ export const AdminLogin = ({ setActivePage }) => {
               gap: '8px',
               background: 'none',
               border: 'none',
-              color: '#737373',
+              color: 'var(--bf-muted)',
               fontSize: '0.84rem',
               fontWeight: '500',
               cursor: 'pointer',
@@ -275,11 +275,11 @@ export const AdminLogin = ({ setActivePage }) => {
               transition: 'color 0.15s, background-color 0.15s'
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.color = '#171717';
-              e.currentTarget.style.backgroundColor = '#F6F6F6';
+              e.currentTarget.style.color = 'var(--bf-bg)';
+              e.currentTarget.style.backgroundColor = 'var(--bf-surface)';
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.color = '#737373';
+              e.currentTarget.style.color = 'var(--bf-muted)';
               e.currentTarget.style.backgroundColor = 'transparent';
             }}
           >
@@ -294,8 +294,8 @@ export const AdminLogin = ({ setActivePage }) => {
           {user && (
             <div
               style={{
-                backgroundColor: '#F6F6F6',
-                border: '1px solid #E7E7E7',
+                backgroundColor: 'var(--bf-surface)',
+                border: '1px solid var(--bf-border)',
                 borderRadius: '8px',
                 padding: '16px 18px',
                 marginBottom: '28px'
@@ -303,11 +303,11 @@ export const AdminLogin = ({ setActivePage }) => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                 <CheckCircle2 size={16} color="#15803D" />
-                <span style={{ fontSize: '0.84rem', fontWeight: '700', color: '#171717' }}>
+                <span style={{ fontSize: '0.84rem', fontWeight: '700', color: 'var(--bf-text)' }}>
                   Sesión activa en este navegador
                 </span>
               </div>
-              <p style={{ margin: '0 0 12px 0', fontSize: '0.78rem', color: '#737373' }}>
+              <p style={{ margin: '0 0 12px 0', fontSize: '0.78rem', color: 'var(--bf-muted)' }}>
                 Conectado como <strong>{user.name}</strong> ({user.email}) · Rol: <strong>{user.role === 'admin' ? 'Administrador' : 'Cliente'}</strong>
               </p>
               <div style={{ display: 'flex', gap: '8px' }}>
@@ -323,8 +323,8 @@ export const AdminLogin = ({ setActivePage }) => {
                     style={{
                       flex: 1,
                       padding: '8px',
-                      backgroundColor: '#0A0A0A',
-                      color: '#FFFFFF',
+                      backgroundColor: 'var(--bf-secondary)',
+                      color: 'var(--bf-text)',
                       border: 'none',
                       borderRadius: '4px',
                       fontSize: '0.78rem',
@@ -346,8 +346,8 @@ export const AdminLogin = ({ setActivePage }) => {
                     style={{
                       flex: 1,
                       padding: '8px',
-                      backgroundColor: '#0A0A0A',
-                      color: '#FFFFFF',
+                      backgroundColor: 'var(--bf-secondary)',
+                      color: 'var(--bf-text)',
                       border: 'none',
                       borderRadius: '4px',
                       fontSize: '0.78rem',
@@ -366,8 +366,8 @@ export const AdminLogin = ({ setActivePage }) => {
                   }}
                   style={{
                     padding: '8px 14px',
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E7E7E7',
+                    backgroundColor: 'var(--bf-secondary)',
+                    border: '1px solid var(--bf-border)',
                     borderRadius: '4px',
                     fontSize: '0.78rem',
                     fontWeight: '600',
@@ -389,7 +389,7 @@ export const AdminLogin = ({ setActivePage }) => {
                 fontWeight: '700',
                 letterSpacing: '1.5px',
                 textTransform: 'uppercase',
-                color: '#737373',
+                color: 'var(--bf-muted)',
                 display: 'block',
                 marginBottom: '8px'
               }}
@@ -401,13 +401,13 @@ export const AdminLogin = ({ setActivePage }) => {
                 fontSize: '1.85rem',
                 fontWeight: '800',
                 letterSpacing: '-0.025em',
-                color: '#171717',
+                color: 'var(--bf-text)',
                 margin: '0 0 8px 0'
               }}
             >
               {mode === 'login' ? 'Bienvenido de nuevo' : 'Crear nueva cuenta'}
             </h2>
-            <p style={{ fontSize: '0.88rem', color: '#737373', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: '0.88rem', color: 'var(--bf-muted)', margin: 0, lineHeight: 1.5 }}>
               {mode === 'login'
                 ? 'Ingresa tus credenciales para acceder al sistema.'
                 : 'Completa tus datos para registrarte como cliente en Sauz Store.'}
@@ -415,7 +415,7 @@ export const AdminLogin = ({ setActivePage }) => {
           </div>
 
           {/* Selector de Modo (Iniciar Sesión vs Registro) */}
-          <div style={{ display: 'flex', backgroundColor: '#F6F6F6', padding: '3px', borderRadius: '6px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', backgroundColor: 'var(--bf-surface)', padding: '3px', borderRadius: '6px', marginBottom: '20px' }}>
             <button
               type="button"
               onClick={() => { setMode('login'); setCustomError(null); }}
@@ -424,8 +424,8 @@ export const AdminLogin = ({ setActivePage }) => {
                 padding: '7px',
                 border: 'none',
                 borderRadius: '4px',
-                backgroundColor: mode === 'login' ? '#FFFFFF' : 'transparent',
-                color: mode === 'login' ? '#171717' : '#737373',
+                backgroundColor: mode === 'login' ? 'var(--bf-text)' : 'transparent',
+                color: mode === 'login' ? 'var(--bf-bg)' : 'var(--bf-muted)',
                 fontSize: '0.8rem',
                 fontWeight: mode === 'login' ? '700' : '500',
                 cursor: 'pointer',
@@ -442,8 +442,8 @@ export const AdminLogin = ({ setActivePage }) => {
                 padding: '7px',
                 border: 'none',
                 borderRadius: '4px',
-                backgroundColor: mode === 'register' ? '#FFFFFF' : 'transparent',
-                color: mode === 'register' ? '#171717' : '#737373',
+                backgroundColor: mode === 'register' ? 'var(--bf-text)' : 'transparent',
+                color: mode === 'register' ? 'var(--bf-bg)' : 'var(--bf-muted)',
                 fontSize: '0.8rem',
                 fontWeight: mode === 'register' ? '700' : '500',
                 cursor: 'pointer',
@@ -463,7 +463,7 @@ export const AdminLogin = ({ setActivePage }) => {
                 alignItems: 'flex-start',
                 gap: '12px',
                 padding: '14px 16px',
-                backgroundColor: '#FEF2F2',
+                backgroundColor: 'var(--bf-surface)',
                 border: '1px solid #FECACA',
                 borderRadius: '6px',
                 color: '#DC2626',
@@ -483,12 +483,12 @@ export const AdminLogin = ({ setActivePage }) => {
               <div>
                 <label
                   htmlFor="user-name"
-                  style={{ display: 'block', fontSize: '0.78rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}
+                  style={{ display: 'block', fontSize: '0.78rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}
                 >
                   Nombre completo *
                 </label>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                  <User size={18} style={{ position: 'absolute', left: '14px', color: '#737373', pointerEvents: 'none' }} />
+                  <User size={18} style={{ position: 'absolute', left: '14px', color: 'var(--bf-muted)', pointerEvents: 'none' }} />
                   <input
                     id="user-name"
                     type="text"
@@ -500,10 +500,10 @@ export const AdminLogin = ({ setActivePage }) => {
                       width: '100%',
                       height: '44px',
                       padding: '0 14px 0 42px',
-                      backgroundColor: '#FFFFFF',
-                      border: '1px solid #E7E7E7',
+                      backgroundColor: 'var(--bf-secondary)',
+                      border: '1px solid var(--bf-border)',
                       borderRadius: '6px',
-                      color: '#171717',
+                      color: 'var(--bf-text)',
                       fontSize: '0.88rem',
                       outline: 'none',
                       boxSizing: 'border-box'
@@ -517,12 +517,12 @@ export const AdminLogin = ({ setActivePage }) => {
             <div>
               <label
                 htmlFor="user-email"
-                style={{ display: 'block', fontSize: '0.78rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}
+                style={{ display: 'block', fontSize: '0.78rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}
               >
                 Correo electrónico *
               </label>
               <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <Mail size={18} style={{ position: 'absolute', left: '14px', color: '#737373', pointerEvents: 'none' }} />
+                <Mail size={18} style={{ position: 'absolute', left: '14px', color: 'var(--bf-muted)', pointerEvents: 'none' }} />
                 <input
                   id="user-email"
                   type="email"
@@ -535,10 +535,10 @@ export const AdminLogin = ({ setActivePage }) => {
                     width: '100%',
                     height: '44px',
                     padding: '0 14px 0 42px',
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E7E7E7',
+                    backgroundColor: 'var(--bf-secondary)',
+                    border: '1px solid var(--bf-border)',
                     borderRadius: '6px',
-                    color: '#171717',
+                    color: 'var(--bf-text)',
                     fontSize: '0.88rem',
                     outline: 'none',
                     boxSizing: 'border-box'
@@ -551,12 +551,12 @@ export const AdminLogin = ({ setActivePage }) => {
             <div>
               <label
                 htmlFor="user-password"
-                style={{ display: 'block', fontSize: '0.78rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}
+                style={{ display: 'block', fontSize: '0.78rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}
               >
                 Contraseña *
               </label>
               <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <Lock size={18} style={{ position: 'absolute', left: '14px', color: '#737373', pointerEvents: 'none' }} />
+                <Lock size={18} style={{ position: 'absolute', left: '14px', color: 'var(--bf-muted)', pointerEvents: 'none' }} />
                 <input
                   id="user-password"
                   type={showPassword ? 'text' : 'password'}
@@ -569,10 +569,10 @@ export const AdminLogin = ({ setActivePage }) => {
                     width: '100%',
                     height: '44px',
                     padding: '0 44px 0 42px',
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E7E7E7',
+                    backgroundColor: 'var(--bf-secondary)',
+                    border: '1px solid var(--bf-border)',
                     borderRadius: '6px',
-                    color: '#171717',
+                    color: 'var(--bf-text)',
                     fontSize: '0.88rem',
                     outline: 'none',
                     boxSizing: 'border-box'
@@ -587,7 +587,7 @@ export const AdminLogin = ({ setActivePage }) => {
                     right: '12px',
                     background: 'none',
                     border: 'none',
-                    color: '#737373',
+                    color: 'var(--bf-muted)',
                     cursor: 'pointer',
                     padding: '4px',
                     display: 'flex',
@@ -604,7 +604,7 @@ export const AdminLogin = ({ setActivePage }) => {
               <>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                       Teléfono móvil
                     </label>
                     <input
@@ -616,8 +616,8 @@ export const AdminLogin = ({ setActivePage }) => {
                         width: '100%',
                         height: '42px',
                         padding: '0 12px',
-                        backgroundColor: '#FFFFFF',
-                        border: '1px solid #E7E7E7',
+                        backgroundColor: 'var(--bf-secondary)',
+                        border: '1px solid var(--bf-border)',
                         borderRadius: '6px',
                         fontSize: '0.84rem',
                         outline: 'none',
@@ -626,7 +626,7 @@ export const AdminLogin = ({ setActivePage }) => {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                       Ciudad
                     </label>
                     <input
@@ -638,8 +638,8 @@ export const AdminLogin = ({ setActivePage }) => {
                         width: '100%',
                         height: '42px',
                         padding: '0 12px',
-                        backgroundColor: '#FFFFFF',
-                        border: '1px solid #E7E7E7',
+                        backgroundColor: 'var(--bf-secondary)',
+                        border: '1px solid var(--bf-border)',
                         borderRadius: '6px',
                         fontSize: '0.84rem',
                         outline: 'none',
@@ -650,7 +650,7 @@ export const AdminLogin = ({ setActivePage }) => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                     Dirección de despacho
                   </label>
                   <input
@@ -662,8 +662,8 @@ export const AdminLogin = ({ setActivePage }) => {
                       width: '100%',
                       height: '42px',
                       padding: '0 12px',
-                      backgroundColor: '#FFFFFF',
-                      border: '1px solid #E7E7E7',
+                      backgroundColor: 'var(--bf-secondary)',
+                      border: '1px solid var(--bf-border)',
                       borderRadius: '6px',
                       fontSize: '0.84rem',
                       outline: 'none',
@@ -682,8 +682,8 @@ export const AdminLogin = ({ setActivePage }) => {
                 width: '100%',
                 height: '46px',
                 marginTop: '6px',
-                backgroundColor: '#0A0A0A',
-                color: '#FFFFFF',
+                backgroundColor: 'var(--bf-secondary)',
+                color: 'var(--bf-text)',
                 border: 'none',
                 borderRadius: '6px',
                 fontSize: '0.88rem',
@@ -696,8 +696,8 @@ export const AdminLogin = ({ setActivePage }) => {
                 transition: 'background-color 0.15s',
                 boxShadow: '0 1px 2px rgba(0,0,0,0.06)'
               }}
-              onMouseOver={(e) => !authLoading && (e.currentTarget.style.backgroundColor = '#262626')}
-              onMouseOut={(e) => !authLoading && (e.currentTarget.style.backgroundColor = '#0A0A0A')}
+              onMouseOver={(e) => !authLoading && (e.currentTarget.style.backgroundColor = 'var(--bf-raised)')}
+              onMouseOut={(e) => !authLoading && (e.currentTarget.style.backgroundColor = 'var(--bf-bg)')}
             >
               {authLoading ? (
                 <>
@@ -714,7 +714,7 @@ export const AdminLogin = ({ setActivePage }) => {
 
             {/* Botones de demostración rápida */}
             <div style={{ marginTop: '10px' }}>
-              <span style={{ fontSize: '0.72rem', color: '#737373', display: 'block', marginBottom: '6px', textAlign: 'center' }}>
+              <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', display: 'block', marginBottom: '6px', textAlign: 'center' }}>
                 Accesos rápidos de demostración:
               </span>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
@@ -723,10 +723,10 @@ export const AdminLogin = ({ setActivePage }) => {
                   onClick={handleFillAdminDemo}
                   style={{
                     padding: '8px',
-                    backgroundColor: '#F6F6F6',
-                    border: '1px solid #E7E7E7',
+                    backgroundColor: 'var(--bf-surface)',
+                    border: '1px solid var(--bf-border)',
                     borderRadius: '6px',
-                    color: '#171717',
+                    color: 'var(--bf-text)',
                     fontSize: '0.74rem',
                     fontWeight: '600',
                     cursor: 'pointer',
@@ -740,10 +740,10 @@ export const AdminLogin = ({ setActivePage }) => {
                   onClick={handleFillClientDemo}
                   style={{
                     padding: '8px',
-                    backgroundColor: '#F6F6F6',
-                    border: '1px solid #E7E7E7',
+                    backgroundColor: 'var(--bf-surface)',
+                    border: '1px solid var(--bf-border)',
                     borderRadius: '6px',
-                    color: '#171717',
+                    color: 'var(--bf-text)',
                     fontSize: '0.74rem',
                     fontWeight: '600',
                     cursor: 'pointer',
@@ -762,8 +762,8 @@ export const AdminLogin = ({ setActivePage }) => {
           style={{
             textAlign: 'center',
             fontSize: '0.75rem',
-            color: '#737373',
-            borderTop: '1px solid #E7E7E7',
+            color: 'var(--bf-muted)',
+            borderTop: '1px solid var(--bf-border)',
             paddingTop: '20px'
           }}
         >

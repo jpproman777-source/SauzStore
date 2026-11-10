@@ -31,8 +31,8 @@ export class ErrorBoundary extends React.Component {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#0A0A0A',
-            color: '#FFFFFF',
+            backgroundColor: 'var(--bf-secondary)',
+            color: 'var(--bf-text)',
             fontFamily: "'Inter', -apple-system, sans-serif",
             padding: '24px'
           }}
@@ -41,8 +41,8 @@ export class ErrorBoundary extends React.Component {
             style={{
               maxWidth: '480px',
               width: '100%',
-              backgroundColor: '#171717',
-              border: '1px solid #262626',
+              backgroundColor: 'var(--bf-secondary)',
+              border: '1px solid var(--bf-border)',
               borderRadius: '12px',
               padding: '36px 32px',
               textAlign: 'center'
@@ -66,18 +66,18 @@ export class ErrorBoundary extends React.Component {
             >
               !
             </div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '8px', color: '#FFFFFF' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '8px', color: 'var(--bf-text)' }}>
               Algo salió mal al cargar esta vista
             </h2>
-            <p style={{ fontSize: '0.85rem', color: '#A3A3A3', marginBottom: '24px', lineHeight: 1.5 }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--bf-muted)', marginBottom: '24px', lineHeight: 1.5 }}>
               Ocurrió un error inesperado al renderizar el componente. Puedes recargar o regresar a la tienda principal.
             </p>
             {this.state.error && (
               <pre
                 style={{
                   textAlign: 'left',
-                  backgroundColor: '#0A0A0A',
-                  border: '1px solid #262626',
+                  backgroundColor: 'var(--bf-secondary)',
+                  border: '1px solid var(--bf-border)',
                   borderRadius: '6px',
                   padding: '12px',
                   fontSize: '0.72rem',
@@ -96,8 +96,8 @@ export class ErrorBoundary extends React.Component {
                 onClick={this.handleReload}
                 style={{
                   padding: '10px 18px',
-                  backgroundColor: '#FFFFFF',
-                  color: '#0A0A0A',
+                  backgroundColor: 'var(--bf-secondary)',
+                  color: 'var(--bf-text)',
                   border: 'none',
                   borderRadius: '6px',
                   fontWeight: '600',
@@ -113,8 +113,8 @@ export class ErrorBoundary extends React.Component {
                 style={{
                   padding: '10px 18px',
                   backgroundColor: 'transparent',
-                  color: '#FFFFFF',
-                  border: '1px solid #333333',
+                  color: 'var(--bf-text)',
+                  border: '1px solid var(--bf-border)',
                   borderRadius: '6px',
                   fontWeight: '600',
                   fontSize: '0.82rem',

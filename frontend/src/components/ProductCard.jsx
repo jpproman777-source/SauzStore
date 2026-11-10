@@ -1,43 +1,83 @@
-import React, { useState } from 'react';
-import { useCart } from '../context/CartContext';
-
+import React from "react";
+import { Heart } from "lucide-react";
+import { useFavorites } from "../hooks/useFavorites";
+import { useCart } from "../context/CartContext";
+import { ProductImage } from "./ProductImage";
+import { BrandLogo } from "./BrandLogo";
+import { brandOf, isCommercial, productPath } from "../lib/products";
 export const ProductCard = ({ product, onProductSelect }) => {
-  const { addToCart, formatMoney, setIsCartOpen } = useCart();
-  const [adding, setAdding] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  const handleAdd = async (e) => {
-    e.stopPropagation(); // prevent triggering onProductSelect
-    setAdding(true);
-    await addToCart(product.id, 1);
-    setAdding(false);
-    setIsCartOpen(true);
-  };
-
+  const { formatMoney } = useCart();
+  const { ids, toggle } = useFavorites();
+  const saved = ids.includes(String(product.id));
   return (
-    <div className="minimal-product-card" data-id={product.id}>
-      <div 
-        className="minimal-product-img-wrapper" 
-        style={{ cursor: 'pointer' }}
-        onClick={() => onProductSelect && onProductSelect(product.id)}
+    <article className="bf-product">
+      <button
+        className="edition-favorite-toggle"
+        aria-label={`${saved ? "Quitar" : "Guardar"} ${product.name} ${saved ? "de" : "en"} favoritos`}
+        aria-pressed={saved}
+        onClick={() => toggle(product.id)}
       >
-        <img src={product.image} alt={product.name} />
+        <Heart size={17} fill={saved ? "currentColor" : "none"} />
+      </button>
+      <a
+        className="bf-product-image"
+        href={productPath(product.id)}
+        onClick={(e) => {
+          if (
+            e.metaKey ||
+            e.ctrlKey ||
+            e.shiftKey ||
+            e.altKey ||
+            e.button !== 0
+          )
+            return;
+          if (onProductSelect) {
+            e.preventDefault();
+            onProductSelect(product.id);
+          }
+        }}
+      >
+        <ProductImage src={product.image} alt={product.name} />
+        <span className="bf-product-tag">
+          {!isCommercial(product)
+            ? "Referencia / no disponible para compra"
+            : product.stock > 0
+              ? product.category
+              : "Agotado"}
+        </span>
+        <span className="bf-product-arrow" aria-hidden="true">
+          ↗
+        </span>
+      </a>
+      <div className="bf-product-meta">
+        <BrandLogo brand={brandOf(product)} />
+        <span>
+          {isCommercial(product)
+            ? formatMoney(product.price)
+            : "Referencia informativa"}
+        </span>
       </div>
-      
-      <div className="minimal-product-info">
-        <h3 className="minimal-product-title">{product.name.toUpperCase()}</h3>
-        <p className="minimal-product-price">{formatMoney(product.price)}</p>
-        
-        <button
-          type="button"
-          className="minimal-btn-outline"
-          style={{ marginTop: '10px', width: '100%', fontSize: '0.7rem', padding: '8px' }}
-          onClick={handleAdd}
-          disabled={adding || product.stock === 0}
+      <h3>
+        <a
+          href={productPath(product.id)}
+          onClick={(e) => {
+            if (
+              e.metaKey ||
+              e.ctrlKey ||
+              e.shiftKey ||
+              e.altKey ||
+              e.button !== 0
+            )
+              return;
+            if (onProductSelect) {
+              e.preventDefault();
+              onProductSelect(product.id);
+            }
+          }}
         >
-          {adding ? 'AGREGANDO...' : product.stock === 0 ? 'AGOTADO' : 'AÑADIR AL CARRITO'}
-        </button>
-      </div>
-    </div>
+          {product.name}
+        </a>
+      </h3>
+    </article>
   );
 };

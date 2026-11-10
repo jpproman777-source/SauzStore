@@ -1,153 +1,194 @@
-import React, { useState, useMemo } from 'react';
-import { useCart } from '../context/CartContext';
-import { ProductCard } from '../components/ProductCard';
-
-export const Catalog = ({ selectedCategory, setSelectedCategory, searchQuery, setSearchQuery, onProductSelect }) => {
-  const { products, loadingProducts } = useCart();
-  const [sortBy, setSortBy] = useState('relevant'); // 'relevant' | 'price-asc' | 'price-desc' | 'name'
-  const categories = useMemo(
-    () => ['Todas', ...new Set(products.map((product) => product.category).filter(Boolean))],
-    [products]
+import React, { useState, useMemo, useEffect } from "react";
+import { useCart } from "../context/CartContext";
+import { ProductCard } from "../components/ProductCard";
+import { brandOf, isCommercial } from "../lib/products";
+export const Catalog = ({
+  selectedCategory,
+  setSelectedCategory,
+  searchQuery,
+  setSearchQuery,
+  onProductSelect,
+}) => {
+  const { products, loadingProducts, refreshProducts } = useCart();
+  const [sort, setSort] = useState("relevant"),
+    [brand, setBrand] = useState("Todas"),
+    [available, setAvailable] = useState(false),
+    [page, setPage] = useState(1);
+  const categories = [
+    "Todas",
+    ...new Set(
+      [...products.map((p) => p.category), selectedCategory].filter(
+        (c) => c && c !== "Todas",
+      ),
+    ),
+  ];
+  const brands = ["Todas", ...new Set(products.map(brandOf))];
+  const filtered = useMemo(() => {
+    const q = searchQuery.trim().toLocaleLowerCase("es");
+    const list = products.filter(
+      (p) =>
+        (selectedCategory === "Todas" ||
+          !selectedCategory ||
+          p.category === selectedCategory ||
+          (selectedCategory === "Ropa" &&
+            /camis|sudader|hood|chaquet|pantal|buzo/i.test(p.category || "")) ||
+          (selectedCategory === "Sneakers" &&
+            /sneaker|tenis|zapat|calzado/i.test(p.category || "")) ||
+          (selectedCategory === "Gorras" && /gorra/i.test(p.category || "")) ||
+          (selectedCategory === "Accesorios" &&
+            /accesor|gorra|bolso/i.test(p.category || ""))) &&
+        (brand === "Todas" || brandOf(p) === brand) &&
+        (!available || (isCommercial(p) && p.stock > 0)) &&
+        [p.name, p.description, p.category, brandOf(p)]
+          .filter(Boolean)
+          .join(" ")
+          .toLocaleLowerCase("es")
+          .includes(q),
+    );
+    if (sort === "price-asc")
+      list.sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity));
+    if (sort === "price-desc")
+      list.sort((a, b) => (b.price ?? -Infinity) - (a.price ?? -Infinity));
+    if (sort === "name")
+      list.sort((a, b) => a.name.localeCompare(b.name, "es"));
+    return list;
+  }, [products, selectedCategory, searchQuery, brand, available, sort]);
+  useEffect(
+    () => setPage(1),
+    [selectedCategory, searchQuery, brand, available, sort],
   );
-
-  // Filtrado y ordenamiento de prendas
-  const filteredProducts = useMemo(() => {
-    let result = [...products];
-
-    // Filtro por categoría
-    if (selectedCategory && selectedCategory !== 'Todas') {
-      result = result.filter((p) => p.category?.toLowerCase() === selectedCategory.toLowerCase());
-    }
-
-    // Filtro por búsqueda
-    if (searchQuery && searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q) ||
-          p.category?.toLowerCase().includes(q)
-      );
-    }
-
-    // Ordenamiento
-    if (sortBy === 'price-asc') {
-      result.sort((a, b) => a.price - b.price);
-    } else if (sortBy === 'price-desc') {
-      result.sort((a, b) => b.price - a.price);
-    } else if (sortBy === 'name') {
-      result.sort((a, b) => a.name.localeCompare(b.name));
-    }
-
-    return result;
-  }, [products, selectedCategory, searchQuery, sortBy]);
-
+  const pages = Math.max(1, Math.ceil(filtered.length / 12)),
+    current = Math.min(page, pages);
+  const clear = () => {
+    setSelectedCategory("Todas");
+    setSearchQuery("");
+    setBrand("Todas");
+    setAvailable(false);
+  };
   return (
-    <main className="catalog-main">
-      {/* Encabezado de página */}
-      <section className="page-head" aria-label="Encabezado del catálogo">
-        <div className="wrap">
-          <h1>Catálogo</h1>
-          <p className="lead">
-            Prendas de corte amplio y telas de alta densidad pensadas para resistir el uso diario sin perder forma ni estilo.
-          </p>
-        </div>
+    <main className="bf-catalog">
+      <section className="bf-page-heading">
+        <span className="bf-eyebrow">SAUZ / LA SELECCIÓN COMPLETA</span>
+        <h1>
+          ENCUENTRA
+          <br />
+          <span>TU PRÓXIMA PIEZA.</span>
+        </h1>
+        <p>Explora a tu ritmo. Elige con actitud.</p>
       </section>
-
-      {/* Contenido del catálogo */}
-      <section className="minimal-products-section">
-        <div className="wrap">
-          {/* Barra de herramientas / filtros */}
-          <div className="toolbar" style={{ marginBottom: '40px' }}>
-            <div className="chips" role="group" aria-label="Filtrar por categoría">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  className={`chip ${selectedCategory === cat ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory(cat)}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: '20px',
-                    border: '1px solid var(--border-color)',
-                    background: selectedCategory === cat ? 'var(--text-color)' : 'transparent',
-                    color: selectedCategory === cat ? 'var(--bg-color)' : 'var(--text-color)',
-                    cursor: 'pointer',
-                    marginRight: '10px'
-                  }}
-                >
-                  {cat}
-                </button>
+      <section className="bf-section">
+        <div className="bf-catalog-toolbar">
+          <label className="bf-catalog-search">
+            <span>BUSCAR</span>
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Nombre, marca, categoría…"
+            />
+          </label>
+          <label>
+            <span>MARCA</span>
+            <select value={brand} onChange={(e) => setBrand(e.target.value)}>
+              {brands.map((b) => (
+                <option key={b}>{b}</option>
               ))}
-            </div>
-
-            <div className="toolbar-right" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-              <span className="result-count" style={{ color: 'var(--text-color)' }}>
-                {filteredProducts.length} {filteredProducts.length === 1 ? 'prenda' : 'prendas'}
-              </span>
-
-              <select
-                className="sort-select"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                aria-label="Ordenar prendas"
-                style={{
-                  padding: '8px',
-                  background: 'var(--panel-bg)',
-                  color: 'var(--text-color)',
-                  border: '1px solid var(--border-color)',
-                  outline: 'none'
+            </select>
+          </label>
+          <label>
+            <span>ORDENAR</span>
+            <select value={sort} onChange={(e) => setSort(e.target.value)}>
+              <option value="relevant">Selección SAUZ</option>
+              <option value="price-asc">Precio: menor a mayor</option>
+              <option value="price-desc">Precio: mayor a menor</option>
+              <option value="name">Nombre: A–Z</option>
+            </select>
+          </label>
+        </div>
+        <div className="bf-filter-row">
+          <div className="bf-chips">
+            {categories.map((c) => (
+              <button
+                key={c}
+                aria-pressed={selectedCategory === c}
+                onClick={() => setSelectedCategory(c)}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+          <label className="bf-check">
+            <input
+              type="checkbox"
+              checked={available}
+              onChange={(e) => setAvailable(e.target.checked)}
+            />{" "}
+            Solo disponibles
+          </label>
+        </div>
+        <div className="bf-catalog-count" aria-live="polite">
+          <span>
+            {filtered.length} referencias ·{" "}
+            {filtered.filter(isCommercial).length} comerciales ·{" "}
+            {filtered.filter((p) => !isCommercial(p)).length} informativas
+          </span>
+          <button className="bf-text-button" onClick={clear}>
+            LIMPIAR FILTROS ↗
+          </button>
+        </div>
+        {loadingProducts ? (
+          <div className="bf-grid" aria-label="Cargando catálogo" role="status">
+            {[1, 2, 3, 4].map((i) => (
+              <div className="bf-skeleton" key={i} />
+            ))}
+            <span className="sr-only">Cargando catálogo…</span>
+          </div>
+        ) : filtered.length ? (
+          <div className="bf-grid">
+            {filtered.slice((current - 1) * 12, current * 12).map((p) => (
+              <ProductCard
+                key={p.id}
+                product={p}
+                onProductSelect={onProductSelect}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="bf-empty">
+            <h2>
+              {products.length
+                ? "Una nueva b\xFAsqueda. Otra posibilidad."
+                : "El cat\xE1logo no est\xE1 disponible."}
+            </h2>
+            <p>
+              {products.length
+                ? "Prueba otra marca, palabra o categor\xEDa."
+                : "Comprueba tu conexi\xF3n e int\xE9ntalo de nuevo."}
+            </p>
+            <button
+              className="bf-button"
+              onClick={products.length ? clear : refreshProducts}
+            >
+              {products.length ? "RESTABLECER FILTROS" : "VOLVER A INTENTAR"} ↗
+            </button>
+          </div>
+        )}
+        {pages > 1 && (
+          <nav className="bf-pagination" aria-label="Paginación">
+            {Array.from({ length: pages }, (_, i) => (
+              <button
+                key={i}
+                aria-current={current === i + 1 ? "page" : void 0}
+                onClick={() => {
+                  setPage(i + 1);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
               >
-                <option value="relevant">Relevancia</option>
-                <option value="price-asc">Menor precio</option>
-                <option value="price-desc">Mayor precio</option>
-                <option value="name">Nombre (A-Z)</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Banner de búsqueda activa */}
-          {searchQuery && (
-            <div className="query-banner" style={{ marginBottom: '20px', color: 'var(--text-color)' }}>
-              <span>
-                Resultados para: <strong style={{ color: 'var(--text-color)' }}>"{searchQuery}"</strong>
-              </span>
-              <button
-                type="button"
-                style={{ marginLeft: '20px', background: 'none', border: 'none', color: 'var(--text-color)', textDecoration: 'underline', cursor: 'pointer' }}
-                onClick={() => setSearchQuery('')}
-              >
-                Limpiar búsqueda
+                {i + 1}
               </button>
-            </div>
-          )}
-
-          {/* Grid de prendas */}
-          <div className="minimal-products-grid">
-            {loadingProducts ? (
-              <p style={{ color: 'var(--text-color)' }}>Cargando catálogo...</p>
-            ) : filteredProducts.length === 0 ? (
-              <div>
-                <p style={{ color: 'var(--text-color)' }}>No se encontraron prendas con los filtros seleccionados.</p>
-                <button
-                  type="button"
-                  className="minimal-btn-outline"
-                  onClick={() => {
-                    setSelectedCategory('Todas');
-                    setSearchQuery('');
-                  }}
-                >
-                  Restablecer filtros
-                </button>
-              </div>
-            ) : (
-              filteredProducts.map((p) => (
-                <ProductCard key={p.id} product={p} onProductSelect={onProductSelect} />
-              ))
-            )}
-          </div>
-        </div>
+            ))}
+          </nav>
+        )}
       </section>
     </main>
   );

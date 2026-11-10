@@ -1,0 +1,20 @@
+
+> sauz-store-frontend@1.0.0 test
+> node --test tests/*.test.js
+
+TAP version 13
+# Subtest: tests/products.test.js
+ok 1 - tests/products.test.js
+  ---
+  duration_ms: 67.059281
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 75.682753

@@ -37,11 +37,11 @@ export const About = ({ setActivePage }) => {
       {/* Bloque Visual */}
       <section className="section section-alt">
         <div className="wrap">
-          <div className="media-block" style={{ display: 'grid', placeItems: 'center', background: '#ffffff', border: '1px solid #e5e5e5', borderRadius: '14px', minHeight: '220px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+          <div className="media-block" style={{ display: 'grid', placeItems: 'center', background: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '14px', minHeight: '220px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
             <div style={{ textAlign: 'center', padding: '2rem' }}>
               <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}>✨</span>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#111111', textTransform: 'uppercase', letterSpacing: '1px' }}>CONFECCIÓN PREMIUM Y RESISTENCIA</h3>
-              <p style={{ color: '#555555', marginTop: '0.4rem', fontSize: '0.95rem' }}>Algodón peinado pesado 240+ GSM · Denim rígido 13 oz · Hecho en Colombia</p>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--bf-text)', textTransform: 'uppercase', letterSpacing: '1px' }}>CONFECCIÓN PREMIUM Y RESISTENCIA</h3>
+              <p style={{ color: 'var(--bf-muted)', marginTop: '0.4rem', fontSize: '0.95rem' }}>Algodón peinado pesado 240+ GSM · Denim rígido 13 oz · Hecho en Colombia</p>
             </div>
           </div>
         </div>
@@ -74,7 +74,7 @@ export const About = ({ setActivePage }) => {
       {/* Banda final */}
       <section className="section section-alt">
         <div className="wrap band" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
-          <h2 style={{ margin: 0, color: '#111111', fontSize: '1.8rem' }}>Conoce las prendas de la colección actual.</h2>
+          <h2 style={{ margin: 0, color: 'var(--bf-text)', fontSize: '1.8rem' }}>Conoce las prendas de la colección actual.</h2>
           <button
             type="button"
             className="btn btn-dark"

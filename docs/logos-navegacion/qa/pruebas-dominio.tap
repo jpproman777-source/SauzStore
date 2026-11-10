@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: El catálogo comercial conserva IDs únicos y precios existentes
+ok 1 - El catálogo comercial conserva IDs únicos y precios existentes
+  ---
+  duration_ms: 1.039814
+  type: 'test'
+  ...
+# Subtest: Una referencia de demostración nunca queda habilitada para compra
+ok 2 - Una referencia de demostración nunca queda habilitada para compra
+  ---
+  duration_ms: 0.249268
+  type: 'test'
+  ...
+# Subtest: Un producto agotado o sin disponibilidad confirmada no se puede comprar
+ok 3 - Un producto agotado o sin disponibilidad confirmada no se puede comprar
+  ---
+  duration_ms: 1.28119
+  type: 'test'
+  ...
+# Subtest: La ausencia de precio comercial impide habilitar una compra
+ok 4 - La ausencia de precio comercial impide habilitar una compra
+  ---
+  duration_ms: 0.3812
+  type: 'test'
+  ...
+# Subtest: Cada ficha conserva su identificador en una URL propia
+ok 5 - Cada ficha conserva su identificador en una URL propia
+  ---
+  duration_ms: 0.333358
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 16.5688

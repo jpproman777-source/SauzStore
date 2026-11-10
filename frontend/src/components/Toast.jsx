@@ -14,8 +14,8 @@ export const Toast = () => {
         position: 'fixed',
         bottom: '28px',
         right: '28px',
-        backgroundColor: '#0A0A0A',
-        color: '#FFFFFF',
+        backgroundColor: 'var(--bf-secondary)',
+        color: 'var(--bf-text)',
         padding: '12px 20px',
         borderRadius: '6px',
         boxShadow: '0 10px 30px rgba(0,0,0,0.18)',
@@ -30,7 +30,7 @@ export const Toast = () => {
         animation: 'toastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
       }}
     >
-      <span style={{ width: '6px', height: '6px', backgroundColor: '#FFFFFF', borderRadius: '50%' }} />
+      <span style={{ width: '6px', height: '6px', backgroundColor: 'var(--bf-secondary)', borderRadius: '50%' }} />
       <span>{toastMessage}</span>
       <style>{`
         @keyframes toastIn {

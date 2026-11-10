@@ -6,6 +6,10 @@ import { AuthProvider } from './context/AuthContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import './styles.css';
 import './theme-minimal.css';
+import './black-future.css';
+import './home-black-edition.css';
+import './brand-navigation.css';
+import './shopping-experience.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

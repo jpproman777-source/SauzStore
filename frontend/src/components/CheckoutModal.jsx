@@ -352,7 +352,7 @@ export const CheckoutModal = () => {
                 <div className="cash-box">
                   <h5>Pago en Efectivo Contra Entrega</h5>
                   <p>Pagas en efectivo al mensajero en el momento exacto en que recibas tus prendas en tu puerta.</p>
-                  <small style={{ color: '#111111' }}>Ten preparado el monto exacto para agilizar la entrega.</small>
+                  <small style={{ color: 'var(--bf-text)' }}>Ten preparado el monto exacto para agilizar la entrega.</small>
                 </div>
               </div>
             )}

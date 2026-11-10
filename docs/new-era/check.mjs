@@ -1,0 +1,46 @@
+import fs from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const t=await(await fetch('http://127.0.0.1:9230/json/new?about:blank',{method:'PUT'})).json();
+const s=new WebSocket(t.webSocketDebuggerUrl);await new Promise(r=>s.addEventListener('open',r,{once:true}));
+let id=0;const jobs=new Map(),checks=[],errors=[];
+s.onmessage=e=>{const m=JSON.parse(e.data);if(m.id){const p=jobs.get(m.id);jobs.delete(m.id);m.error?p.reject(m.error):p.resolve(m.result);}else if(m.method==='Runtime.exceptionThrown')errors.push(m.params);};
+const call=(method,params={})=>new Promise((resolve,reject)=>{jobs.set(++id,{resolve,reject});s.send(JSON.stringify({id,method,params}));});
+const js=async expression=>{const r=await call('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const check=(name,value)=>{assert.ok(value,name);checks.push(name);};
+const index=()=>js(`Array.from(document.querySelectorAll('.edition-slide')).findIndex(x=>x.classList.contains('is-active'))`);
+await call('Page.enable');await call('Runtime.enable');await call('Page.bringToFront');
+await call('Emulation.setDeviceMetricsOverride',{width:1440,height:900,deviceScaleFactor:1,mobile:false});
+await call('Page.navigate',{url:'http://127.0.0.1:4175/'});await wait(800);
+// Deterministic timing begins on reload with cursor outside the hero.
+await call('Input.dispatchMouseEvent',{type:'mouseMoved',x:5,y:5});
+await call('Page.reload');await wait(600);
+check('Starts with Jordan',await index()===0);
+await wait(4650);check('Automatically advances after five seconds',await index()===1);
+await wait(5000);check('Automatically advances to hats',await index()===2);
+await wait(5000);check('Automatically loops to Jordan',await index()===0);
+await js(`document.querySelector('.edition-play').click()`);await wait(5300);check('Pause stops autoplay',await index()===0);
+await js(`document.querySelector('.edition-side-next').click()`);check('Next arrow selects models',await index()===1);
+await js(`document.querySelector('.edition-side-prev').click()`);check('Previous arrow selects Jordan',await index()===0);
+await js(`document.querySelectorAll('.edition-indicators button')[1].click()`);check('Indicator selects models',await index()===1);
+await js(`document.querySelector('.edition-hero').dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}))`);check('Keyboard selects hats',await index()===2);
+await js(`document.querySelectorAll('.edition-indicators button')[1].click()`);
+await js(`document.querySelector('.edition-play').click()`);await wait(5300);check('Resume restarts autoplay',await index()===2);
+for(const [width,height] of [[1920,1080],[1366,768],[768,1024],[390,844]]){
+ await call('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:width<701});
+ await js(`document.querySelectorAll('.edition-indicators button')[2].click();document.activeElement.blur()`);await wait(400);
+ await js(`document.fonts.ready`);await js(`document.querySelector('.edition-slide-gorras img').decode()`);
+ const state=await js(`(()=>{const e=document.querySelector('.edition-slide-gorras'),i=e.querySelector('img');return {url:i.currentSrc,loaded:i.complete&&i.naturalWidth>0,title:e.querySelector('h1').innerText,brands:e.querySelectorAll('.brand-logo').length,horizontal:document.documentElement.scrollWidth>innerWidth,image:getComputedStyle(i).objectFit}})()`);
+ check('Editorial image loaded '+width,state.loaded&&state.url.includes('03-new-era'));
+ check('Title preserved '+width,state.title.replace(/\s/g,'')==='LACALLE.TIENEESTILO.');check('No horizontal overflow '+width,!state.horizontal);
+ const shot=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await fs.writeFile('/tmp/sauz-newera-qa/slide-3-'+width+'.png',Buffer.from(shot.data,'base64'));
+}
+await js(`document.querySelector('.edition-side-prev').click()`);check('Previous returns to models',await index()===1);
+await js(`document.querySelector('.edition-side-next').click()`);check('Next returns to New Era',await index()===2);
+await call('Input.dispatchMouseEvent',{type:'mouseMoved',x:200,y:300});
+await js(`document.querySelector('.edition-play').click()`);await wait(5300);check('Hover pauses autoplay',await index()===2);
+await call('Input.dispatchMouseEvent',{type:'mouseMoved',x:5,y:5});await wait(5300);check('Autoplay resumes after hover and loops',await index()===0);
+await js(`document.querySelectorAll('.edition-indicators button')[2].click();document.querySelector('.edition-slide-gorras .edition-cta').click()`);await wait(400);
+check('CTA opens actual Gorras catalog filter',await js(`location.pathname==='/catalogo'&&new URLSearchParams(location.search).get('coleccion')==='Gorras'`));
+check('No JavaScript exceptions',errors.length===0);
+await fs.writeFile('/tmp/sauz-newera-qa/results.json',JSON.stringify({checks,errors},null,2));console.log(JSON.stringify({passed:checks.length,errors}));s.close();

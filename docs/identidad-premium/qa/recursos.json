@@ -1,0 +1,70 @@
+{
+  "SAUZ": {
+    "source": "frontend/img/logos/23eaa4ed-6401-44b2-a8cd-5efd9833cde3.png",
+    "originalSize": [
+      1983,
+      793
+    ],
+    "sourceSHA256": "a4ece66a5ed8387fd46863879cc3641837146afd2782cb565ccc7a50c1a58428",
+    "cropBox": [
+      399,
+      54,
+      1596,
+      747
+    ],
+    "width": 1197,
+    "height": 693,
+    "src": "/logos/web/sauz-store.png"
+  },
+  "NIKE": {
+    "source": "frontend/img/logos/nike.png",
+    "originalSize": [
+      1254,
+      1254
+    ],
+    "sourceSHA256": "94f24c9f37fc956ed696173e657768feaa30bbe40ca627a1fce1c7a64b055578",
+    "cropBox": [
+      148,
+      438,
+      1110,
+      844
+    ],
+    "width": 962,
+    "height": 406,
+    "src": "/logos/web/nike.png"
+  },
+  "JORDAN": {
+    "source": "frontend/img/logos/jordan.png",
+    "originalSize": [
+      1254,
+      1254
+    ],
+    "sourceSHA256": "c677fd633353581b8fb09eafbdb7424c7ad0d7edf9cfe798c388718cd53517bc",
+    "cropBox": [
+      247,
+      259,
+      1007,
+      975
+    ],
+    "width": 760,
+    "height": 716,
+    "src": "/logos/web/jordan.png"
+  },
+  "ADIDAS": {
+    "source": "frontend/img/logos/Archivo adjunto del usuario.png",
+    "originalSize": [
+      1254,
+      1254
+    ],
+    "sourceSHA256": "8c20eb92ff6a176360a6f13a624803f173e8303ae5edbadcec84f789996dcf46",
+    "cropBox": [
+      226,
+      357,
+      1028,
+      913
+    ],
+    "width": 802,
+    "height": 556,
+    "src": "/logos/web/adidas.png"
+  }
+}

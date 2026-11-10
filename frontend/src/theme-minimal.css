@@ -1,6 +1,6 @@
 /* theme-blackgold.css - Premium Black & Gold Brutalist/Luxury */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
+
 
 :root {
   --bg-color: #ffffff;
@@ -34,14 +34,14 @@ body {
 
 .minimal-header.transparent {
   background-color: transparent;
-  color: #ffffff !important;
+  color: var(--bf-text) !important;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
 }
 
 .minimal-header.solid {
   background-color: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(12px);
-  color: #111111;
+  color: var(--bf-text);
   border-bottom: 1px solid #e5e5e5;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
@@ -85,7 +85,7 @@ body {
 .minimal-brand {
   background: none;
   border: none;
-  color: #666666;
+  color: var(--bf-muted);
   font-family: inherit;
   font-size: 1.8rem;
   font-weight: 900;
@@ -199,7 +199,7 @@ body {
 
 .minimal-hero-bottom-left h2,
 .minimal-hero-bottom-left span {
-  color: #ffffff !important;
+  color: var(--bf-text) !important;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7) !important;
 }
 
@@ -217,20 +217,20 @@ body {
 }
 
 .minimal-hero-bottom-left .minimal-btn-outline {
-  color: #ffffff !important;
+  color: var(--bf-text) !important;
   border-color: rgba(255, 255, 255, 0.9) !important;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.65);
 }
 
 .minimal-hero-bottom-left .minimal-btn-outline:hover {
-  background: #ffffff;
-  color: #111111 !important;
+  background: var(--bf-secondary);
+  color: var(--bf-text) !important;
   text-shadow: none;
 }
 
 .minimal-btn-outline {
   background: transparent;
-  color: #666666;
+  color: var(--bf-muted);
   border: 1px solid #666666;
   padding: 12px 30px;
   font-size: 0.8rem;
@@ -242,7 +242,7 @@ body {
 }
 
 .minimal-btn-outline:hover {
-  background: #666666;
+  background: var(--bf-surface);
   color: var(--bg-color);
   box-shadow: 0px 0px 15px rgba(102, 102, 102, 0.4);
 }
@@ -267,7 +267,7 @@ body {
 .minimal-products-kicker {
   display: block;
   margin-bottom: 6px;
-  color: #666666;
+  color: var(--bf-muted);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -275,7 +275,7 @@ body {
 
 .minimal-products-heading p {
   margin: 0;
-  color: #777777;
+  color: var(--bf-muted);
   font-size: 0.85rem;
 }
 
@@ -292,20 +292,20 @@ body {
   place-items: center;
   border: 1px solid #d6d6d6;
   border-radius: 50%;
-  background: #ffffff;
-  color: #222222;
+  background: var(--bf-secondary);
+  color: var(--bf-text);
   cursor: pointer;
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .minimal-carousel-arrow:hover:not(:disabled) {
-  border-color: #222222;
-  background: #222222;
-  color: #ffffff;
+  border-color: var(--bf-border);
+  background: var(--bf-secondary);
+  color: var(--bf-text);
 }
 
 .minimal-carousel-arrow:disabled {
-  color: #b8b8b8;
+  color: var(--bf-muted);
   cursor: default;
 }
 
@@ -348,7 +348,7 @@ body {
 
 .minimal-products-grid > p {
   flex: 0 0 100%;
-  color: #666666;
+  color: var(--bf-muted);
 }
 
 .minimal-product-img-wrapper {
@@ -366,7 +366,7 @@ body {
 }
 
 .minimal-product-card:hover .minimal-product-img-wrapper {
-  border-color: #666666;
+  border-color: var(--bf-border);
 }
 
 .minimal-product-img-wrapper img {
@@ -397,7 +397,7 @@ body {
 
 .minimal-product-price {
   font-size: 0.9rem;
-  color: #666666;
+  color: var(--bf-muted);
   margin: 0;
   font-weight: 300;
 }
@@ -418,12 +418,12 @@ body {
   margin: 0 0 15px 0;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: #666666;
+  color: var(--bf-muted);
 }
 
 .minimal-newsletter-desc {
   font-size: 0.9rem;
-  color: #aaaaaa;
+  color: var(--bf-muted);
   margin: 0 0 40px 0;
   letter-spacing: 1px;
 }
@@ -449,11 +449,11 @@ body {
 }
 
 .minimal-newsletter-form input:focus {
-  border-color: #666666;
+  border-color: var(--bf-border);
 }
 
 .minimal-newsletter-form button {
-  background-color: #666666;
+  background-color: var(--bf-surface);
   color: var(--bg-color);
   border: 1px solid #666666;
   padding: 16px 30px;
@@ -482,13 +482,13 @@ body {
   border-bottom: 1px solid var(--border-color) !important;
 }
 .drawer-title span:first-child {
-  color: #666666;
+  color: var(--bf-muted);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 .drawer-badge {
-  background-color: #666666 !important;
+  background-color: var(--bf-surface) !important;
   color: var(--bg-color) !important;
 }
 .cart-item {
@@ -501,7 +501,7 @@ body {
   font-size: 0.85rem;
 }
 .cart-item-price, .cart-item-total {
-  color: #666666 !important;
+  color: var(--bf-muted) !important;
 }
 .qty-btn {
   background: var(--panel-bg) !important;
@@ -509,15 +509,15 @@ body {
   border: 1px solid var(--border-color) !important;
 }
 .qty-btn:hover {
-  border-color: #666666 !important;
-  color: #666666 !important;
+  border-color: var(--bf-border) !important;
+  color: var(--bf-muted) !important;
 }
 .drawer-footer {
   background-color: var(--panel-bg) !important;
   border-top: 1px solid var(--border-color) !important;
 }
 .checkout-btn {
-  background-color: #666666 !important;
+  background-color: var(--bf-surface) !important;
   color: var(--bg-color) !important;
   border: none !important;
   font-weight: 900 !important;
@@ -542,20 +542,20 @@ body {
   border-bottom: 1px solid var(--border-color) !important;
 }
 .modal-title h3 {
-  color: #666666 !important;
+  color: var(--bf-muted) !important;
   text-transform: uppercase;
   letter-spacing: 2px;
 }
 .modal-title p {
-  color: #888 !important;
+  color: var(--bf-muted) !important;
 }
 .checkout-step h4 {
-  color: #666666 !important;
+  color: var(--bf-muted) !important;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 .form-group label {
-  color: #ccc !important;
+  color: var(--bf-muted) !important;
   font-weight: 300 !important;
   letter-spacing: 1px;
 }
@@ -565,26 +565,26 @@ body {
   color: var(--text-color) !important;
 }
 .form-group input:focus {
-  border-color: #666666 !important;
+  border-color: var(--bf-border) !important;
   box-shadow: 0 0 10px rgba(102,102,102,0.1) !important;
 }
 .pay-tab {
   background-color: var(--panel-bg) !important;
   border: 1px solid var(--border-color) !important;
-  color: #888 !important;
+  color: var(--bf-muted) !important;
 }
 .pay-tab.active {
   background-color: rgba(102,102,102,0.1) !important;
-  border-color: #666666 !important;
-  color: #666666 !important;
+  border-color: var(--bf-border) !important;
+  color: var(--bf-muted) !important;
 }
 .card-preview {
-  background: #eeeeee !important;
+  background: var(--bf-surface) !important;
   border: 1px solid #666666 !important;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
 }
 .card-number-display {
-  color: #666666 !important;
+  color: var(--bf-muted) !important;
   text-shadow: 0 2px 5px rgba(0,0,0,0.8);
 }
 .checkout-summary-bar {
@@ -592,10 +592,10 @@ body {
   border-top: 1px solid var(--border-color) !important;
 }
 .checkout-total-info strong {
-  color: #666666 !important;
+  color: var(--bf-muted) !important;
 }
 .pay-btn {
-  background-color: #666666 !important;
+  background-color: var(--bf-surface) !important;
   color: var(--bg-color) !important;
   font-weight: 900 !important;
   letter-spacing: 2px;
@@ -646,7 +646,7 @@ body {
 }
 .detail-price {
   font-size: 1.1rem;
-  color: #666666;
+  color: var(--bf-muted);
   margin: 0 0 30px 0;
   font-weight: 300;
 }
@@ -665,7 +665,7 @@ body {
   width: 100%;
   background: none;
   border: none;
-  color: #ccc;
+  color: var(--bf-muted);
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
@@ -677,7 +677,7 @@ body {
   transition: color 0.3s ease;
 }
 .accordion-btn:hover {
-  color: #666666;
+  color: var(--bf-muted);
 }
 .accordion-content {
   max-height: 0;
@@ -685,7 +685,7 @@ body {
   transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
   opacity: 0;
   font-size: 0.85rem;
-  color: #888;
+  color: var(--bf-muted);
   line-height: 1.6;
 }
 .accordion-content.open {
@@ -732,7 +732,7 @@ body {
 .size-btn {
   background: var(--panel-bg);
   border: 1px solid var(--border-color);
-  color: #888;
+  color: var(--bf-muted);
   width: 45px;
   height: 45px;
   display: flex;
@@ -748,13 +748,13 @@ body {
   color: var(--gold-light);
 }
 .size-btn.active {
-  background: #666666;
+  background: var(--bf-surface);
   color: var(--bg-color);
-  border-color: #666666;
+  border-color: var(--bf-border);
 }
 .add-to-cart-massive {
   width: 100%;
-  background: #666666;
+  background: var(--bf-surface);
   color: var(--bg-color);
   border: none;
   padding: 20px;
@@ -778,7 +778,7 @@ body {
 .pay-icon {
   font-size: 0.7rem;
   font-weight: 900;
-  color: #555;
+  color: var(--bf-muted);
   border: 1px solid #333;
   padding: 4px 8px;
   border-radius: 2px;
@@ -857,7 +857,7 @@ body {
 }
 .support-chat-launcher {
   background-color: var(--panel-bg) !important;
-  color: #666666 !important;
+  color: var(--bf-muted) !important;
   border: 1px solid #666666 !important;
   padding: 12px 20px !important;
   border-radius: 30px !important;
@@ -883,7 +883,7 @@ body {
 .support-chat-header {
   background-color: var(--bg-color) !important;
   border-bottom: 1px solid var(--border-color) !important;
-  color: #666666 !important;
+  color: var(--bf-muted) !important;
 }
 .support-message.bot {
   background-color: var(--panel-bg) !important;
@@ -891,7 +891,7 @@ body {
   border: 1px solid var(--border-color);
 }
 .support-message.user {
-  background-color: #666666 !important;
+  background-color: var(--bf-surface) !important;
   color: var(--bg-color) !important;
 }
 .support-chat-form input {
@@ -928,8 +928,8 @@ body {
 }
 
 .admin-nav-item:hover {
-  background-color: #F4F4F5 !important;
-  color: #0A0A0A !important;
+  background-color: var(--bf-surface) !important;
+  color: var(--bf-text) !important;
   transform: translateX(4px) !important;
 }
 
@@ -938,15 +938,15 @@ body {
 }
 
 .admin-nav-item.active {
-  background-color: #0A0A0A !important;
-  color: #FFFFFF !important;
+  background-color: var(--bf-bg) !important;
+  color: var(--bf-text) !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14) !important;
 }
 
 /* 3. Tarjetas KPI de Resumen Ejecutivo */
 .admin-kpi-card {
   position: relative;
-  background-color: #FFFFFF;
+  background-color: var(--bf-secondary);
   border: 1px solid #E7E7E7;
   border-radius: 8px;
   padding: 20px 22px;
@@ -957,7 +957,7 @@ body {
 
 .admin-kpi-card:hover {
   transform: translateY(-4px);
-  border-color: #171717;
+  border-color: var(--bf-border);
   box-shadow: 0 14px 28px -8px rgba(0, 0, 0, 0.08), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
 }
 
@@ -968,7 +968,7 @@ body {
   left: 0;
   right: 0;
   height: 2px;
-  background: #0A0A0A;
+  background: var(--bf-bg);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
@@ -985,7 +985,7 @@ body {
 }
 
 .admin-btn-primary:hover {
-  background-color: #262626 !important;
+  background-color: var(--bf-secondary) !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16) !important;
 }
@@ -1000,9 +1000,9 @@ body {
 }
 
 .admin-btn-secondary:hover {
-  background-color: #F4F4F5 !important;
-  border-color: #A3A3A3 !important;
-  color: #0A0A0A !important;
+  background-color: var(--bf-surface) !important;
+  border-color: var(--bf-border) !important;
+  color: var(--bf-text) !important;
   transform: translateY(-1px) !important;
 }
 
@@ -1016,7 +1016,7 @@ body {
 }
 
 .admin-table-row:hover {
-  background-color: #F8F9FA !important;
+  background-color: var(--bf-secondary) !important;
 }
 
 .admin-row-action-btn {
@@ -1031,7 +1031,7 @@ body {
 
 .admin-row-action-btn:hover {
   transform: scale(1.15) !important;
-  background-color: #EAEAEA !important;
+  background-color: var(--bf-surface) !important;
 }
 
 /* 6. Tarjetas interactivas de Productos e Inventario con zoom fotográfico */
@@ -1042,7 +1042,7 @@ body {
 
 .admin-card-interactive:hover {
   transform: translateY(-4px) !important;
-  border-color: #171717 !important;
+  border-color: var(--bf-border) !important;
   box-shadow: 0 14px 30px -8px rgba(0, 0, 0, 0.09) !important;
 }
 
@@ -1060,11 +1060,11 @@ body {
 }
 
 .admin-input-focus:hover {
-  border-color: #A3A3A3 !important;
+  border-color: var(--bf-border) !important;
 }
 
 .admin-input-focus:focus {
-  border-color: #0A0A0A !important;
+  border-color: var(--bf-border) !important;
   box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.08) !important;
   outline: none !important;
 }
@@ -1072,8 +1072,8 @@ body {
 /* 8. Píldoras de filtro y botones de modo de gráfica */
 .chart-mode-pill, .admin-filter-pill {
   border: 1px solid #E7E7E7;
-  background-color: #FFFFFF;
-  color: #737373;
+  background-color: var(--bf-secondary);
+  color: var(--bf-muted);
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.74rem;
@@ -1086,16 +1086,16 @@ body {
 }
 
 .chart-mode-pill:hover, .admin-filter-pill:hover {
-  color: #171717;
-  border-color: #A3A3A3;
-  background-color: #F8F8F8;
+  color: var(--bf-text);
+  border-color: var(--bf-border);
+  background-color: var(--bf-secondary);
   transform: translateY(-1px);
 }
 
 .chart-mode-pill.active, .admin-filter-pill.active {
-  background-color: #0A0A0A !important;
-  color: #FFFFFF !important;
-  border-color: #0A0A0A !important;
+  background-color: var(--bf-bg) !important;
+  color: var(--bf-text) !important;
+  border-color: var(--bf-border) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
 }
 
@@ -1108,7 +1108,7 @@ body {
 }
 
 .admin-ranking-item:hover {
-  background-color: #F8F8F8 !important;
+  background-color: var(--bf-secondary) !important;
   transform: translateX(4px) !important;
 }
 
@@ -1173,7 +1173,7 @@ body {
   border-radius: 8px;
   padding: 12px 16px;
   box-shadow: 0 14px 34px -4px rgba(0, 0, 0, 0.45);
-  color: #FFFFFF;
+  color: var(--bf-text);
   font-family: 'Inter', -apple-system, sans-serif;
   min-width: 175px;
   pointer-events: none;

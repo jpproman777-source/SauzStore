@@ -1,3 +1,4 @@
+import { ProductImage } from './ProductImage';
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -33,11 +34,11 @@ export const ClientProfileModal = () => {
           maxWidth: '650px',
           width: '94%',
           maxHeight: '90vh',
-          backgroundColor: '#ffffff',
+          backgroundColor: 'var(--bf-secondary)',
           borderRadius: '16px',
           boxShadow: '0 25px 60px rgba(0,0,0,0.25)',
-          border: '1px solid #e5e5e5',
-          color: '#111111',
+          border: '1px solid var(--bf-border)',
+          color: 'var(--bf-text)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden'
@@ -47,11 +48,11 @@ export const ClientProfileModal = () => {
         <div
           style={{
             padding: '24px 28px',
-            borderBottom: '1px solid #eeeeee',
+            borderBottom: '1px solid var(--bf-border)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            backgroundColor: '#fafafa'
+            backgroundColor: 'var(--bf-secondary)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -60,8 +61,8 @@ export const ClientProfileModal = () => {
                 width: '44px',
                 height: '44px',
                 borderRadius: '50%',
-                backgroundColor: '#111111',
-                color: '#ffffff',
+                backgroundColor: 'var(--bf-secondary)',
+                color: 'var(--bf-text)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -72,11 +73,11 @@ export const ClientProfileModal = () => {
               {user.name.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: '800', color: '#111111' }}>
+              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: '800', color: 'var(--bf-text)' }}>
                 {user.name}
               </h3>
-              <span style={{ fontSize: '0.8rem', color: '#666666' }}>
-                {user.email} · Rol: <strong style={{ color: '#111111', textTransform: 'capitalize' }}>{user.role}</strong>
+              <span style={{ fontSize: '0.8rem', color: 'var(--bf-muted)' }}>
+                {user.email} · Rol: <strong style={{ color: 'var(--bf-text)', textTransform: 'capitalize' }}>{user.role}</strong>
               </span>
             </div>
           </div>
@@ -85,25 +86,25 @@ export const ClientProfileModal = () => {
             className="icon-btn"
             onClick={() => setIsProfileOpen(false)}
             aria-label="Cerrar modal"
-            style={{ color: '#111111' }}
+            style={{ color: 'var(--bf-text)' }}
           >
             ✕
           </button>
         </div>
 
         {/* Datos del Cliente */}
-        <div style={{ padding: '20px 28px', borderBottom: '1px solid #eeeeee', backgroundColor: '#ffffff' }}>
+        <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--bf-border)', backgroundColor: 'var(--bf-secondary)' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
             <div>
-              <span style={{ fontSize: '0.7rem', color: '#888888', textTransform: 'uppercase', fontWeight: '700', display: 'block' }}>Teléfono</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--bf-muted)', textTransform: 'uppercase', fontWeight: '700', display: 'block' }}>Teléfono</span>
               <span style={{ fontSize: '0.88rem', fontWeight: '600' }}>{user.phone || 'No registrado'}</span>
             </div>
             <div>
-              <span style={{ fontSize: '0.7rem', color: '#888888', textTransform: 'uppercase', fontWeight: '700', display: 'block' }}>Ciudad</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--bf-muted)', textTransform: 'uppercase', fontWeight: '700', display: 'block' }}>Ciudad</span>
               <span style={{ fontSize: '0.88rem', fontWeight: '600' }}>{user.city || 'Medellín'}</span>
             </div>
             <div>
-              <span style={{ fontSize: '0.7rem', color: '#888888', textTransform: 'uppercase', fontWeight: '700', display: 'block' }}>Dirección de Entrega</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--bf-muted)', textTransform: 'uppercase', fontWeight: '700', display: 'block' }}>Dirección de Entrega</span>
               <span style={{ fontSize: '0.88rem', fontWeight: '600' }}>{user.address || 'Sin dirección guardada'}</span>
             </div>
           </div>
@@ -118,12 +119,12 @@ export const ClientProfileModal = () => {
           </div>
 
           {loading ? (
-            <p style={{ textAlign: 'center', padding: '30px', color: '#888' }}>Cargando tus pedidos...</p>
+            <p style={{ textAlign: 'center', padding: '30px', color: 'var(--bf-muted)' }}>Cargando tus pedidos...</p>
           ) : clientOrders.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px 20px', backgroundColor: '#fafafa', borderRadius: '12px', border: '1px dashed #dddddd' }}>
+            <div style={{ textAlign: 'center', padding: '40px 20px', backgroundColor: 'var(--bf-secondary)', borderRadius: '12px', border: '1px dashed var(--bf-border)' }}>
               <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '10px' }}>🛍️</span>
               <h5 style={{ margin: 0, fontSize: '1rem', fontWeight: '700' }}>Aún no has realizado pedidos</h5>
-              <p style={{ margin: '6px 0 0', fontSize: '0.85rem', color: '#666' }}>
+              <p style={{ margin: '6px 0 0', fontSize: '0.85rem', color: 'var(--bf-muted)' }}>
                 Explora el catálogo de Sauz Store y estrena las mejores prendas urbanas.
               </p>
             </div>
@@ -133,19 +134,19 @@ export const ClientProfileModal = () => {
                 <div
                   key={ord.orderId}
                   style={{
-                    border: '1px solid #e5e5e5',
+                    border: '1px solid var(--bf-border)',
                     borderRadius: '12px',
                     padding: '16px 20px',
-                    backgroundColor: '#ffffff',
+                    backgroundColor: 'var(--bf-secondary)',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #f0f0f0', paddingBottom: '12px', marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--bf-border)', paddingBottom: '12px', marginBottom: '12px' }}>
                     <div>
-                      <span style={{ fontWeight: '800', fontSize: '0.92rem', color: '#111111', display: 'block' }}>
+                      <span style={{ fontWeight: '800', fontSize: '0.92rem', color: 'var(--bf-text)', display: 'block' }}>
                         {ord.orderId}
                       </span>
-                      <span style={{ fontSize: '0.75rem', color: '#888888' }}>{ord.date}</span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--bf-muted)' }}>{ord.date}</span>
                     </div>
 
                     <div style={{ textAlign: 'right' }}>
@@ -164,7 +165,7 @@ export const ClientProfileModal = () => {
                       >
                         {ord.orderStatus || 'En proceso'}
                       </span>
-                      <div style={{ fontWeight: '800', fontSize: '0.95rem', marginTop: '4px', color: '#111111' }}>
+                      <div style={{ fontWeight: '800', fontSize: '0.95rem', marginTop: '4px', color: 'var(--bf-text)' }}>
                         {formatMoney(ord.total)}
                       </div>
                     </div>
@@ -174,14 +175,14 @@ export const ClientProfileModal = () => {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {(ord.items || []).map((item, idx) => (
                       <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.82rem' }}>
-                        <div style={{ width: '38px', height: '44px', backgroundColor: '#f0f0f0', borderRadius: '4px', overflow: 'hidden', flexShrink: 0 }}>
-                          <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <div style={{ width: '38px', height: '44px', backgroundColor: 'var(--bf-surface)', borderRadius: '4px', overflow: 'hidden', flexShrink: 0 }}>
+                          <ProductImage src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </div>
                         <div style={{ flex: 1 }}>
-                          <span style={{ fontWeight: '600', color: '#111111', display: 'block' }}>{item.name}</span>
-                          <span style={{ color: '#777777', fontSize: '0.75rem' }}>{item.quantity} ud(s) × {formatMoney(item.price)}</span>
+                          <span style={{ fontWeight: '600', color: 'var(--bf-text)', display: 'block' }}>{item.name}</span>
+                          <span style={{ color: 'var(--bf-muted)', fontSize: '0.75rem' }}>{item.quantity} ud(s) × {formatMoney(item.price)}</span>
                         </div>
-                        <span style={{ fontWeight: '700', color: '#111111' }}>
+                        <span style={{ fontWeight: '700', color: 'var(--bf-text)' }}>
                           {formatMoney(item.price * item.quantity)}
                         </span>
                       </div>
@@ -197,11 +198,11 @@ export const ClientProfileModal = () => {
         <div
           style={{
             padding: '16px 28px',
-            borderTop: '1px solid #eeeeee',
+            borderTop: '1px solid var(--bf-border)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            backgroundColor: '#fafafa'
+            backgroundColor: 'var(--bf-secondary)'
           }}
         >
           <button
@@ -225,8 +226,8 @@ export const ClientProfileModal = () => {
             onClick={() => setIsProfileOpen(false)}
             style={{
               padding: '8px 20px',
-              backgroundColor: '#111111',
-              color: '#ffffff',
+              backgroundColor: 'var(--bf-secondary)',
+              color: 'var(--bf-text)',
               border: 'none',
               borderRadius: '6px',
               fontSize: '0.8rem',

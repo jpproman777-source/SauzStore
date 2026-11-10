@@ -1,0 +1,229 @@
+/* Shared typography and approved brand integration. Hero display face remains independent. */
+:root {
+  --font-ui: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  --font-body: var(--font-ui);
+  --font-display: var(--font-ui);
+  --edition-font: var(--font-ui);
+  --type-nav-size: 16px;
+  --type-nav-weight: 600;
+  --type-heading-weight: 750;
+  --type-product-name-weight: 600;
+  --type-price-weight: 650;
+  --type-button-weight: 600;
+  --edition-header-h: 82px;
+  --brand-sauz-width: 154px;
+  --brand-sauz-height: 76px;
+}
+body {
+  font-family: var(--font-ui) !important;
+  line-height: 1.6;
+}
+.bf-desktop-nav button,
+.bf-desktop-nav a {
+  font-family: var(--font-ui);
+  font-size: var(--type-nav-size);
+  font-weight: var(--type-nav-weight);
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.4;
+}
+.bf-desktop-nav {
+  gap: clamp(20px, 1.8vw, 34px);
+}
+.bf-header {
+  grid-template-columns: minmax(154px, 1fr) auto minmax(180px, 1fr);
+  gap: 20px;
+}
+.bf-header .bf-brand {
+  width: var(--brand-sauz-width);
+  min-width: var(--brand-sauz-width);
+  min-height: var(--brand-sauz-height);
+  height: var(--brand-sauz-height);
+}
+.bf-header .bf-brand > .integrated-brand-logo {
+  width: var(--brand-sauz-width);
+  height: var(--brand-sauz-height);
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+  filter: none;
+}
+.integrated-brand-strip {
+  height: 42px;
+  gap: 25px;
+  align-items: center;
+}
+.integrated-brand-slot {
+  height: 42px;
+}
+.integrated-brand-slot + .integrated-brand-slot {
+  padding-left: 25px;
+  border-left-color: var(--bf-border);
+}
+.integrated-brand-slot .integrated-brand-logo {
+  display: block;
+  width: auto;
+  height: 40px;
+  max-width: 88px;
+  object-fit: contain;
+  filter: none;
+}
+.integrated-brand-slot-nike .integrated-brand-logo {
+  height: 36px;
+  max-width: 94px;
+}
+.integrated-brand-slot-adidas .integrated-brand-logo {
+  height: 40px;
+  max-width: 66px;
+}
+.bf-section-heading h2,
+.edition-category-heading h2,
+.edition-category-info h3 {
+  font-family: var(--font-ui);
+  font-weight: var(--type-heading-weight);
+  line-height: 1.2;
+}
+.bf-product h3 {
+  font-family: var(--font-ui);
+  font-weight: var(--type-product-name-weight);
+  line-height: 1.5;
+}
+.bf-product-meta > span:last-child {
+  font-weight: var(--type-price-weight);
+}
+.bf-detail-price,
+.minimal-product-price {
+  font-weight: var(--type-price-weight);
+}
+.bf-button,
+.edition-cta {
+  font-family: var(--font-ui);
+  font-weight: var(--type-button-weight);
+}
+.edition-hero-copy > p,
+.bf-detail-description,
+.bf-page-heading > p {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  line-height: 1.7;
+}
+.bf-header-actions button {
+  transition: color 220ms ease;
+  position: relative;
+}
+.bf-header-actions button:hover {
+  color: var(--bf-muted);
+}
+.bf-header-actions .edition-cart-badge {
+  position: absolute;
+  top: 2px;
+  right: -8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  margin: 0;
+  border-radius: 20px;
+  background: var(--edition-accent);
+  color: #fff;
+  font: 600 10px/1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--bf-bg);
+}
+@media (max-width: 1200px) {
+  .bf-desktop-nav {
+    gap: 19px;
+  }
+  .bf-header {
+    gap: 16px;
+  }
+  .bf-header-actions {
+    gap: 15px;
+  }
+}
+@media (max-width: 1100px) {
+  .bf-header {
+    display: flex;
+  }
+  .bf-desktop-nav {
+    display: none;
+  }
+  .bf-header-actions button:last-child {
+    display: flex;
+  }
+}
+@media (max-width: 700px) {
+  :root {
+    --edition-header-h: 72px;
+    --brand-sauz-width: 110px;
+    --brand-sauz-height: 64px;
+  }
+  .bf-header {
+    padding-inline: 5%;
+    gap: 12px;
+  }
+  .bf-header-actions {
+    gap: 5px;
+  }
+  .bf-header-actions button {
+    min-width: 32px;
+    min-height: 44px;
+  }
+  .bf-header-actions .edition-cart-badge {
+    top: 1px;
+    right: -5px;
+    min-width: 17px;
+    height: 17px;
+    font-size: 9px;
+  }
+  .integrated-brand-strip {
+    height: 38px;
+    gap: 23px;
+    margin-top: 22px;
+  }
+  .integrated-brand-slot {
+    height: 38px;
+  }
+  .integrated-brand-slot + .integrated-brand-slot {
+    padding-left: 23px;
+  }
+  .integrated-brand-slot .integrated-brand-logo {
+    height: 35px;
+    max-width: 70px;
+  }
+  .integrated-brand-slot-nike .integrated-brand-logo {
+    height: 31px;
+    max-width: 78px;
+  }
+  .integrated-brand-slot-adidas .integrated-brand-logo {
+    height: 35px;
+    max-width: 58px;
+  }
+  .bf-menu-link {
+    font-family: var(--font-ui);
+    font-weight: 600;
+  }
+  .bf-search {
+    top: var(--edition-header-h);
+  }
+}
+@media (max-width: 380px) {
+  .bf-header {
+    padding-inline: 4%;
+    gap: 8px;
+  }
+  .bf-header-actions {
+    gap: 3px;
+  }
+  .bf-header-actions button {
+    min-width: 30px;
+  }
+  .integrated-brand-strip {
+    gap: 21px;
+  }
+  .integrated-brand-slot + .integrated-brand-slot {
+    padding-left: 21px;
+  }
+}

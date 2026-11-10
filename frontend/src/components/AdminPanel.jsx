@@ -1,3 +1,4 @@
+import { ProductImage } from './ProductImage';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -66,9 +67,9 @@ const CustomActiveDot = (props) => {
   if (cx == null || cy == null) return null;
   return (
     <g>
-      <circle cx={cx} cy={cy} r={14} fill="#0A0A0A" fillOpacity={0.16} className="chart-pulse-ring" />
-      <circle cx={cx} cy={cy} r={6.5} fill="#FFFFFF" stroke="#0A0A0A" strokeWidth={2.5} />
-      <circle cx={cx} cy={cy} r={2.5} fill="#0A0A0A" />
+      <circle cx={cx} cy={cy} r={14} fill="var(--bf-text)" fillOpacity={0.16} className="chart-pulse-ring" />
+      <circle cx={cx} cy={cy} r={6.5} fill="var(--bf-text)" stroke="var(--bf-text)" strokeWidth={2.5} />
+      <circle cx={cx} cy={cy} r={2.5} fill="var(--bf-text)" />
     </g>
   );
 };
@@ -82,27 +83,27 @@ const CustomChartTooltip = ({ active, payload, label, formatMoney, chartViewMode
     return (
       <div className="chart-tooltip-container">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px', marginBottom: '8px' }}>
-          <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.8px', color: '#A3A3A3', fontWeight: '600' }}>
+          <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.8px', color: 'var(--bf-muted)', fontWeight: '600' }}>
             {data.fullDate || label}
           </span>
           <span className="chart-pulse-badge" />
         </div>
 
-        <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: '8px' }}>
+        <div style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--bf-text)', letterSpacing: '-0.02em', marginBottom: '8px' }}>
           {chartViewMode.startsWith('revenue')
             ? formatMoney(val)
             : `${val} ${val === 1 ? 'pedido' : 'pedidos'}`
           }
         </div>
 
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.12)', paddingTop: '8px', display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.73rem', color: '#D4D4D4' }}>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.12)', paddingTop: '8px', display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.73rem', color: 'var(--bf-muted)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span>Pedidos en la fecha:</span>
-            <strong style={{ color: '#FFFFFF' }}>{data.orders}</strong>
+            <strong style={{ color: 'var(--bf-text)' }}>{data.orders}</strong>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span>Prendas vendidas:</span>
-            <strong style={{ color: '#FFFFFF' }}>{data.units} uds</strong>
+            <strong style={{ color: 'var(--bf-text)' }}>{data.units} uds</strong>
           </div>
           {chartViewMode === 'revenue_accum' && (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -629,9 +630,9 @@ export const AdminPanel = ({ setActivePage }) => {
   // Helper para insignias de estado de pedido
   const renderOrderStatusBadge = (status) => {
     const st = status || 'En proceso';
-    let bg = '#F6F6F6';
-    let text = '#171717';
-    let border = '#E7E7E7';
+    let bg = 'var(--bf-surface)';
+    let text = 'var(--bf-muted)';
+    let border = 'var(--bf-border)';
     let Icon = Clock;
 
     if (st === 'Entregado') {
@@ -691,7 +692,7 @@ export const AdminPanel = ({ setActivePage }) => {
             borderRadius: '4px',
             fontSize: '0.7rem',
             fontWeight: '600',
-            backgroundColor: '#FEF2F2',
+            backgroundColor: 'var(--bf-surface)',
             color: '#B91C1C',
             border: '1px solid #FECACA'
           }}
@@ -748,8 +749,8 @@ export const AdminPanel = ({ setActivePage }) => {
       style={{
         display: 'flex',
         minHeight: '100vh',
-        backgroundColor: '#F6F6F6',
-        color: '#171717',
+        backgroundColor: 'var(--bf-surface)',
+        color: 'var(--bf-text)',
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
       }}
     >
@@ -759,8 +760,8 @@ export const AdminPanel = ({ setActivePage }) => {
       <aside
         style={{
           width: sidebarCollapsed ? '72px' : '260px',
-          backgroundColor: '#FFFFFF',
-          borderRight: '1px solid #E7E7E7',
+          backgroundColor: 'var(--bf-secondary)',
+          borderRight: '1px solid var(--bf-border)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
@@ -779,7 +780,7 @@ export const AdminPanel = ({ setActivePage }) => {
             style={{
               height: '68px',
               padding: sidebarCollapsed ? '0 16px' : '0 22px',
-              borderBottom: '1px solid #E7E7E7',
+              borderBottom: '1px solid var(--bf-border)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: sidebarCollapsed ? 'center' : 'space-between'
@@ -788,12 +789,12 @@ export const AdminPanel = ({ setActivePage }) => {
             {!sidebarCollapsed && (
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ width: '8px', height: '8px', backgroundColor: '#0A0A0A', borderRadius: '50%' }} />
+                  <span style={{ width: '8px', height: '8px', backgroundColor: 'var(--bf-secondary)', borderRadius: '50%' }} />
                   <span style={{ fontSize: '0.86rem', fontWeight: '800', letterSpacing: '2.5px', textTransform: 'uppercase' }}>
                     SAUZ
                   </span>
                 </div>
-                <span style={{ fontSize: '0.66rem', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', color: '#737373', display: 'block', marginTop: '2px' }}>
+                <span style={{ fontSize: '0.66rem', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--bf-muted)', display: 'block', marginTop: '2px' }}>
                   Administración
                 </span>
               </div>
@@ -810,7 +811,7 @@ export const AdminPanel = ({ setActivePage }) => {
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#737373',
+                color: 'var(--bf-muted)',
                 cursor: 'pointer',
                 padding: '6px',
                 borderRadius: '4px',
@@ -820,12 +821,12 @@ export const AdminPanel = ({ setActivePage }) => {
                 transition: 'background-color 0.15s, color 0.15s'
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = '#F6F6F6';
-                e.currentTarget.style.color = '#171717';
+                e.currentTarget.style.backgroundColor = 'var(--bf-surface)';
+                e.currentTarget.style.color = 'var(--bf-bg)';
               }}
               onMouseOut={(e) => {
                 e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = '#737373';
+                e.currentTarget.style.color = 'var(--bf-muted)';
               }}
             >
               {sidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
@@ -863,8 +864,8 @@ export const AdminPanel = ({ setActivePage }) => {
                     justifyContent: sidebarCollapsed ? 'center' : 'space-between',
                     padding: sidebarCollapsed ? '10px 0' : '9px 12px',
                     borderRadius: '6px',
-                    backgroundColor: isActive ? '#0A0A0A' : 'transparent',
-                    color: isActive ? '#FFFFFF' : '#737373',
+                    backgroundColor: isActive ? 'var(--bf-bg)' : 'transparent',
+                    color: isActive ? 'var(--bf-text)' : 'var(--bf-muted)',
                     border: 'none',
                     fontSize: '0.84rem',
                     fontWeight: isActive ? '600' : '500',
@@ -884,9 +885,9 @@ export const AdminPanel = ({ setActivePage }) => {
                         fontWeight: '700',
                         padding: '2px 7px',
                         borderRadius: '10px',
-                        backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : '#F6F6F6',
-                        color: isActive ? '#FFFFFF' : '#171717',
-                        border: isActive ? 'none' : '1px solid #E7E7E7'
+                        backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : 'var(--bf-surface)',
+                        color: isActive ? 'var(--bf-text)' : 'var(--bf-muted)',
+                        border: isActive ? 'none' : '1px solid var(--bf-border)'
                       }}
                     >
                       {item.badge}
@@ -899,7 +900,7 @@ export const AdminPanel = ({ setActivePage }) => {
         </div>
 
         {/* Zona Inferior: Perfil y Cierre de Sesión */}
-        <div style={{ padding: '14px 10px', borderTop: '1px solid #E7E7E7' }}>
+        <div style={{ padding: '14px 10px', borderTop: '1px solid var(--bf-border)' }}>
           {/* Botón Ir a Tienda */}
           <button
             type="button"
@@ -914,7 +915,7 @@ export const AdminPanel = ({ setActivePage }) => {
               padding: '8px 12px',
               borderRadius: '6px',
               backgroundColor: 'transparent',
-              color: '#737373',
+              color: 'var(--bf-muted)',
               border: 'none',
               fontSize: '0.8rem',
               fontWeight: '500',
@@ -923,12 +924,12 @@ export const AdminPanel = ({ setActivePage }) => {
               transition: 'background-color 0.15s, color 0.15s'
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#F6F6F6';
-              e.currentTarget.style.color = '#171717';
+              e.currentTarget.style.backgroundColor = 'var(--bf-surface)';
+              e.currentTarget.style.color = 'var(--bf-bg)';
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = '#737373';
+              e.currentTarget.style.color = 'var(--bf-muted)';
             }}
           >
             <ExternalLink size={16} />
@@ -939,7 +940,7 @@ export const AdminPanel = ({ setActivePage }) => {
           <div
             style={{
               padding: sidebarCollapsed ? '8px 0' : '10px 12px',
-              backgroundColor: '#F6F6F6',
+              backgroundColor: 'var(--bf-surface)',
               borderRadius: '6px',
               display: 'flex',
               alignItems: 'center',
@@ -954,8 +955,8 @@ export const AdminPanel = ({ setActivePage }) => {
                     width: '32px',
                     height: '32px',
                     borderRadius: '4px',
-                    backgroundColor: '#0A0A0A',
-                    color: '#FFFFFF',
+                    backgroundColor: 'var(--bf-secondary)',
+                    color: 'var(--bf-text)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -967,10 +968,10 @@ export const AdminPanel = ({ setActivePage }) => {
                   {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
                 </div>
                 <div style={{ overflow: 'hidden' }}>
-                  <span style={{ fontSize: '0.8rem', fontWeight: '600', color: '#171717', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--bf-text)', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
                     {user?.name || 'Administrador'}
                   </span>
-                  <span style={{ fontSize: '0.68rem', color: '#737373', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                  <span style={{ fontSize: '0.68rem', color: 'var(--bf-muted)', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
                     {user?.email || 'admin@sauzstore.com'}
                   </span>
                 </div>
@@ -981,8 +982,8 @@ export const AdminPanel = ({ setActivePage }) => {
                   width: '32px',
                   height: '32px',
                   borderRadius: '4px',
-                  backgroundColor: '#0A0A0A',
-                  color: '#FFFFFF',
+                  backgroundColor: 'var(--bf-secondary)',
+                  color: 'var(--bf-text)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1002,7 +1003,7 @@ export const AdminPanel = ({ setActivePage }) => {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#737373',
+                  color: 'var(--bf-muted)',
                   cursor: 'pointer',
                   padding: '6px',
                   borderRadius: '4px',
@@ -1013,10 +1014,10 @@ export const AdminPanel = ({ setActivePage }) => {
                 }}
                 onMouseOver={(e) => {
                   e.currentTarget.style.color = '#DC2626';
-                  e.currentTarget.style.backgroundColor = '#FFFFFF';
+                  e.currentTarget.style.backgroundColor = 'var(--bf-text)';
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.color = '#737373';
+                  e.currentTarget.style.color = 'var(--bf-muted)';
                   e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
@@ -1035,8 +1036,8 @@ export const AdminPanel = ({ setActivePage }) => {
         <header
           style={{
             height: '68px',
-            backgroundColor: '#FFFFFF',
-            borderBottom: '1px solid #E7E7E7',
+            backgroundColor: 'var(--bf-secondary)',
+            borderBottom: '1px solid var(--bf-border)',
             padding: '0 clamp(16px, 3vw, 36px)',
             display: 'flex',
             alignItems: 'center',
@@ -1054,10 +1055,10 @@ export const AdminPanel = ({ setActivePage }) => {
               className="admin-mobile-toggle-btn"
               style={{
                 background: 'none',
-                border: '1px solid #E7E7E7',
+                border: '1px solid var(--bf-border)',
                 borderRadius: '6px',
                 padding: '6px',
-                color: '#171717',
+                color: 'var(--bf-text)',
                 cursor: 'pointer',
                 display: 'none',
                 alignItems: 'center',
@@ -1068,10 +1069,10 @@ export const AdminPanel = ({ setActivePage }) => {
             </button>
 
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: '#737373' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
                 <span>Administración</span>
                 <span>/</span>
-                <span style={{ textTransform: 'capitalize', color: '#171717', fontWeight: '600' }}>
+                <span style={{ textTransform: 'capitalize', color: 'var(--bf-text)', fontWeight: '600' }}>
                   {activeTab === 'dashboard' && 'Dashboard'}
                   {activeTab === 'products' && 'Productos'}
                   {activeTab === 'inventory' && 'Inventario'}
@@ -1082,7 +1083,7 @@ export const AdminPanel = ({ setActivePage }) => {
                   {activeTab === 'settings' && 'Configuración'}
                 </span>
               </div>
-              <h2 style={{ fontSize: '1.15rem', fontWeight: '800', margin: '2px 0 0 0', letterSpacing: '-0.02em', color: '#171717' }}>
+              <h2 style={{ fontSize: '1.15rem', fontWeight: '800', margin: '2px 0 0 0', letterSpacing: '-0.02em', color: 'var(--bf-text)' }}>
                 {activeTab === 'dashboard' && 'Resumen Ejecutivo'}
                 {activeTab === 'products' && 'Catálogo de Prendas'}
                 {activeTab === 'inventory' && 'Inventario y Existencias'}
@@ -1102,10 +1103,10 @@ export const AdminPanel = ({ setActivePage }) => {
               <div
                 style={{
                   display: 'flex',
-                  backgroundColor: '#F6F6F6',
+                  backgroundColor: 'var(--bf-surface)',
                   padding: '3px',
                   borderRadius: '6px',
-                  border: '1px solid #E7E7E7'
+                  border: '1px solid var(--bf-border)'
                 }}
                 className="admin-period-controls"
               >
@@ -1123,8 +1124,8 @@ export const AdminPanel = ({ setActivePage }) => {
                       padding: '5px 11px',
                       borderRadius: '4px',
                       border: 'none',
-                      backgroundColor: periodFilter === p.id ? '#FFFFFF' : 'transparent',
-                      color: periodFilter === p.id ? '#171717' : '#737373',
+                      backgroundColor: periodFilter === p.id ? 'var(--bf-text)' : 'transparent',
+                      color: periodFilter === p.id ? 'var(--bf-bg)' : 'var(--bf-muted)',
                       fontSize: '0.74rem',
                       fontWeight: periodFilter === p.id ? '700' : '500',
                       cursor: 'pointer',
@@ -1148,8 +1149,8 @@ export const AdminPanel = ({ setActivePage }) => {
                   alignItems: 'center',
                   gap: '6px',
                   padding: '7px 14px',
-                  backgroundColor: '#0A0A0A',
-                  color: '#FFFFFF',
+                  backgroundColor: 'var(--bf-secondary)',
+                  color: 'var(--bf-text)',
                   borderRadius: '6px',
                   border: 'none',
                   fontSize: '0.78rem',
@@ -1157,8 +1158,8 @@ export const AdminPanel = ({ setActivePage }) => {
                   cursor: 'pointer',
                   transition: 'background-color 0.15s'
                 }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#262626'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0A0A0A'}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--bf-raised)'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--bf-bg)'}
               >
                 <Plus size={15} />
                 <span>Nueva Prenda</span>
@@ -1175,9 +1176,9 @@ export const AdminPanel = ({ setActivePage }) => {
                   width: '36px',
                   height: '36px',
                   borderRadius: '6px',
-                  border: '1px solid #E7E7E7',
-                  backgroundColor: '#FFFFFF',
-                  color: '#171717',
+                  border: '1px solid var(--bf-border)',
+                  backgroundColor: 'var(--bf-secondary)',
+                  color: 'var(--bf-text)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -1208,8 +1209,8 @@ export const AdminPanel = ({ setActivePage }) => {
                     top: '46px',
                     right: 0,
                     width: '320px',
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E7E7E7',
+                    backgroundColor: 'var(--bf-secondary)',
+                    border: '1px solid var(--bf-border)',
                     borderRadius: '8px',
                     boxShadow: '0 10px 25px rgba(0,0,0,0.08)',
                     padding: '16px',
@@ -1217,18 +1218,18 @@ export const AdminPanel = ({ setActivePage }) => {
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#171717' }}>Notificaciones Operativas</span>
+                    <span style={{ fontSize: '0.82rem', fontWeight: '700', color: 'var(--bf-text)' }}>Notificaciones Operativas</span>
                     <button
                       type="button"
                       onClick={() => setNotificationsOpen(false)}
-                      style={{ background: 'none', border: 'none', color: '#737373', cursor: 'pointer', padding: 0 }}
+                      style={{ background: 'none', border: 'none', color: 'var(--bf-muted)', cursor: 'pointer', padding: 0 }}
                     >
                       <X size={14} />
                     </button>
                   </div>
 
                   {pendingOrders.length === 0 ? (
-                    <p style={{ margin: 0, fontSize: '0.78rem', color: '#737373' }}>No hay pedidos pendientes de despacho.</p>
+                    <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--bf-muted)' }}>No hay pedidos pendientes de despacho.</p>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       <span style={{ fontSize: '0.72rem', color: '#B45309', fontWeight: '600' }}>
@@ -1244,17 +1245,17 @@ export const AdminPanel = ({ setActivePage }) => {
                           }}
                           style={{
                             padding: '8px 10px',
-                            backgroundColor: '#F6F6F6',
+                            backgroundColor: 'var(--bf-surface)',
                             borderRadius: '4px',
                             cursor: 'pointer',
                             fontSize: '0.75rem'
                           }}
                         >
                           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <strong style={{ color: '#171717' }}>{po.orderId}</strong>
-                            <span style={{ color: '#737373' }}>{formatMoney(po.total)}</span>
+                            <strong style={{ color: 'var(--bf-text)' }}>{po.orderId}</strong>
+                            <span style={{ color: 'var(--bf-muted)' }}>{formatMoney(po.total)}</span>
                           </div>
-                          <span style={{ color: '#737373', display: 'block', fontSize: '0.7rem' }}>{po.customer?.name}</span>
+                          <span style={{ color: 'var(--bf-muted)', display: 'block', fontSize: '0.7rem' }}>{po.customer?.name}</span>
                         </div>
                       ))}
                     </div>
@@ -1285,18 +1286,18 @@ export const AdminPanel = ({ setActivePage }) => {
                 {/* 1. Ingresos Netos Confirmados */}
                 <div className="admin-kpi-card">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: '#737373' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
                       Ingresos Netos (COP)
                     </span>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '0.72rem', fontWeight: '700', color: '#15803D', backgroundColor: '#F0FDF4', padding: '2px 6px', borderRadius: '4px' }}>
                       <ArrowUpRight size={12} /> +12.4%
                     </span>
                   </div>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: '#171717', letterSpacing: '-0.02em', marginBottom: '4px' }}>
+                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
                     {formatMoney(totalNetRevenue)}
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                    <span style={{ fontSize: '0.72rem', color: '#737373' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
                       Excluye pedidos cancelados ({cancelledOrders.length})
                     </span>
                     <svg width="48" height="18" viewBox="0 0 48 18">
@@ -1308,22 +1309,22 @@ export const AdminPanel = ({ setActivePage }) => {
                 {/* 2. Ventas del Mes */}
                 <div className="admin-kpi-card">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: '#737373' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
                       Ventas Este Mes
                     </span>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '0.72rem', fontWeight: '700', color: '#15803D', backgroundColor: '#F0FDF4', padding: '2px 6px', borderRadius: '4px' }}>
                       <ArrowUpRight size={12} /> +8.0%
                     </span>
                   </div>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: '#171717', letterSpacing: '-0.02em', marginBottom: '4px' }}>
+                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
                     {formatMoney(monthRevenue)}
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                    <span style={{ fontSize: '0.72rem', color: '#737373' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
                       Octubre 2026 en curso
                     </span>
                     <svg width="48" height="18" viewBox="0 0 48 18">
-                      <path d="M 2 14 Q 16 13, 26 8 T 38 7 T 46 3" fill="none" stroke="#0A0A0A" strokeWidth="2" strokeLinecap="round" />
+                      <path d="M 2 14 Q 16 13, 26 8 T 38 7 T 46 3" fill="none" stroke="var(--bf-text)" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   </div>
                 </div>
@@ -1331,17 +1332,17 @@ export const AdminPanel = ({ setActivePage }) => {
                 {/* 3. Valor Promedio por Pedido (AOV) */}
                 <div className="admin-kpi-card">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: '#737373' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
                       Ticket Promedio (AOV)
                     </span>
-                    <span style={{ fontSize: '0.72rem', color: '#737373', fontWeight: '600' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', fontWeight: '600' }}>
                       Por orden
                     </span>
                   </div>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: '#171717', letterSpacing: '-0.02em', marginBottom: '4px' }}>
+                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
                     {formatMoney(averageOrderValue)}
                   </div>
-                  <span style={{ fontSize: '0.72rem', color: '#737373', display: 'block', marginTop: '6px' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', display: 'block', marginTop: '6px' }}>
                     Promedio de compra por cliente
                   </span>
                 </div>
@@ -1354,7 +1355,7 @@ export const AdminPanel = ({ setActivePage }) => {
                   title="Clic para ir al módulo de pedidos"
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: '#737373' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
                       Pedidos Realizados
                     </span>
                     {pendingOrders.length > 0 ? (
@@ -1368,14 +1369,14 @@ export const AdminPanel = ({ setActivePage }) => {
                       </span>
                     )}
                   </div>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: '#171717', letterSpacing: '-0.02em', marginBottom: '4px' }}>
+                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
                     {orders.length}
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                    <span style={{ fontSize: '0.72rem', color: '#737373' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
                       {deliveredOrders.length} entregados exitosamente
                     </span>
-                    <ArrowRight size={13} color="#737373" />
+                    <ArrowRight size={13} color="var(--bf-muted)" />
                   </div>
                 </div>
 
@@ -1387,21 +1388,21 @@ export const AdminPanel = ({ setActivePage }) => {
                   title="Clic para ver catálogo y productos"
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: '#737373' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
                       Prendas Despachadas
                     </span>
-                    <span style={{ fontSize: '0.72rem', color: '#737373', fontWeight: '600' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', fontWeight: '600' }}>
                       Físico
                     </span>
                   </div>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: '#171717', letterSpacing: '-0.02em', marginBottom: '4px' }}>
+                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
                     {totalUnitsSold}
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                    <span style={{ fontSize: '0.72rem', color: '#737373' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
                       Unidades totales vendidas
                     </span>
-                    <ArrowRight size={13} color="#737373" />
+                    <ArrowRight size={13} color="var(--bf-muted)" />
                   </div>
                 </div>
 
@@ -1416,11 +1417,11 @@ export const AdminPanel = ({ setActivePage }) => {
                   title="Clic para filtrar inventario con bajo stock"
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: '#737373' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
                       Alertas de Stock
                     </span>
                     {lowStockProducts.length > 0 ? (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', fontWeight: '700', color: '#B91C1C', backgroundColor: '#FEF2F2', padding: '2px 6px', borderRadius: '4px' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', fontWeight: '700', color: '#B91C1C', backgroundColor: 'var(--bf-surface)', padding: '2px 6px', borderRadius: '4px' }}>
                         <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#B91C1C' }} />
                         {lowStockProducts.length} críticos
                       </span>
@@ -1430,14 +1431,14 @@ export const AdminPanel = ({ setActivePage }) => {
                       </span>
                     )}
                   </div>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: '#171717', letterSpacing: '-0.02em', marginBottom: '4px' }}>
+                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
                     {lowStockProducts.length + outOfStockProducts.length}
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                    <span style={{ fontSize: '0.72rem', color: '#737373' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
                       Prendas con 5 o menos existencias
                     </span>
-                    <ArrowRight size={13} color="#737373" />
+                    <ArrowRight size={13} color="var(--bf-muted)" />
                   </div>
                 </div>
               </div>
@@ -1445,8 +1446,8 @@ export const AdminPanel = ({ setActivePage }) => {
               {/* Gráfica Recharts Interactiva Premium */}
               <div
                 style={{
-                  backgroundColor: '#FFFFFF',
-                  border: '1px solid #E7E7E7',
+                  backgroundColor: 'var(--bf-secondary)',
+                  border: '1px solid var(--bf-border)',
                   borderRadius: '10px',
                   padding: '24px 28px',
                   boxShadow: '0 2px 12px rgba(0,0,0,0.02)'
@@ -1462,12 +1463,12 @@ export const AdminPanel = ({ setActivePage }) => {
                     gap: '16px',
                     marginBottom: '24px',
                     paddingBottom: '16px',
-                    borderBottom: '1px solid #F0F0F0'
+                    borderBottom: '1px solid var(--bf-border)'
                   }}
                 >
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.8px', textTransform: 'uppercase', color: '#737373' }}>
+                      <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.8px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
                         Evolución Financiera de Ventas
                       </span>
                       <span
@@ -1487,12 +1488,12 @@ export const AdminPanel = ({ setActivePage }) => {
                         <span className="chart-pulse-badge" /> EN VIVO
                       </span>
                     </div>
-                    <h3 style={{ fontSize: '1.35rem', fontWeight: '800', margin: 0, color: '#171717', letterSpacing: '-0.02em' }}>
+                    <h3 style={{ fontSize: '1.35rem', fontWeight: '800', margin: 0, color: 'var(--bf-text)', letterSpacing: '-0.02em' }}>
                       {chartViewMode === 'revenue_accum' && 'Ingresos acumulados del período'}
                       {chartViewMode === 'revenue' && 'Facturación diaria confirmada'}
                       {chartViewMode === 'orders' && 'Volumen de pedidos por checkpoint'}
                     </h3>
-                    <p style={{ margin: '4px 0 0 0', fontSize: '0.78rem', color: '#737373' }}>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '0.78rem', color: 'var(--bf-muted)' }}>
                       {chartViewMode.startsWith('revenue') 
                         ? `Total acumulado: ${formatMoney(totalNetRevenue)} en ${orders.length} pedidos (${totalUnitsSold} prendas)`
                         : `Total de transacciones: ${orders.length} pedidos procesados`}
@@ -1502,7 +1503,7 @@ export const AdminPanel = ({ setActivePage }) => {
                   {/* Selector de métricas y tipo de gráfica */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                     {/* Botones de Métrica */}
-                    <div style={{ display: 'flex', backgroundColor: '#F6F6F6', padding: '3px', borderRadius: '6px', gap: '2px' }}>
+                    <div style={{ display: 'flex', backgroundColor: 'var(--bf-surface)', padding: '3px', borderRadius: '6px', gap: '2px' }}>
                       <button
                         type="button"
                         onClick={() => setChartViewMode('revenue_accum')}
@@ -1513,8 +1514,8 @@ export const AdminPanel = ({ setActivePage }) => {
                           fontSize: '0.74rem',
                           fontWeight: '700',
                           cursor: 'pointer',
-                          backgroundColor: chartViewMode === 'revenue_accum' ? '#0A0A0A' : 'transparent',
-                          color: chartViewMode === 'revenue_accum' ? '#FFFFFF' : '#737373',
+                          backgroundColor: chartViewMode === 'revenue_accum' ? 'var(--bf-bg)' : 'transparent',
+                          color: chartViewMode === 'revenue_accum' ? 'var(--bf-text)' : 'var(--bf-muted)',
                           transition: 'all 0.2s ease'
                         }}
                       >
@@ -1530,8 +1531,8 @@ export const AdminPanel = ({ setActivePage }) => {
                           fontSize: '0.74rem',
                           fontWeight: '700',
                           cursor: 'pointer',
-                          backgroundColor: chartViewMode === 'revenue' ? '#0A0A0A' : 'transparent',
-                          color: chartViewMode === 'revenue' ? '#FFFFFF' : '#737373',
+                          backgroundColor: chartViewMode === 'revenue' ? 'var(--bf-bg)' : 'transparent',
+                          color: chartViewMode === 'revenue' ? 'var(--bf-text)' : 'var(--bf-muted)',
                           transition: 'all 0.2s ease'
                         }}
                       >
@@ -1547,8 +1548,8 @@ export const AdminPanel = ({ setActivePage }) => {
                           fontSize: '0.74rem',
                           fontWeight: '700',
                           cursor: 'pointer',
-                          backgroundColor: chartViewMode === 'orders' ? '#0A0A0A' : 'transparent',
-                          color: chartViewMode === 'orders' ? '#FFFFFF' : '#737373',
+                          backgroundColor: chartViewMode === 'orders' ? 'var(--bf-bg)' : 'transparent',
+                          color: chartViewMode === 'orders' ? 'var(--bf-text)' : 'var(--bf-muted)',
                           transition: 'all 0.2s ease'
                         }}
                       >
@@ -1557,7 +1558,7 @@ export const AdminPanel = ({ setActivePage }) => {
                     </div>
 
                     {/* Toggle Curva vs Barras */}
-                    <div style={{ display: 'flex', backgroundColor: '#F6F6F6', padding: '3px', borderRadius: '6px', gap: '2px' }}>
+                    <div style={{ display: 'flex', backgroundColor: 'var(--bf-surface)', padding: '3px', borderRadius: '6px', gap: '2px' }}>
                       <button
                         type="button"
                         onClick={() => setChartType('area')}
@@ -1569,8 +1570,8 @@ export const AdminPanel = ({ setActivePage }) => {
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
-                          backgroundColor: chartType === 'area' ? '#0A0A0A' : 'transparent',
-                          color: chartType === 'area' ? '#FFFFFF' : '#737373',
+                          backgroundColor: chartType === 'area' ? 'var(--bf-bg)' : 'transparent',
+                          color: chartType === 'area' ? 'var(--bf-text)' : 'var(--bf-muted)',
                           transition: 'all 0.2s ease'
                         }}
                       >
@@ -1587,8 +1588,8 @@ export const AdminPanel = ({ setActivePage }) => {
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
-                          backgroundColor: chartType === 'bar' ? '#0A0A0A' : 'transparent',
-                          color: chartType === 'bar' ? '#FFFFFF' : '#737373',
+                          backgroundColor: chartType === 'bar' ? 'var(--bf-bg)' : 'transparent',
+                          color: chartType === 'bar' ? 'var(--bf-text)' : 'var(--bf-muted)',
                           transition: 'all 0.2s ease'
                         }}
                       >
@@ -1608,23 +1609,23 @@ export const AdminPanel = ({ setActivePage }) => {
                       >
                         <defs>
                           <linearGradient id="luxuryRevenueGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#0A0A0A" stopOpacity={0.16} />
-                            <stop offset="60%" stopColor="#0A0A0A" stopOpacity={0.03} />
-                            <stop offset="98%" stopColor="#0A0A0A" stopOpacity={0.00} />
+                            <stop offset="5%" stopColor="var(--bf-text)" stopOpacity={0.16} />
+                            <stop offset="60%" stopColor="var(--bf-text)" stopOpacity={0.03} />
+                            <stop offset="98%" stopColor="var(--bf-text)" stopOpacity={0.00} />
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#F0F0F0" vertical={false} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--bf-border)" vertical={false} />
                         <XAxis
                           dataKey="label"
-                          axisLine={{ stroke: '#E7E7E7' }}
+                          axisLine={{ stroke: 'var(--bf-border)' }}
                           tickLine={false}
-                          tick={{ fill: '#737373', fontSize: 11, fontFamily: 'Inter, sans-serif' }}
+                          tick={{ fill: 'var(--bf-muted)', fontSize: 11, fontFamily: 'Inter, sans-serif' }}
                           dy={8}
                         />
                         <YAxis
                           axisLine={false}
                           tickLine={false}
-                          tick={{ fill: '#A3A3A3', fontSize: 10, fontFamily: 'Inter, sans-serif' }}
+                          tick={{ fill: 'var(--bf-muted)', fontSize: 10, fontFamily: 'Inter, sans-serif' }}
                           tickFormatter={(val) => {
                             if (chartViewMode === 'orders') return `${val}`;
                             if (val === 0) return '$0';
@@ -1635,12 +1636,12 @@ export const AdminPanel = ({ setActivePage }) => {
                         />
                         <Tooltip
                           content={<CustomChartTooltip formatMoney={formatMoney} chartViewMode={chartViewMode} />}
-                          cursor={{ stroke: '#0A0A0A', strokeWidth: 1.5, strokeDasharray: '4 4' }}
+                          cursor={{ stroke: 'var(--bf-text)', strokeWidth: 1.5, strokeDasharray: '4 4' }}
                         />
                         <Area
                           type="monotone"
                           dataKey={chartViewMode === 'orders' ? 'orders' : (chartViewMode === 'revenue' ? 'revenue' : 'revenue_accum')}
-                          stroke="#0A0A0A"
+                          stroke="var(--bf-text)"
                           strokeWidth={2.6}
                           fill="url(#luxuryRevenueGradient)"
                           activeDot={<CustomActiveDot />}
@@ -1653,18 +1654,18 @@ export const AdminPanel = ({ setActivePage }) => {
                         data={chartData}
                         margin={{ top: 15, right: 15, left: -5, bottom: 5 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" stroke="#F0F0F0" vertical={false} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--bf-border)" vertical={false} />
                         <XAxis
                           dataKey="label"
-                          axisLine={{ stroke: '#E7E7E7' }}
+                          axisLine={{ stroke: 'var(--bf-border)' }}
                           tickLine={false}
-                          tick={{ fill: '#737373', fontSize: 11, fontFamily: 'Inter, sans-serif' }}
+                          tick={{ fill: 'var(--bf-muted)', fontSize: 11, fontFamily: 'Inter, sans-serif' }}
                           dy={8}
                         />
                         <YAxis
                           axisLine={false}
                           tickLine={false}
-                          tick={{ fill: '#A3A3A3', fontSize: 10, fontFamily: 'Inter, sans-serif' }}
+                          tick={{ fill: 'var(--bf-muted)', fontSize: 10, fontFamily: 'Inter, sans-serif' }}
                           tickFormatter={(val) => {
                             if (chartViewMode === 'orders') return `${val}`;
                             if (val === 0) return '$0';
@@ -1679,7 +1680,7 @@ export const AdminPanel = ({ setActivePage }) => {
                         />
                         <Bar
                           dataKey={chartViewMode === 'orders' ? 'orders' : (chartViewMode === 'revenue' ? 'revenue' : 'revenue_accum')}
-                          fill="#0A0A0A"
+                          fill="var(--bf-text)"
                           radius={[4, 4, 0, 0]}
                           maxBarSize={38}
                           animationDuration={850}
@@ -1699,14 +1700,14 @@ export const AdminPanel = ({ setActivePage }) => {
                     alignItems: 'center',
                     marginTop: '16px',
                     paddingTop: '14px',
-                    borderTop: '1px solid #F6F6F6',
+                    borderTop: '1px solid var(--bf-border)',
                     fontSize: '0.74rem',
-                    color: '#737373'
+                    color: 'var(--bf-muted)'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                      <span style={{ width: '8px', height: '8px', backgroundColor: '#0A0A0A', borderRadius: '50%' }} />
+                      <span style={{ width: '8px', height: '8px', backgroundColor: 'var(--bf-secondary)', borderRadius: '50%' }} />
                       <span>{chartViewMode.startsWith('revenue') ? 'Facturación Neta COP' : 'Pedidos Confirmados'}</span>
                     </span>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
@@ -1715,7 +1716,7 @@ export const AdminPanel = ({ setActivePage }) => {
                     </span>
                   </div>
 
-                  <span style={{ color: '#A3A3A3', fontSize: '0.72rem' }}>
+                  <span style={{ color: 'var(--bf-muted)', fontSize: '0.72rem' }}>
                     Pasa el cursor sobre la gráfica para ver detalles por fecha
                   </span>
                 </div>
@@ -1724,12 +1725,12 @@ export const AdminPanel = ({ setActivePage }) => {
               {/* Distribución de Pedidos & Top Prendas */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '20px' }}>
                 {/* Columna 1: Distribución por Estados */}
-                <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '24px' }}>
+                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '800' }}>
                       Estado Operativo de Pedidos
                     </h4>
-                    <span style={{ fontSize: '0.72rem', color: '#737373' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
                       Total {orders.length}
                     </span>
                   </div>
@@ -1744,10 +1745,10 @@ export const AdminPanel = ({ setActivePage }) => {
                       return (
                         <div key={st.label}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', marginBottom: '6px' }}>
-                            <span style={{ color: '#171717', fontWeight: '600' }}>{st.label}</span>
-                            <span style={{ color: '#737373' }}>{st.count} ({pct}%)</span>
+                            <span style={{ color: 'var(--bf-text)', fontWeight: '600' }}>{st.label}</span>
+                            <span style={{ color: 'var(--bf-muted)' }}>{st.count} ({pct}%)</span>
                           </div>
-                          <div style={{ height: '6px', width: '100%', backgroundColor: '#F6F6F6', borderRadius: '3px', overflow: 'hidden' }}>
+                          <div style={{ height: '6px', width: '100%', backgroundColor: 'var(--bf-surface)', borderRadius: '3px', overflow: 'hidden' }}>
                             <div style={{ height: '100%', width: `${pct}%`, backgroundColor: st.color, borderRadius: '3px' }} />
                           </div>
                         </div>
@@ -1757,16 +1758,16 @@ export const AdminPanel = ({ setActivePage }) => {
                 </div>
 
                 {/* Columna 2: Top 5 Prendas Más Vendidas */}
-                <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '24px' }}>
+                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '800' }}>
                       Prendas Más Vendidas
                     </h4>
-                    <span style={{ fontSize: '0.72rem', color: '#737373' }}>Por volumen</span>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Por volumen</span>
                   </div>
 
                   {topProducts.length === 0 ? (
-                    <p style={{ fontSize: '0.8rem', color: '#737373', margin: 0 }}>Aún no hay ventas registradas.</p>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--bf-muted)', margin: 0 }}>Aún no hay ventas registradas.</p>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                       {topProducts.map((item, idx) => (
@@ -1777,28 +1778,28 @@ export const AdminPanel = ({ setActivePage }) => {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             padding: '8px 0',
-                            borderBottom: idx < topProducts.length - 1 ? '1px solid #F6F6F6' : 'none'
+                            borderBottom: idx < topProducts.length - 1 ? '1px solid var(--bf-border)' : 'none'
                           }}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#737373', width: '16px' }}>
+                            <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--bf-muted)', width: '16px' }}>
                               0{idx + 1}
                             </span>
-                            <img
+                            <ProductImage
                               src={item.image}
                               alt={item.name}
-                              style={{ width: '36px', height: '36px', objectFit: 'cover', borderRadius: '4px', backgroundColor: '#F6F6F6' }}
+                              style={{ width: '36px', height: '36px', objectFit: 'cover', borderRadius: '4px', backgroundColor: 'var(--bf-surface)' }}
                             />
                             <div>
-                              <span style={{ fontSize: '0.82rem', fontWeight: '600', color: '#171717', display: 'block' }}>
+                              <span style={{ fontSize: '0.82rem', fontWeight: '600', color: 'var(--bf-text)', display: 'block' }}>
                                 {item.name}
                               </span>
-                              <span style={{ fontSize: '0.7rem', color: '#737373' }}>
+                              <span style={{ fontSize: '0.7rem', color: 'var(--bf-muted)' }}>
                                 {item.quantity} unidades vendidas
                               </span>
                             </div>
                           </div>
-                          <strong style={{ fontSize: '0.84rem', color: '#171717' }}>
+                          <strong style={{ fontSize: '0.84rem', color: 'var(--bf-text)' }}>
                             {formatMoney(item.revenue)}
                           </strong>
                         </div>
@@ -1809,13 +1810,13 @@ export const AdminPanel = ({ setActivePage }) => {
               </div>
 
               {/* Tabla Resumen de Órdenes Recientes */}
-              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '24px' }}>
+              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
                   <div>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '800' }}>
                       Últimos Pedidos Recibidos
                     </h4>
-                    <span style={{ fontSize: '0.72rem', color: '#737373' }}>Transacciones más recientes en tienda</span>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Transacciones más recientes en tienda</span>
                   </div>
                   <button
                     type="button"
@@ -1823,7 +1824,7 @@ export const AdminPanel = ({ setActivePage }) => {
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: '#0A0A0A',
+                      color: 'var(--bf-text)',
                       fontSize: '0.78rem',
                       fontWeight: '700',
                       cursor: 'pointer',
@@ -1840,7 +1841,7 @@ export const AdminPanel = ({ setActivePage }) => {
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
                     <thead>
-                      <tr style={{ borderBottom: '1px solid #E7E7E7', color: '#737373', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <tr style={{ borderBottom: '1px solid var(--bf-border)', color: 'var(--bf-muted)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                         <th style={{ padding: '10px 14px' }}>ID Pedido</th>
                         <th style={{ padding: '10px 14px' }}>Fecha</th>
                         <th style={{ padding: '10px 14px' }}>Cliente</th>
@@ -1852,15 +1853,15 @@ export const AdminPanel = ({ setActivePage }) => {
                     </thead>
                     <tbody>
                       {orders.slice(0, 4).map(ord => (
-                        <tr key={ord.orderId} className="admin-table-row" style={{ borderBottom: '1px solid #F6F6F6' }}>
-                          <td style={{ padding: '12px 14px', fontWeight: '700', color: '#171717' }}>{ord.orderId}</td>
-                          <td style={{ padding: '12px 14px', color: '#737373' }}>{ord.date}</td>
+                        <tr key={ord.orderId} className="admin-table-row" style={{ borderBottom: '1px solid var(--bf-border)' }}>
+                          <td style={{ padding: '12px 14px', fontWeight: '700', color: 'var(--bf-text)' }}>{ord.orderId}</td>
+                          <td style={{ padding: '12px 14px', color: 'var(--bf-muted)' }}>{ord.date}</td>
                           <td style={{ padding: '12px 14px' }}>
-                            <div style={{ fontWeight: '600', color: '#171717' }}>{ord.customer?.name}</div>
-                            <div style={{ fontSize: '0.7rem', color: '#737373' }}>{ord.customer?.city || 'Medellín'}</div>
+                            <div style={{ fontWeight: '600', color: 'var(--bf-text)' }}>{ord.customer?.name}</div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--bf-muted)' }}>{ord.customer?.city || 'Medellín'}</div>
                           </td>
-                          <td style={{ padding: '12px 14px', color: '#737373' }}>{ord.count || (ord.items || []).length} ud(s)</td>
-                          <td style={{ padding: '12px 14px', fontWeight: '700', color: '#171717' }}>{formatMoney(ord.total)}</td>
+                          <td style={{ padding: '12px 14px', color: 'var(--bf-muted)' }}>{ord.count || (ord.items || []).length} ud(s)</td>
+                          <td style={{ padding: '12px 14px', fontWeight: '700', color: 'var(--bf-text)' }}>{formatMoney(ord.total)}</td>
                           <td style={{ padding: '12px 14px' }}>{renderOrderStatusBadge(ord.orderStatus)}</td>
                           <td style={{ padding: '12px 14px', textAlign: 'right' }}>
                             <button
@@ -1872,12 +1873,12 @@ export const AdminPanel = ({ setActivePage }) => {
                               className="admin-btn-secondary"
                               style={{
                                 padding: '6px 12px',
-                                backgroundColor: '#F6F6F6',
-                                border: '1px solid #E7E7E7',
+                                backgroundColor: 'var(--bf-surface)',
+                                border: '1px solid var(--bf-border)',
                                 borderRadius: '4px',
                                 fontSize: '0.72rem',
                                 fontWeight: '600',
-                                color: '#171717',
+                                color: 'var(--bf-text)',
                                 cursor: 'pointer'
                               }}
                             >
@@ -1901,8 +1902,8 @@ export const AdminPanel = ({ setActivePage }) => {
               {/* Barra de Filtros y Búsqueda */}
               <div
                 style={{
-                  backgroundColor: '#FFFFFF',
-                  border: '1px solid #E7E7E7',
+                  backgroundColor: 'var(--bf-secondary)',
+                  border: '1px solid var(--bf-border)',
                   borderRadius: '8px',
                   padding: '16px 20px',
                   display: 'flex',
@@ -1914,7 +1915,7 @@ export const AdminPanel = ({ setActivePage }) => {
               >
                 {/* Buscador */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: '260px' }}>
-                  <Search size={16} color="#737373" />
+                  <Search size={16} color="var(--bf-muted)" />
                   <input
                     type="text"
                     placeholder="Buscar prenda por nombre, categoría o ID..."
@@ -1924,7 +1925,7 @@ export const AdminPanel = ({ setActivePage }) => {
                       width: '100%',
                       border: 'none',
                       backgroundColor: 'transparent',
-                      color: '#171717',
+                      color: 'var(--bf-text)',
                       fontSize: '0.86rem',
                       outline: 'none'
                     }}
@@ -1933,7 +1934,7 @@ export const AdminPanel = ({ setActivePage }) => {
 
                 {/* Filtros de Categoría */}
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.72rem', color: '#737373', fontWeight: '600', marginRight: '4px' }}>Categoría:</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', fontWeight: '600', marginRight: '4px' }}>Categoría:</span>
                   {['Todas', 'Camisetas', 'Sudaderas', 'Chaquetas', 'Pantalones'].map(cat => (
                     <button
                       key={cat}
@@ -1943,8 +1944,8 @@ export const AdminPanel = ({ setActivePage }) => {
                         padding: '5px 10px',
                         borderRadius: '4px',
                         border: 'none',
-                        backgroundColor: productCategoryFilter === cat ? '#0A0A0A' : '#F6F6F6',
-                        color: productCategoryFilter === cat ? '#FFFFFF' : '#737373',
+                        backgroundColor: productCategoryFilter === cat ? 'var(--bf-bg)' : 'var(--bf-surface)',
+                        color: productCategoryFilter === cat ? 'var(--bf-text)' : 'var(--bf-muted)',
                         fontSize: '0.74rem',
                         fontWeight: '600',
                         cursor: 'pointer'
@@ -1956,14 +1957,14 @@ export const AdminPanel = ({ setActivePage }) => {
                 </div>
 
                 {/* Selector de Vista (Tabla vs Cards) */}
-                <div style={{ display: 'flex', border: '1px solid #E7E7E7', borderRadius: '4px', overflow: 'hidden' }}>
+                <div style={{ display: 'flex', border: '1px solid var(--bf-border)', borderRadius: '4px', overflow: 'hidden' }}>
                   <button
                     type="button"
                     onClick={() => setProductViewMode('table')}
                     style={{
                       padding: '6px 12px',
-                      backgroundColor: productViewMode === 'table' ? '#0A0A0A' : '#FFFFFF',
-                      color: productViewMode === 'table' ? '#FFFFFF' : '#737373',
+                      backgroundColor: productViewMode === 'table' ? 'var(--bf-bg)' : 'var(--bf-text)',
+                      color: productViewMode === 'table' ? 'var(--bf-text)' : 'var(--bf-muted)',
                       border: 'none',
                       fontSize: '0.74rem',
                       fontWeight: '600',
@@ -1977,8 +1978,8 @@ export const AdminPanel = ({ setActivePage }) => {
                     onClick={() => setProductViewMode('cards')}
                     style={{
                       padding: '6px 12px',
-                      backgroundColor: productViewMode === 'cards' ? '#0A0A0A' : '#FFFFFF',
-                      color: productViewMode === 'cards' ? '#FFFFFF' : '#737373',
+                      backgroundColor: productViewMode === 'cards' ? 'var(--bf-bg)' : 'var(--bf-text)',
+                      color: productViewMode === 'cards' ? 'var(--bf-text)' : 'var(--bf-muted)',
                       border: 'none',
                       fontSize: '0.74rem',
                       fontWeight: '600',
@@ -1992,10 +1993,10 @@ export const AdminPanel = ({ setActivePage }) => {
 
               {/* Listado de Productos en Modo Tabla */}
               {productViewMode === 'table' ? (
-                <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', overflow: 'hidden' }}>
+                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', overflow: 'hidden' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
                     <thead>
-                      <tr style={{ borderBottom: '1px solid #E7E7E7', backgroundColor: '#FAFAFA', color: '#737373', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <tr style={{ borderBottom: '1px solid var(--bf-border)', backgroundColor: 'var(--bf-secondary)', color: 'var(--bf-muted)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                         <th style={{ padding: '12px 18px' }}>Prenda</th>
                         <th style={{ padding: '12px 18px' }}>Categoría</th>
                         <th style={{ padding: '12px 18px' }}>Precio (COP)</th>
@@ -2006,22 +2007,22 @@ export const AdminPanel = ({ setActivePage }) => {
                     </thead>
                     <tbody>
                       {filteredProducts.map(p => (
-                        <tr key={p.id} style={{ borderBottom: '1px solid #F6F6F6' }}>
+                        <tr key={p.id} style={{ borderBottom: '1px solid var(--bf-border)' }}>
                           <td style={{ padding: '12px 18px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                              <img
+                              <ProductImage
                                 src={p.image}
                                 alt={p.name}
-                                style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '4px', backgroundColor: '#F6F6F6' }}
+                                style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '4px', backgroundColor: 'var(--bf-surface)' }}
                               />
                               <div>
-                                <span style={{ fontWeight: '700', color: '#171717', display: 'block' }}>{p.name}</span>
-                                <span style={{ fontSize: '0.72rem', color: '#737373' }}>SKU-{p.id}</span>
+                                <span style={{ fontWeight: '700', color: 'var(--bf-text)', display: 'block' }}>{p.name}</span>
+                                <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>SKU-{p.id}</span>
                               </div>
                             </div>
                           </td>
-                          <td style={{ padding: '12px 18px', color: '#737373' }}>{p.category}</td>
-                          <td style={{ padding: '12px 18px', fontWeight: '700', color: '#171717' }}>{formatMoney(p.price)}</td>
+                          <td style={{ padding: '12px 18px', color: 'var(--bf-muted)' }}>{p.category}</td>
+                          <td style={{ padding: '12px 18px', fontWeight: '700', color: 'var(--bf-text)' }}>{formatMoney(p.price)}</td>
                           <td style={{ padding: '12px 18px', fontWeight: '600' }}>{p.stock} uds</td>
                           <td style={{ padding: '12px 18px' }}>{renderStockBadge(p.stock)}</td>
                           <td style={{ padding: '12px 18px', textAlign: 'right' }}>
@@ -2032,10 +2033,10 @@ export const AdminPanel = ({ setActivePage }) => {
                                 title="Editar prenda"
                                 style={{
                                   padding: '6px',
-                                  backgroundColor: '#F6F6F6',
-                                  border: '1px solid #E7E7E7',
+                                  backgroundColor: 'var(--bf-surface)',
+                                  border: '1px solid var(--bf-border)',
                                   borderRadius: '4px',
-                                  color: '#171717',
+                                  color: 'var(--bf-text)',
                                   cursor: 'pointer'
                                 }}
                               >
@@ -2047,7 +2048,7 @@ export const AdminPanel = ({ setActivePage }) => {
                                 title="Eliminar del catálogo"
                                 style={{
                                   padding: '6px',
-                                  backgroundColor: '#FEF2F2',
+                                  backgroundColor: 'var(--bf-surface)',
                                   border: '1px solid #FECACA',
                                   borderRadius: '4px',
                                   color: '#DC2626',
@@ -2070,16 +2071,16 @@ export const AdminPanel = ({ setActivePage }) => {
                     <div
                       key={p.id}
                       style={{
-                        backgroundColor: '#FFFFFF',
-                        border: '1px solid #E7E7E7',
+                        backgroundColor: 'var(--bf-secondary)',
+                        border: '1px solid var(--bf-border)',
                         borderRadius: '8px',
                         overflow: 'hidden',
                         display: 'flex',
                         flexDirection: 'column'
                       }}
                     >
-                      <div style={{ height: '220px', backgroundColor: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', position: 'relative' }}>
-                        <img
+                      <div style={{ height: '220px', backgroundColor: 'var(--bf-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', position: 'relative' }}>
+                        <ProductImage
                           src={p.image}
                           alt={p.name}
                           style={{ maxWidth: '85%', maxHeight: '85%', objectFit: 'contain' }}
@@ -2092,25 +2093,25 @@ export const AdminPanel = ({ setActivePage }) => {
                       <div style={{ padding: '18px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                         <div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
-                            <h4 style={{ margin: 0, fontSize: '0.92rem', fontWeight: '800', color: '#171717' }}>{p.name}</h4>
-                            <span style={{ fontSize: '0.88rem', fontWeight: '800', color: '#171717' }}>{formatMoney(p.price)}</span>
+                            <h4 style={{ margin: 0, fontSize: '0.92rem', fontWeight: '800', color: 'var(--bf-text)' }}>{p.name}</h4>
+                            <span style={{ fontSize: '0.88rem', fontWeight: '800', color: 'var(--bf-text)' }}>{formatMoney(p.price)}</span>
                           </div>
-                          <span style={{ fontSize: '0.72rem', color: '#737373', display: 'block', marginBottom: '14px' }}>{p.category} · SKU-{p.id}</span>
+                          <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', display: 'block', marginBottom: '14px' }}>{p.category} · SKU-{p.id}</span>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid #F0F0F0', paddingTop: '12px' }}>
+                        <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid var(--bf-border)', paddingTop: '12px' }}>
                           <button
                             type="button"
                             onClick={() => handleOpenEditProduct(p)}
                             style={{
                               flex: 1,
                               padding: '7px',
-                              backgroundColor: '#F6F6F6',
-                              border: '1px solid #E7E7E7',
+                              backgroundColor: 'var(--bf-surface)',
+                              border: '1px solid var(--bf-border)',
                               borderRadius: '4px',
                               fontSize: '0.75rem',
                               fontWeight: '600',
-                              color: '#171717',
+                              color: 'var(--bf-text)',
                               cursor: 'pointer'
                             }}
                           >
@@ -2121,7 +2122,7 @@ export const AdminPanel = ({ setActivePage }) => {
                             onClick={() => setDeleteConfirmProduct(p)}
                             style={{
                               padding: '7px 10px',
-                              backgroundColor: '#FEF2F2',
+                              backgroundColor: 'var(--bf-surface)',
                               border: '1px solid #FECACA',
                               borderRadius: '4px',
                               fontSize: '0.75rem',
@@ -2147,45 +2148,45 @@ export const AdminPanel = ({ setActivePage }) => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
               {/* Tarjetas Superiores de Bodega */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-                <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '18px 20px' }}>
-                  <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: '#737373', display: 'block', marginBottom: '6px' }}>
+                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '18px 20px' }}>
+                  <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--bf-muted)', display: 'block', marginBottom: '6px' }}>
                     Total Unidades en Bodega
                   </span>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: '#171717' }}>
+                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)' }}>
                     {totalStockUnits}
                   </div>
-                  <span style={{ fontSize: '0.72rem', color: '#737373' }}>En {products.length} referencias</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>En {products.length} referencias</span>
                 </div>
 
-                <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '18px 20px' }}>
-                  <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: '#737373', display: 'block', marginBottom: '6px' }}>
+                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '18px 20px' }}>
+                  <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--bf-muted)', display: 'block', marginBottom: '6px' }}>
                     Referencias Críticas (≤ 5)
                   </span>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: lowStockProducts.length > 0 ? '#B45309' : '#171717' }}>
+                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: lowStockProducts.length > 0 ? '#B45309' : 'var(--bf-text)' }}>
                     {lowStockProducts.length}
                   </div>
-                  <span style={{ fontSize: '0.72rem', color: '#737373' }}>Requieren reabastecimiento pronto</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Requieren reabastecimiento pronto</span>
                 </div>
 
-                <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '18px 20px' }}>
-                  <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: '#737373', display: 'block', marginBottom: '6px' }}>
+                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '18px 20px' }}>
+                  <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--bf-muted)', display: 'block', marginBottom: '6px' }}>
                     Referencias Agotadas (0)
                   </span>
                   <div style={{ fontSize: '1.65rem', fontWeight: '800', color: outOfStockProducts.length > 0 ? '#DC2626' : '#15803D' }}>
                     {outOfStockProducts.length}
                   </div>
-                  <span style={{ fontSize: '0.72rem', color: '#737373' }}>Sin existencias para venta</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Sin existencias para venta</span>
                 </div>
               </div>
 
               {/* Herramienta de Reabastecimiento Rápido */}
-              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '24px' }}>
+              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
                   <div>
                     <h4 style={{ margin: 0, fontSize: '0.98rem', fontWeight: '800' }}>
                       Reabastecimiento de Existencias por Prenda
                     </h4>
-                    <span style={{ fontSize: '0.72rem', color: '#737373' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
                       Incrementa las existencias físicas cuando llegue un despacho de confección
                     </span>
                   </div>
@@ -2197,12 +2198,12 @@ export const AdminPanel = ({ setActivePage }) => {
                       alignItems: 'center',
                       gap: '6px',
                       padding: '6px 12px',
-                      backgroundColor: '#F6F6F6',
-                      border: '1px solid #E7E7E7',
+                      backgroundColor: 'var(--bf-surface)',
+                      border: '1px solid var(--bf-border)',
                       borderRadius: '4px',
                       fontSize: '0.75rem',
                       fontWeight: '600',
-                      color: '#171717',
+                      color: 'var(--bf-text)',
                       cursor: 'pointer'
                     }}
                   >
@@ -2218,21 +2219,21 @@ export const AdminPanel = ({ setActivePage }) => {
                       <div
                         key={p.id}
                         style={{
-                          backgroundColor: '#FAFAFA',
-                          border: '1px solid #E7E7E7',
+                          backgroundColor: 'var(--bf-secondary)',
+                          border: '1px solid var(--bf-border)',
                           borderRadius: '6px',
                           padding: '16px'
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                          <img
+                          <ProductImage
                             src={p.image}
                             alt={p.name}
-                            style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7' }}
+                            style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)' }}
                           />
                           <div style={{ flex: 1 }}>
-                            <strong style={{ fontSize: '0.84rem', color: '#171717', display: 'block' }}>{p.name}</strong>
-                            <span style={{ fontSize: '0.72rem', color: '#737373' }}>Stock actual: <strong>{p.stock} uds</strong></span>
+                            <strong style={{ fontSize: '0.84rem', color: 'var(--bf-text)', display: 'block' }}>{p.name}</strong>
+                            <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Stock actual: <strong>{p.stock} uds</strong></span>
                           </div>
                           {renderStockBadge(p.stock)}
                         </div>
@@ -2247,12 +2248,12 @@ export const AdminPanel = ({ setActivePage }) => {
                               style={{
                                 flex: 1,
                                 padding: '5px',
-                                backgroundColor: '#FFFFFF',
-                                border: '1px solid #E7E7E7',
+                                backgroundColor: 'var(--bf-secondary)',
+                                border: '1px solid var(--bf-border)',
                                 borderRadius: '4px',
                                 fontSize: '0.72rem',
                                 fontWeight: '600',
-                                color: '#171717',
+                                color: 'var(--bf-text)',
                                 cursor: 'pointer'
                               }}
                             >
@@ -2272,8 +2273,8 @@ export const AdminPanel = ({ setActivePage }) => {
                             style={{
                               width: '70px',
                               padding: '5px 8px',
-                              backgroundColor: '#FFFFFF',
-                              border: '1px solid #E7E7E7',
+                              backgroundColor: 'var(--bf-secondary)',
+                              border: '1px solid var(--bf-border)',
                               borderRadius: '4px',
                               fontSize: '0.78rem',
                               outline: 'none',
@@ -2286,8 +2287,8 @@ export const AdminPanel = ({ setActivePage }) => {
                             style={{
                               flex: 1,
                               padding: '6px 12px',
-                              backgroundColor: '#0A0A0A',
-                              color: '#FFFFFF',
+                              backgroundColor: 'var(--bf-secondary)',
+                              color: 'var(--bf-text)',
                               border: 'none',
                               borderRadius: '4px',
                               fontSize: '0.74rem',
@@ -2314,8 +2315,8 @@ export const AdminPanel = ({ setActivePage }) => {
               {/* Barra de Filtros y Búsqueda */}
               <div
                 style={{
-                  backgroundColor: '#FFFFFF',
-                  border: '1px solid #E7E7E7',
+                  backgroundColor: 'var(--bf-secondary)',
+                  border: '1px solid var(--bf-border)',
                   borderRadius: '8px',
                   padding: '16px 20px',
                   display: 'flex',
@@ -2327,7 +2328,7 @@ export const AdminPanel = ({ setActivePage }) => {
               >
                 {/* Búsqueda */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: '260px' }}>
-                  <Search size={16} color="#737373" />
+                  <Search size={16} color="var(--bf-muted)" />
                   <input
                     type="text"
                     placeholder="Buscar por ID, cliente, correo o ciudad..."
@@ -2337,7 +2338,7 @@ export const AdminPanel = ({ setActivePage }) => {
                       width: '100%',
                       border: 'none',
                       backgroundColor: 'transparent',
-                      color: '#171717',
+                      color: 'var(--bf-text)',
                       fontSize: '0.86rem',
                       outline: 'none'
                     }}
@@ -2358,8 +2359,8 @@ export const AdminPanel = ({ setActivePage }) => {
                         padding: '5px 11px',
                         borderRadius: '4px',
                         border: 'none',
-                        backgroundColor: orderStatusFilter === st ? '#0A0A0A' : '#F6F6F6',
-                        color: orderStatusFilter === st ? '#FFFFFF' : '#737373',
+                        backgroundColor: orderStatusFilter === st ? 'var(--bf-bg)' : 'var(--bf-surface)',
+                        color: orderStatusFilter === st ? 'var(--bf-text)' : 'var(--bf-muted)',
                         fontSize: '0.74rem',
                         fontWeight: '600',
                         cursor: 'pointer'
@@ -2379,12 +2380,12 @@ export const AdminPanel = ({ setActivePage }) => {
                     alignItems: 'center',
                     gap: '6px',
                     padding: '6px 12px',
-                    backgroundColor: '#F6F6F6',
-                    border: '1px solid #E7E7E7',
+                    backgroundColor: 'var(--bf-surface)',
+                    border: '1px solid var(--bf-border)',
                     borderRadius: '4px',
                     fontSize: '0.75rem',
                     fontWeight: '600',
-                    color: '#171717',
+                    color: 'var(--bf-text)',
                     cursor: 'pointer'
                   }}
                 >
@@ -2394,17 +2395,17 @@ export const AdminPanel = ({ setActivePage }) => {
               </div>
 
               {/* Tabla de Pedidos */}
-              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', overflow: 'hidden' }}>
+              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', overflow: 'hidden' }}>
                 {paginatedOrders.length === 0 ? (
                   <div style={{ padding: '60px 20px', textAlign: 'center' }}>
-                    <ClipboardList size={32} color="#A3A3A3" style={{ margin: '0 auto 10px' }} />
-                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#171717' }}>No se encontraron órdenes</h4>
-                    <p style={{ margin: 0, fontSize: '0.8rem', color: '#737373' }}>Intenta ajustar el término de búsqueda o el filtro de estado.</p>
+                    <ClipboardList size={32} color="var(--bf-muted)" style={{ margin: '0 auto 10px' }} />
+                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: 'var(--bf-text)' }}>No se encontraron órdenes</h4>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--bf-muted)' }}>Intenta ajustar el término de búsqueda o el filtro de estado.</p>
                   </div>
                 ) : (
                   <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
                     <thead>
-                      <tr style={{ borderBottom: '1px solid #E7E7E7', backgroundColor: '#FAFAFA', color: '#737373', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <tr style={{ borderBottom: '1px solid var(--bf-border)', backgroundColor: 'var(--bf-secondary)', color: 'var(--bf-muted)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                         <th style={{ padding: '12px 16px' }}>ID Pedido</th>
                         <th style={{ padding: '12px 16px' }}>Fecha</th>
                         <th style={{ padding: '12px 16px' }}>Cliente</th>
@@ -2416,26 +2417,26 @@ export const AdminPanel = ({ setActivePage }) => {
                     </thead>
                     <tbody>
                       {paginatedOrders.map(ord => (
-                        <tr key={ord.orderId} style={{ borderBottom: '1px solid #F6F6F6' }}>
-                          <td style={{ padding: '14px 16px', fontWeight: '700', color: '#171717' }}>
+                        <tr key={ord.orderId} style={{ borderBottom: '1px solid var(--bf-border)' }}>
+                          <td style={{ padding: '14px 16px', fontWeight: '700', color: 'var(--bf-text)' }}>
                             {ord.orderId}
                           </td>
-                          <td style={{ padding: '14px 16px', color: '#737373' }}>
+                          <td style={{ padding: '14px 16px', color: 'var(--bf-muted)' }}>
                             {ord.date}
                           </td>
                           <td style={{ padding: '14px 16px' }}>
-                            <div style={{ fontWeight: '600', color: '#171717' }}>{ord.customer?.name}</div>
-                            <div style={{ fontSize: '0.7rem', color: '#737373' }}>{ord.customer?.email}</div>
+                            <div style={{ fontWeight: '600', color: 'var(--bf-text)' }}>{ord.customer?.name}</div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--bf-muted)' }}>{ord.customer?.email}</div>
                           </td>
                           <td style={{ padding: '14px 16px' }}>
-                            <span style={{ fontSize: '0.76rem', color: '#171717', fontWeight: '500', display: 'block' }}>
+                            <span style={{ fontSize: '0.76rem', color: 'var(--bf-text)', fontWeight: '500', display: 'block' }}>
                               {ord.payment?.method === 'card' ? 'Tarjeta' : (ord.payment?.method === 'transfer' ? 'Transferencia' : 'Efectivo')}
                             </span>
-                            <span style={{ fontSize: '0.68rem', color: '#737373' }}>
+                            <span style={{ fontSize: '0.68rem', color: 'var(--bf-muted)' }}>
                               {ord.payment?.status}
                             </span>
                           </td>
-                          <td style={{ padding: '14px 16px', fontWeight: '800', color: '#171717' }}>
+                          <td style={{ padding: '14px 16px', fontWeight: '800', color: 'var(--bf-text)' }}>
                             {formatMoney(ord.total)}
                           </td>
                           <td style={{ padding: '14px 16px' }}>
@@ -2448,9 +2449,9 @@ export const AdminPanel = ({ setActivePage }) => {
                                 borderRadius: '4px',
                                 fontSize: '0.74rem',
                                 fontWeight: '600',
-                                backgroundColor: '#F6F6F6',
-                                border: '1px solid #E7E7E7',
-                                color: '#171717',
+                                backgroundColor: 'var(--bf-surface)',
+                                border: '1px solid var(--bf-border)',
+                                color: 'var(--bf-text)',
                                 cursor: 'pointer',
                                 outline: 'none'
                               }}
@@ -2470,12 +2471,12 @@ export const AdminPanel = ({ setActivePage }) => {
                                 alignItems: 'center',
                                 gap: '4px',
                                 padding: '5px 10px',
-                                backgroundColor: '#F6F6F6',
-                                border: '1px solid #E7E7E7',
+                                backgroundColor: 'var(--bf-surface)',
+                                border: '1px solid var(--bf-border)',
                                 borderRadius: '4px',
                                 fontSize: '0.74rem',
                                 fontWeight: '600',
-                                color: '#171717',
+                                color: 'var(--bf-text)',
                                 cursor: 'pointer'
                               }}
                             >
@@ -2494,12 +2495,12 @@ export const AdminPanel = ({ setActivePage }) => {
                   <div
                     style={{
                       padding: '12px 16px',
-                      borderTop: '1px solid #E7E7E7',
+                      borderTop: '1px solid var(--bf-border)',
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       fontSize: '0.78rem',
-                      color: '#737373'
+                      color: 'var(--bf-muted)'
                     }}
                   >
                     <span>
@@ -2512,8 +2513,8 @@ export const AdminPanel = ({ setActivePage }) => {
                         onClick={() => setOrdersPage(p => Math.max(1, p - 1))}
                         style={{
                           padding: '4px 10px',
-                          backgroundColor: '#F6F6F6',
-                          border: '1px solid #E7E7E7',
+                          backgroundColor: 'var(--bf-surface)',
+                          border: '1px solid var(--bf-border)',
                           borderRadius: '4px',
                           cursor: ordersPage === 1 ? 'not-allowed' : 'pointer'
                         }}
@@ -2526,8 +2527,8 @@ export const AdminPanel = ({ setActivePage }) => {
                         onClick={() => setOrdersPage(p => Math.min(totalOrderPages, p + 1))}
                         style={{
                           padding: '4px 10px',
-                          backgroundColor: '#F6F6F6',
-                          border: '1px solid #E7E7E7',
+                          backgroundColor: 'var(--bf-surface)',
+                          border: '1px solid var(--bf-border)',
                           borderRadius: '4px',
                           cursor: ordersPage === totalOrderPages ? 'not-allowed' : 'pointer'
                         }}
@@ -2548,8 +2549,8 @@ export const AdminPanel = ({ setActivePage }) => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div
                 style={{
-                  backgroundColor: '#FFFFFF',
-                  border: '1px solid #E7E7E7',
+                  backgroundColor: 'var(--bf-secondary)',
+                  border: '1px solid var(--bf-border)',
                   borderRadius: '8px',
                   padding: '16px 20px',
                   display: 'flex',
@@ -2560,7 +2561,7 @@ export const AdminPanel = ({ setActivePage }) => {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: '260px' }}>
-                  <Search size={16} color="#737373" />
+                  <Search size={16} color="var(--bf-muted)" />
                   <input
                     type="text"
                     placeholder="Buscar cliente por nombre, email o ciudad..."
@@ -2570,22 +2571,22 @@ export const AdminPanel = ({ setActivePage }) => {
                       width: '100%',
                       border: 'none',
                       backgroundColor: 'transparent',
-                      color: '#171717',
+                      color: 'var(--bf-text)',
                       fontSize: '0.86rem',
                       outline: 'none'
                     }}
                   />
                 </div>
 
-                <span style={{ fontSize: '0.78rem', color: '#737373' }}>
+                <span style={{ fontSize: '0.78rem', color: 'var(--bf-muted)' }}>
                   {filteredCustomers.length} clientes encontrados
                 </span>
               </div>
 
-              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', overflow: 'hidden' }}>
+              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
                   <thead>
-                    <tr style={{ borderBottom: '1px solid #E7E7E7', backgroundColor: '#FAFAFA', color: '#737373', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    <tr style={{ borderBottom: '1px solid var(--bf-border)', backgroundColor: 'var(--bf-secondary)', color: 'var(--bf-muted)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       <th style={{ padding: '12px 16px' }}>Cliente</th>
                       <th style={{ padding: '12px 16px' }}>Contacto</th>
                       <th style={{ padding: '12px 16px' }}>Ciudad / Ubicación</th>
@@ -2596,7 +2597,7 @@ export const AdminPanel = ({ setActivePage }) => {
                   </thead>
                   <tbody>
                     {filteredCustomers.map((c, idx) => (
-                      <tr key={idx} style={{ borderBottom: '1px solid #F6F6F6' }}>
+                      <tr key={idx} style={{ borderBottom: '1px solid var(--bf-border)' }}>
                         <td style={{ padding: '14px 16px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <div
@@ -2604,8 +2605,8 @@ export const AdminPanel = ({ setActivePage }) => {
                                 width: '32px',
                                 height: '32px',
                                 borderRadius: '50%',
-                                backgroundColor: '#F0F0F0',
-                                color: '#171717',
+                                backgroundColor: 'var(--bf-surface)',
+                                color: 'var(--bf-text)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
@@ -2615,17 +2616,17 @@ export const AdminPanel = ({ setActivePage }) => {
                             >
                               {c.name ? c.name.charAt(0).toUpperCase() : 'C'}
                             </div>
-                            <strong style={{ color: '#171717' }}>{c.name}</strong>
+                            <strong style={{ color: 'var(--bf-text)' }}>{c.name}</strong>
                           </div>
                         </td>
-                        <td style={{ padding: '14px 16px', color: '#737373' }}>
+                        <td style={{ padding: '14px 16px', color: 'var(--bf-muted)' }}>
                           <div>{c.email}</div>
                           {c.phone && <div style={{ fontSize: '0.7rem' }}>{c.phone}</div>}
                         </td>
-                        <td style={{ padding: '14px 16px', color: '#171717' }}>{c.city || 'Medellín'}</td>
+                        <td style={{ padding: '14px 16px', color: 'var(--bf-text)' }}>{c.city || 'Medellín'}</td>
                         <td style={{ padding: '14px 16px', fontWeight: '600' }}>{c.orderCount} pedido(s)</td>
-                        <td style={{ padding: '14px 16px', fontWeight: '800', color: '#171717' }}>{formatMoney(c.totalSpent)}</td>
-                        <td style={{ padding: '14px 16px', color: '#737373' }}>{c.lastOrderDate}</td>
+                        <td style={{ padding: '14px 16px', fontWeight: '800', color: 'var(--bf-text)' }}>{formatMoney(c.totalSpent)}</td>
+                        <td style={{ padding: '14px 16px', color: 'var(--bf-muted)' }}>{c.lastOrderDate}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -2640,33 +2641,33 @@ export const AdminPanel = ({ setActivePage }) => {
           {activeTab === 'sales' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
-                <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '20px' }}>
-                  <span style={{ fontSize: '0.72rem', color: '#737373', textTransform: 'uppercase', fontWeight: '700', display: 'block', marginBottom: '6px' }}>
+                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '20px' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', textTransform: 'uppercase', fontWeight: '700', display: 'block', marginBottom: '6px' }}>
                     Ventas Brutas Totales
                   </span>
-                  <div style={{ fontSize: '1.6rem', fontWeight: '800', color: '#171717' }}>{formatMoney(totalGrossRevenue)}</div>
-                  <span style={{ fontSize: '0.72rem', color: '#737373' }}>Incluye todas las órdenes registradas</span>
+                  <div style={{ fontSize: '1.6rem', fontWeight: '800', color: 'var(--bf-text)' }}>{formatMoney(totalGrossRevenue)}</div>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Incluye todas las órdenes registradas</span>
                 </div>
 
-                <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '20px' }}>
-                  <span style={{ fontSize: '0.72rem', color: '#737373', textTransform: 'uppercase', fontWeight: '700', display: 'block', marginBottom: '6px' }}>
+                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '20px' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', textTransform: 'uppercase', fontWeight: '700', display: 'block', marginBottom: '6px' }}>
                     Ventas Netas Confirmadas
                   </span>
                   <div style={{ fontSize: '1.6rem', fontWeight: '800', color: '#15803D' }}>{formatMoney(totalNetRevenue)}</div>
-                  <span style={{ fontSize: '0.72rem', color: '#737373' }}>Órdenes vigentes en preparación y entregadas</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Órdenes vigentes en preparación y entregadas</span>
                 </div>
 
-                <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '20px' }}>
-                  <span style={{ fontSize: '0.72rem', color: '#737373', textTransform: 'uppercase', fontWeight: '700', display: 'block', marginBottom: '6px' }}>
+                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '20px' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', textTransform: 'uppercase', fontWeight: '700', display: 'block', marginBottom: '6px' }}>
                     Volumen Cancelado
                   </span>
                   <div style={{ fontSize: '1.6rem', fontWeight: '800', color: '#DC2626' }}>{formatMoney(cancelledRevenue)}</div>
-                  <span style={{ fontSize: '0.72rem', color: '#737373' }}>{cancelledOrders.length} pedido(s) dados de baja</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>{cancelledOrders.length} pedido(s) dados de baja</span>
                 </div>
               </div>
 
               {/* Métodos de Pago */}
-              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '24px' }}>
+              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
                 <h4 style={{ margin: '0 0 16px 0', fontSize: '0.98rem', fontWeight: '800' }}>Distribución por Medio de Pago</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
                   {[
@@ -2678,14 +2679,14 @@ export const AdminPanel = ({ setActivePage }) => {
                     const sum = matchOrders.reduce((acc, o) => acc + (o.total || 0), 0);
                     const pct = totalNetRevenue > 0 ? Math.round((sum / totalNetRevenue) * 100) : 0;
                     return (
-                      <div key={m.key} style={{ padding: '16px', backgroundColor: '#FAFAFA', borderRadius: '6px', border: '1px solid #E7E7E7' }}>
-                        <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#171717', display: 'block', marginBottom: '4px' }}>
+                      <div key={m.key} style={{ padding: '16px', backgroundColor: 'var(--bf-secondary)', borderRadius: '6px', border: '1px solid var(--bf-border)' }}>
+                        <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--bf-text)', display: 'block', marginBottom: '4px' }}>
                           {m.method}
                         </span>
-                        <div style={{ fontSize: '1.35rem', fontWeight: '800', color: '#171717', marginBottom: '4px' }}>
+                        <div style={{ fontSize: '1.35rem', fontWeight: '800', color: 'var(--bf-text)', marginBottom: '4px' }}>
                           {formatMoney(sum)}
                         </div>
-                        <span style={{ fontSize: '0.72rem', color: '#737373' }}>
+                        <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
                           {matchOrders.length} transacción(es) · {pct}% del total
                         </span>
                       </div>
@@ -2701,9 +2702,9 @@ export const AdminPanel = ({ setActivePage }) => {
               ============================================================== */}
           {activeTab === 'reports' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
-              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '24px' }}>
+              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
                 <h4 style={{ margin: '0 0 6px 0', fontSize: '1.05rem', fontWeight: '800' }}>Centro de Informes y Exportación</h4>
-                <p style={{ margin: '0 0 20px 0', fontSize: '0.82rem', color: '#737373' }}>
+                <p style={{ margin: '0 0 20px 0', fontSize: '0.82rem', color: 'var(--bf-muted)' }}>
                   Descarga en formato CSV plano los registros operativos de ventas e inventario para auditoría contable.
                 </p>
 
@@ -2716,8 +2717,8 @@ export const AdminPanel = ({ setActivePage }) => {
                       alignItems: 'center',
                       gap: '8px',
                       padding: '10px 18px',
-                      backgroundColor: '#0A0A0A',
-                      color: '#FFFFFF',
+                      backgroundColor: 'var(--bf-secondary)',
+                      color: 'var(--bf-text)',
                       borderRadius: '6px',
                       border: 'none',
                       fontSize: '0.82rem',
@@ -2737,10 +2738,10 @@ export const AdminPanel = ({ setActivePage }) => {
                       alignItems: 'center',
                       gap: '8px',
                       padding: '10px 18px',
-                      backgroundColor: '#FFFFFF',
-                      color: '#171717',
+                      backgroundColor: 'var(--bf-secondary)',
+                      color: 'var(--bf-text)',
                       borderRadius: '6px',
-                      border: '1px solid #E7E7E7',
+                      border: '1px solid var(--bf-border)',
                       fontSize: '0.82rem',
                       fontWeight: '600',
                       cursor: 'pointer'
@@ -2753,11 +2754,11 @@ export const AdminPanel = ({ setActivePage }) => {
               </div>
 
               {/* Tabla de Rendimiento por Categoría */}
-              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '24px' }}>
+              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
                 <h4 style={{ margin: '0 0 16px 0', fontSize: '0.98rem', fontWeight: '800' }}>Rendimiento Comercial por Categoría</h4>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
                   <thead>
-                    <tr style={{ borderBottom: '1px solid #E7E7E7', color: '#737373', fontSize: '0.72rem', textTransform: 'uppercase' }}>
+                    <tr style={{ borderBottom: '1px solid var(--bf-border)', color: 'var(--bf-muted)', fontSize: '0.72rem', textTransform: 'uppercase' }}>
                       <th style={{ padding: '10px 14px' }}>Categoría</th>
                       <th style={{ padding: '10px 14px' }}>Prendas Activas</th>
                       <th style={{ padding: '10px 14px' }}>Existencias Físicas</th>
@@ -2770,11 +2771,11 @@ export const AdminPanel = ({ setActivePage }) => {
                       const stockSum = prods.reduce((acc, p) => acc + (p.stock || 0), 0);
                       const revenue = categorySales[cat] || 0;
                       return (
-                        <tr key={cat} style={{ borderBottom: '1px solid #F6F6F6' }}>
+                        <tr key={cat} style={{ borderBottom: '1px solid var(--bf-border)' }}>
                           <td style={{ padding: '12px 14px', fontWeight: '700' }}>{cat}</td>
-                          <td style={{ padding: '12px 14px', color: '#737373' }}>{prods.length} modelo(s)</td>
+                          <td style={{ padding: '12px 14px', color: 'var(--bf-muted)' }}>{prods.length} modelo(s)</td>
                           <td style={{ padding: '12px 14px' }}>{stockSum} uds</td>
-                          <td style={{ padding: '12px 14px', fontWeight: '700', color: '#171717' }}>{formatMoney(revenue)}</td>
+                          <td style={{ padding: '12px 14px', fontWeight: '700', color: 'var(--bf-text)' }}>{formatMoney(revenue)}</td>
                         </tr>
                       );
                     })}
@@ -2789,71 +2790,71 @@ export const AdminPanel = ({ setActivePage }) => {
               ============================================================== */}
           {activeTab === 'settings' && (
             <div style={{ maxWidth: '680px', display: 'flex', flexDirection: 'column', gap: '22px' }}>
-              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7E7E7', borderRadius: '8px', padding: '28px' }}>
+              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '28px' }}>
                 <h4 style={{ margin: '0 0 6px 0', fontSize: '1.05rem', fontWeight: '800' }}>Información Corporativa de Sauz Store</h4>
-                <p style={{ margin: '0 0 20px 0', fontSize: '0.8rem', color: '#737373' }}>
+                <p style={{ margin: '0 0 20px 0', fontSize: '0.8rem', color: 'var(--bf-muted)' }}>
                   Parámetros del sistema de facturación y despacho para Colombia.
                 </p>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                       Nombre de la Marca
                     </label>
                     <input
                       type="text"
                       readOnly
                       value="Sauz Store Colombia"
-                      style={{ width: '100%', padding: '9px 12px', backgroundColor: '#FAFAFA', border: '1px solid #E7E7E7', borderRadius: '6px', fontSize: '0.86rem', color: '#171717', boxSizing: 'border-box' }}
+                      style={{ width: '100%', padding: '9px 12px', backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '6px', fontSize: '0.86rem', color: 'var(--bf-text)', boxSizing: 'border-box' }}
                     />
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                     <div>
-                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                         Moneda Operativa
                       </label>
                       <input
                         type="text"
                         readOnly
                         value="COP ($ Peso Colombiano)"
-                        style={{ width: '100%', padding: '9px 12px', backgroundColor: '#FAFAFA', border: '1px solid #E7E7E7', borderRadius: '6px', fontSize: '0.86rem', color: '#171717', boxSizing: 'border-box' }}
+                        style={{ width: '100%', padding: '9px 12px', backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '6px', fontSize: '0.86rem', color: 'var(--bf-text)', boxSizing: 'border-box' }}
                       />
                     </div>
                     <div>
-                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                         Tasa de IVA Aplicable
                       </label>
                       <input
                         type="text"
                         readOnly
                         value="16% (Incluido en Total)"
-                        style={{ width: '100%', padding: '9px 12px', backgroundColor: '#FAFAFA', border: '1px solid #E7E7E7', borderRadius: '6px', fontSize: '0.86rem', color: '#171717', boxSizing: 'border-box' }}
+                        style={{ width: '100%', padding: '9px 12px', backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '6px', fontSize: '0.86rem', color: 'var(--bf-text)', boxSizing: 'border-box' }}
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                       Bodega y Centro Logístico
                     </label>
                     <input
                       type="text"
                       readOnly
                       value="Calle 10 # 40-20, El Poblado, Medellín, Colombia"
-                      style={{ width: '100%', padding: '9px 12px', backgroundColor: '#FAFAFA', border: '1px solid #E7E7E7', borderRadius: '6px', fontSize: '0.86rem', color: '#171717', boxSizing: 'border-box' }}
+                      style={{ width: '100%', padding: '9px 12px', backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '6px', fontSize: '0.86rem', color: 'var(--bf-text)', boxSizing: 'border-box' }}
                     />
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                       Tiempo Promedio de Entrega
                     </label>
                     <input
                       type="text"
                       readOnly
                       value="2 a 4 días hábiles nacionales"
-                      style={{ width: '100%', padding: '9px 12px', backgroundColor: '#FAFAFA', border: '1px solid #E7E7E7', borderRadius: '6px', fontSize: '0.86rem', color: '#171717', boxSizing: 'border-box' }}
+                      style={{ width: '100%', padding: '9px 12px', backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '6px', fontSize: '0.86rem', color: 'var(--bf-text)', boxSizing: 'border-box' }}
                     />
                   </div>
 
@@ -2863,8 +2864,8 @@ export const AdminPanel = ({ setActivePage }) => {
                       onClick={() => showToast('Parámetros corporativos validados correctamente')}
                       style={{
                         padding: '9px 18px',
-                        backgroundColor: '#0A0A0A',
-                        color: '#FFFFFF',
+                        backgroundColor: 'var(--bf-secondary)',
+                        color: 'var(--bf-text)',
                         border: 'none',
                         borderRadius: '6px',
                         fontSize: '0.82rem',
@@ -2905,21 +2906,21 @@ export const AdminPanel = ({ setActivePage }) => {
             style={{
               width: '100%',
               maxWidth: '500px',
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E7E7E7',
+              backgroundColor: 'var(--bf-secondary)',
+              border: '1px solid var(--bf-border)',
               borderRadius: '8px',
               padding: '28px',
               boxShadow: '0 20px 45px rgba(0,0,0,0.12)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: '800', color: '#171717' }}>
+              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: '800', color: 'var(--bf-text)' }}>
                 {editingProduct ? 'Editar Prenda' : 'Nueva Prenda de Colección'}
               </h3>
               <button
                 type="button"
                 onClick={() => setIsCreateProductModalOpen(false)}
-                style={{ background: 'none', border: 'none', color: '#737373', cursor: 'pointer', padding: '4px' }}
+                style={{ background: 'none', border: 'none', color: 'var(--bf-muted)', cursor: 'pointer', padding: '4px' }}
               >
                 <X size={18} />
               </button>
@@ -2927,7 +2928,7 @@ export const AdminPanel = ({ setActivePage }) => {
 
             <form onSubmit={handleSaveProductSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                   Nombre de la prenda *
                 </label>
                 <input
@@ -2939,7 +2940,7 @@ export const AdminPanel = ({ setActivePage }) => {
                   style={{
                     width: '100%',
                     padding: '9px 12px',
-                    border: '1px solid #E7E7E7',
+                    border: '1px solid var(--bf-border)',
                     borderRadius: '6px',
                     fontSize: '0.86rem',
                     outline: 'none',
@@ -2950,7 +2951,7 @@ export const AdminPanel = ({ setActivePage }) => {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                     Categoría *
                   </label>
                   <select
@@ -2959,12 +2960,12 @@ export const AdminPanel = ({ setActivePage }) => {
                     style={{
                       width: '100%',
                       padding: '9px 12px',
-                      border: '1px solid #E7E7E7',
+                      border: '1px solid var(--bf-border)',
                       borderRadius: '6px',
                       fontSize: '0.86rem',
                       outline: 'none',
                       boxSizing: 'border-box',
-                      backgroundColor: '#FFFFFF'
+                      backgroundColor: 'var(--bf-secondary)'
                     }}
                   >
                     <option value="Camisetas">Camisetas</option>
@@ -2976,7 +2977,7 @@ export const AdminPanel = ({ setActivePage }) => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                     Precio (COP) *
                   </label>
                   <input
@@ -2990,7 +2991,7 @@ export const AdminPanel = ({ setActivePage }) => {
                     style={{
                       width: '100%',
                       padding: '9px 12px',
-                      border: '1px solid #E7E7E7',
+                      border: '1px solid var(--bf-border)',
                       borderRadius: '6px',
                       fontSize: '0.86rem',
                       outline: 'none',
@@ -3002,7 +3003,7 @@ export const AdminPanel = ({ setActivePage }) => {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                     Stock Inicial *
                   </label>
                   <input
@@ -3014,7 +3015,7 @@ export const AdminPanel = ({ setActivePage }) => {
                     style={{
                       width: '100%',
                       padding: '9px 12px',
-                      border: '1px solid #E7E7E7',
+                      border: '1px solid var(--bf-border)',
                       borderRadius: '6px',
                       fontSize: '0.86rem',
                       outline: 'none',
@@ -3024,7 +3025,7 @@ export const AdminPanel = ({ setActivePage }) => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                     Imagen *
                   </label>
                   <select
@@ -3033,12 +3034,12 @@ export const AdminPanel = ({ setActivePage }) => {
                     style={{
                       width: '100%',
                       padding: '9px 12px',
-                      border: '1px solid #E7E7E7',
+                      border: '1px solid var(--bf-border)',
                       borderRadius: '6px',
                       fontSize: '0.86rem',
                       outline: 'none',
                       boxSizing: 'border-box',
-                      backgroundColor: '#FFFFFF'
+                      backgroundColor: 'var(--bf-secondary)'
                     }}
                   >
                     <option value="/Productos/jordan_Blanca.png">Camisa Jordan Blanca</option>
@@ -3058,7 +3059,7 @@ export const AdminPanel = ({ setActivePage }) => {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: '#171717', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                   Descripción Editorial de la Prenda
                 </label>
                 <textarea
@@ -3069,7 +3070,7 @@ export const AdminPanel = ({ setActivePage }) => {
                   style={{
                     width: '100%',
                     padding: '9px 12px',
-                    border: '1px solid #E7E7E7',
+                    border: '1px solid var(--bf-border)',
                     borderRadius: '6px',
                     fontSize: '0.86rem',
                     outline: 'none',
@@ -3085,12 +3086,12 @@ export const AdminPanel = ({ setActivePage }) => {
                   onClick={() => setIsCreateProductModalOpen(false)}
                   style={{
                     padding: '9px 16px',
-                    backgroundColor: '#F6F6F6',
-                    border: '1px solid #E7E7E7',
+                    backgroundColor: 'var(--bf-surface)',
+                    border: '1px solid var(--bf-border)',
                     borderRadius: '6px',
                     fontSize: '0.8rem',
                     fontWeight: '600',
-                    color: '#171717',
+                    color: 'var(--bf-text)',
                     cursor: 'pointer'
                   }}
                 >
@@ -3100,8 +3101,8 @@ export const AdminPanel = ({ setActivePage }) => {
                   type="submit"
                   style={{
                     padding: '9px 20px',
-                    backgroundColor: '#0A0A0A',
-                    color: '#FFFFFF',
+                    backgroundColor: 'var(--bf-secondary)',
+                    color: 'var(--bf-text)',
                     border: 'none',
                     borderRadius: '6px',
                     fontSize: '0.8rem',
@@ -3140,8 +3141,8 @@ export const AdminPanel = ({ setActivePage }) => {
             style={{
               width: '100%',
               maxWidth: '600px',
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E7E7E7',
+              backgroundColor: 'var(--bf-secondary)',
+              border: '1px solid var(--bf-border)',
               borderRadius: '8px',
               padding: '28px',
               boxShadow: '0 20px 45px rgba(0,0,0,0.12)',
@@ -3149,43 +3150,43 @@ export const AdminPanel = ({ setActivePage }) => {
               overflowY: 'auto'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px', borderBottom: '1px solid #E7E7E7', paddingBottom: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px', borderBottom: '1px solid var(--bf-border)', paddingBottom: '16px' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: '800', color: '#171717' }}>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: '800', color: 'var(--bf-text)' }}>
                     {selectedOrderDetails.orderId}
                   </h3>
                   {renderOrderStatusBadge(selectedOrderDetails.orderStatus)}
                 </div>
-                <span style={{ fontSize: '0.75rem', color: '#737373', display: 'block', marginTop: '4px' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--bf-muted)', display: 'block', marginTop: '4px' }}>
                   Fecha de compra: {selectedOrderDetails.date}
                 </span>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedOrderDetails(null)}
-                style={{ background: 'none', border: 'none', color: '#737373', cursor: 'pointer', padding: '4px' }}
+                style={{ background: 'none', border: 'none', color: 'var(--bf-muted)', cursor: 'pointer', padding: '4px' }}
               >
                 <X size={18} />
               </button>
             </div>
 
             {/* Datos del Cliente y Despacho */}
-            <div style={{ backgroundColor: '#FAFAFA', border: '1px solid #E7E7E7', borderRadius: '6px', padding: '16px', marginBottom: '20px' }}>
-              <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: '#737373', display: 'block', marginBottom: '8px' }}>
+            <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '6px', padding: '16px', marginBottom: '20px' }}>
+              <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--bf-muted)', display: 'block', marginBottom: '8px' }}>
                 Información de Entrega
               </span>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', fontSize: '0.82rem' }}>
                 <div>
-                  <span style={{ color: '#737373', display: 'block', fontSize: '0.7rem' }}>Comprador:</span>
+                  <span style={{ color: 'var(--bf-muted)', display: 'block', fontSize: '0.7rem' }}>Comprador:</span>
                   <strong>{selectedOrderDetails.customer?.name}</strong>
                 </div>
                 <div>
-                  <span style={{ color: '#737373', display: 'block', fontSize: '0.7rem' }}>Email:</span>
+                  <span style={{ color: 'var(--bf-muted)', display: 'block', fontSize: '0.7rem' }}>Email:</span>
                   <span>{selectedOrderDetails.customer?.email}</span>
                 </div>
                 <div>
-                  <span style={{ color: '#737373', display: 'block', fontSize: '0.7rem' }}>Teléfono:</span>
+                  <span style={{ color: 'var(--bf-muted)', display: 'block', fontSize: '0.7rem' }}>Teléfono:</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span>{selectedOrderDetails.customer?.phone || 'No registrado'}</span>
                     {selectedOrderDetails.customer?.phone && (
@@ -3201,7 +3202,7 @@ export const AdminPanel = ({ setActivePage }) => {
                   </div>
                 </div>
                 <div>
-                  <span style={{ color: '#737373', display: 'block', fontSize: '0.7rem' }}>Dirección y Ciudad:</span>
+                  <span style={{ color: 'var(--bf-muted)', display: 'block', fontSize: '0.7rem' }}>Dirección y Ciudad:</span>
                   <span>{selectedOrderDetails.customer?.address}, {selectedOrderDetails.customer?.city || 'Medellín'}</span>
                 </div>
               </div>
@@ -3209,7 +3210,7 @@ export const AdminPanel = ({ setActivePage }) => {
 
             {/* Prendas Llevadas */}
             <div style={{ marginBottom: '20px' }}>
-              <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: '#737373', display: 'block', marginBottom: '10px' }}>
+              <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--bf-muted)', display: 'block', marginBottom: '10px' }}>
                 Prendas en esta Orden ({(selectedOrderDetails.items || []).length})
               </span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -3221,25 +3222,25 @@ export const AdminPanel = ({ setActivePage }) => {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       padding: '10px 12px',
-                      backgroundColor: '#FFFFFF',
-                      border: '1px solid #E7E7E7',
+                      backgroundColor: 'var(--bf-secondary)',
+                      border: '1px solid var(--bf-border)',
                       borderRadius: '6px'
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <img
+                      <ProductImage
                         src={item.image}
                         alt={item.name}
-                        style={{ width: '36px', height: '36px', objectFit: 'cover', borderRadius: '4px', backgroundColor: '#F6F6F6' }}
+                        style={{ width: '36px', height: '36px', objectFit: 'cover', borderRadius: '4px', backgroundColor: 'var(--bf-surface)' }}
                       />
                       <div>
-                        <strong style={{ fontSize: '0.82rem', color: '#171717', display: 'block' }}>{item.name}</strong>
-                        <span style={{ fontSize: '0.7rem', color: '#737373' }}>
+                        <strong style={{ fontSize: '0.82rem', color: 'var(--bf-text)', display: 'block' }}>{item.name}</strong>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--bf-muted)' }}>
                           {item.quantity} ud(s) × {formatMoney(item.price)}
                         </span>
                       </div>
                     </div>
-                    <span style={{ fontWeight: '700', fontSize: '0.84rem', color: '#171717' }}>
+                    <span style={{ fontWeight: '700', fontSize: '0.84rem', color: 'var(--bf-text)' }}>
                       {formatMoney(item.price * item.quantity)}
                     </span>
                   </div>
@@ -3248,24 +3249,24 @@ export const AdminPanel = ({ setActivePage }) => {
             </div>
 
             {/* Resumen Financiero de la Orden */}
-            <div style={{ borderTop: '1px solid #E7E7E7', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#737373' }}>
+            <div style={{ borderTop: '1px solid var(--bf-border)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--bf-muted)' }}>
                 <span>Subtotal:</span>
                 <span>{formatMoney(selectedOrderDetails.subtotal || (selectedOrderDetails.total * 0.84))}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#737373' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--bf-muted)' }}>
                 <span>IVA (16%):</span>
                 <span>{formatMoney(selectedOrderDetails.tax || (selectedOrderDetails.total * 0.16))}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1rem', fontWeight: '800', color: '#171717', borderTop: '1px solid #F0F0F0', paddingTop: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1rem', fontWeight: '800', color: 'var(--bf-text)', borderTop: '1px solid var(--bf-border)', paddingTop: '8px' }}>
                 <span>Total Facturado:</span>
                 <span>{formatMoney(selectedOrderDetails.total)}</span>
               </div>
             </div>
 
             {/* Selector de Estado Operativo dentro del Modal */}
-            <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #E7E7E7', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '0.78rem', color: '#737373' }}>Actualizar estado operativo:</span>
+            <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--bf-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '0.78rem', color: 'var(--bf-muted)' }}>Actualizar estado operativo:</span>
               <select
                 value={selectedOrderDetails.orderStatus || 'En proceso'}
                 onChange={async (e) => {
@@ -3276,11 +3277,11 @@ export const AdminPanel = ({ setActivePage }) => {
                 style={{
                   padding: '6px 12px',
                   borderRadius: '4px',
-                  border: '1px solid #E7E7E7',
-                  backgroundColor: '#F6F6F6',
+                  border: '1px solid var(--bf-border)',
+                  backgroundColor: 'var(--bf-surface)',
                   fontSize: '0.78rem',
                   fontWeight: '600',
-                  color: '#171717',
+                  color: 'var(--bf-text)',
                   cursor: 'pointer'
                 }}
               >
@@ -3316,7 +3317,7 @@ export const AdminPanel = ({ setActivePage }) => {
             style={{
               width: '100%',
               maxWidth: '420px',
-              backgroundColor: '#FFFFFF',
+              backgroundColor: 'var(--bf-secondary)',
               borderRadius: '8px',
               padding: '24px',
               boxShadow: '0 20px 45px rgba(0,0,0,0.15)'
@@ -3326,7 +3327,7 @@ export const AdminPanel = ({ setActivePage }) => {
               <AlertCircle size={22} />
               <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: '800' }}>Confirmar eliminación</h4>
             </div>
-            <p style={{ margin: '0 0 20px 0', fontSize: '0.84rem', color: '#737373', lineHeight: 1.5 }}>
+            <p style={{ margin: '0 0 20px 0', fontSize: '0.84rem', color: 'var(--bf-muted)', lineHeight: 1.5 }}>
               ¿Estás seguro de que deseas eliminar la prenda <strong>"{deleteConfirmProduct.name}"</strong>? Esta acción removerá el slot de bodega y de la tienda pública.
             </p>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
@@ -3335,8 +3336,8 @@ export const AdminPanel = ({ setActivePage }) => {
                 onClick={() => setDeleteConfirmProduct(null)}
                 style={{
                   padding: '8px 14px',
-                  backgroundColor: '#F6F6F6',
-                  border: '1px solid #E7E7E7',
+                  backgroundColor: 'var(--bf-surface)',
+                  border: '1px solid var(--bf-border)',
                   borderRadius: '4px',
                   fontSize: '0.78rem',
                   fontWeight: '600',
@@ -3351,7 +3352,7 @@ export const AdminPanel = ({ setActivePage }) => {
                 style={{
                   padding: '8px 16px',
                   backgroundColor: '#DC2626',
-                  color: '#FFFFFF',
+                  color: 'var(--bf-text)',
                   border: 'none',
                   borderRadius: '4px',
                   fontSize: '0.78rem',
