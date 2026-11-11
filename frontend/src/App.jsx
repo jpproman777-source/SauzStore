@@ -1,33 +1,33 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { ArrowRight, ArrowLeft } from "lucide-react";
-import { Header } from "./components/Header";
-import { Footer } from "./components/Footer";
-import { Cart } from "./pages/Cart";
-import { CartConfirmation } from "./components/CartConfirmation";
-import { CheckoutModal } from "./components/CheckoutModal";
-import { ReceiptModal } from "./components/ReceiptModal";
-import { Toast } from "./components/Toast";
-import { ClientProfileModal } from "./components/ClientProfileModal";
+import { Header } from "./componentes/BarraNavegacion/Header";
+import { Footer } from "./componentes/PiePagina/Footer";
+import { Cart } from "./paginas/Carrito/Carrito";
+import { CartConfirmation } from "./componentes/Carrito/CartConfirmation";
+import { CheckoutModal } from "./componentes/Carrito/CheckoutModal";
+import { ReceiptModal } from "./componentes/Carrito/ReceiptModal";
+import { Toast } from "./componentes/BarraNavegacion/Toast";
+import { ClientProfileModal } from "./componentes/PerfilPedidos/ClientProfileModal";
 const AdminPanel = lazy(() =>
-  import("./components/AdminPanel").then((module) => ({
+  import("./componentes/Administracion/AdminPanel").then((module) => ({
     default: module.AdminPanel,
   })),
 );
-import { AdminLogin } from "./components/AdminLogin";
-import { Home } from "./pages/Home";
-import { Catalog } from "./pages/Catalog";
-import { About } from "./pages/About";
-import Brands from "./pages/Brands";
-import { Location } from "./pages/Location";
-import { ProductDetail } from "./pages/ProductDetail";
-import { StyleStudio } from "./pages/StyleStudio";
-import { SauzFitBuilder } from "./pages/SauzFitBuilder";
-import { SauzStyleDna } from "./pages/SauzStyleDna";
-import { MySauzCloset } from "./pages/MySauzCloset";
-import { SauzDrops } from "./pages/SauzDrops";
-import { SauzCommunity } from "./pages/SauzCommunity";
-import { SauzSizeFinder } from "./pages/SauzSizeFinder";
-import { useAuth } from "./context/AuthContext";
+import { AdminLogin } from "./componentes/Autenticacion/AdminLogin";
+import { Home } from "./paginas/Inicio/Inicio";
+import { Catalog } from "./paginas/Catalogo/Catalogo";
+import { About } from "./paginas/Nosotros/Nosotros";
+import Brands from "./paginas/Marcas/Marcas";
+import { Location } from "./paginas/Ubicacion/Ubicacion";
+import { ProductDetail } from "./paginas/DetalleProducto/DetalleProducto";
+import { StyleStudio } from "./paginas/Experiencia/StyleStudio";
+import { SauzFitBuilder } from "./paginas/Experiencia/SauzFitBuilder";
+import { SauzStyleDna } from "./paginas/Experiencia/SauzStyleDna";
+import { MySauzCloset } from "./paginas/Experiencia/MySauzCloset";
+import { SauzDrops } from "./paginas/Experiencia/SauzDrops";
+import { SauzCommunity } from "./paginas/Experiencia/SauzCommunity";
+import { SauzSizeFinder } from "./paginas/Experiencia/SauzSizeFinder";
+import { useAuth } from "./contextos/AuthContext";
 
 const readProductId = () => {
   const match = window.location.pathname.match(/^\/producto\/([^/]+)\/?$/);

@@ -2,13 +2,13 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { filterCatalog } from "../src/lib/catalogFilters.js";
+import { filterCatalog } from "../src/utilidades/catalogFilters.js";
 
 const frontendDir = path.resolve(import.meta.dirname, "..");
 const repoDir = path.resolve(frontendDir, "..");
 
 test("Header Ropa mega menu removes Siluetas Urbanas and Explorar Catálogo columns", () => {
-  const header = fs.readFileSync(path.join(frontendDir, "src/components/Header.jsx"), "utf8");
+  const header = fs.readFileSync(path.join(frontendDir, "src/componentes/BarraNavegacion/Header.jsx"), "utf8");
   const ropaSectionMatch = header.match(
     /activeDropdown === "ropa" && \(([\s\S]*?)activeDropdown === "sneakers"/,
   );
@@ -24,7 +24,7 @@ test("Header Ropa mega menu removes Siluetas Urbanas and Explorar Catálogo colu
 
 test("handleCatalogFilter resets stale query and URL filters when entering Camisetas", () => {
   const app = fs.readFileSync(path.join(frontendDir, "src/App.jsx"), "utf8");
-  const catalog = fs.readFileSync(path.join(frontendDir, "src/pages/Catalog.jsx"), "utf8");
+  const catalog = fs.readFileSync(path.join(frontendDir, "src/paginas/Catalogo/Catalogo.jsx"), "utf8");
 
   assert.match(
     app,
@@ -54,8 +54,8 @@ test("Camisetas category returns active products when query and brand are clean"
 });
 
 test("Catalog selection hero uses isolated styles without altering catalog body", () => {
-  const catalog = fs.readFileSync(path.join(frontendDir, "src/pages/Catalog.jsx"), "utf8");
-  const heroCss = fs.readFileSync(path.join(frontendDir, "src/pages/selection-hero.css"), "utf8");
+  const catalog = fs.readFileSync(path.join(frontendDir, "src/paginas/Catalogo/Catalogo.jsx"), "utf8");
+  const heroCss = fs.readFileSync(path.join(frontendDir, "src/paginas/Catalogo/selection-hero.css"), "utf8");
 
   assert.match(catalog, /<header className="selection-hero"/);
   assert.match(catalog, /SAUZ STORE \/ BLACK EDITION/);

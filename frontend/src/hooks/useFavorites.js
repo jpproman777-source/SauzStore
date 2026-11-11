@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { favoritesKey, readFavorites } from '../lib/favorites';
+import { useAuth } from '../contextos/AuthContext';
+import { favoritesKey, readFavorites } from '../utilidades/favorites';
 const eventName = 'sauz:favorites-changed';
 export const useFavorites = () => {
   const { user } = useAuth();

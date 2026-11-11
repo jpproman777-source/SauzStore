@@ -2,9 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { approvedBrandAssets } from "../src/assets/brandAssets.js";
-import { filterCatalog } from "../src/lib/catalogFilters.js";
-import { brandOf } from "../src/lib/products.js";
+import { approvedBrandAssets } from "../src/recursos/brandAssets.js";
+import { filterCatalog } from "../src/utilidades/catalogFilters.js";
+import { brandOf } from "../src/utilidades/products.js";
 
 const frontendDir = path.resolve(import.meta.dirname, "..");
 const repoDir = path.resolve(frontendDir, "..");
@@ -21,13 +21,13 @@ test("brandAssets exposes proportional official logos including New Era", () => 
 });
 
 test("Brands page and Home #marcas section reuse the 2x2 official brand cards grid", () => {
-  const brandsJsx = fs.readFileSync(path.join(frontendDir, "src/pages/Brands.jsx"), "utf8");
+  const brandsJsx = fs.readFileSync(path.join(frontendDir, "src/paginas/Marcas/Marcas.jsx"), "utf8");
   const gridJsx = fs.readFileSync(
-    path.join(frontendDir, "src/components/BrandsDirectoryGrid.jsx"),
+    path.join(frontendDir, "src/componentes/BarraNavegacion/BrandsDirectoryGrid.jsx"),
     "utf8",
   );
-  const homeJsx = fs.readFileSync(path.join(frontendDir, "src/pages/Home.jsx"), "utf8");
-  const css = fs.readFileSync(path.join(frontendDir, "src/pages/brands-directory.css"), "utf8");
+  const homeJsx = fs.readFileSync(path.join(frontendDir, "src/paginas/Inicio/Inicio.jsx"), "utf8");
+  const css = fs.readFileSync(path.join(frontendDir, "src/paginas/Marcas/brands-directory.css"), "utf8");
 
   assert.match(brandsJsx, /SAUZ STORE \/ BRAND DIRECTORY/);
   assert.match(brandsJsx, /LAS MARCAS\./);
@@ -57,8 +57,8 @@ test("Brands page and Home #marcas section reuse the 2x2 official brand cards gr
 
 test("App, Header, and Footer wire /marcas route cleanly", () => {
   const app = fs.readFileSync(path.join(frontendDir, "src/App.jsx"), "utf8");
-  const header = fs.readFileSync(path.join(frontendDir, "src/components/Header.jsx"), "utf8");
-  const footer = fs.readFileSync(path.join(frontendDir, "src/components/Footer.jsx"), "utf8");
+  const header = fs.readFileSync(path.join(frontendDir, "src/componentes/BarraNavegacion/Header.jsx"), "utf8");
+  const footer = fs.readFileSync(path.join(frontendDir, "src/componentes/PiePagina/Footer.jsx"), "utf8");
 
   assert.match(app, /if \(path === "\/marcas" \|\| path === "\/brands"\) return "brands"/);
   assert.match(app, /else if \(page === "brands"\) path = "\/marcas"/);
