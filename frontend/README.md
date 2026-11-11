@@ -10,7 +10,7 @@ Interfaz web de **SAUZ STORE BLACK EDITION**, tienda multimarca de streetwear, s
 - **Vite 5** (`@vitejs/plugin-react`)
 - **Lucide React** (iconografía)
 - **Recharts** (gráficos del panel administrativo)
-- **SweetAlert2** (alertas y confirmaciones en `src/lib/alerts.js`)
+- **SweetAlert2** (alertas y confirmaciones en `src/utilidades/alerts.js`)
 - **Node Test Runner** (`node --test tests/*.test.js`)
 
 ---
@@ -45,31 +45,34 @@ frontend/
 │   ├── 1.jpeg, 2.jpeg, 3.jpeg              # Fotografías principales de Nosotros
 │   └── sauz-placeholder.svg
 ├── src/
-│   ├── assets/                 # Rutas tipadas de logotipos (brandAssets.js)
-│   ├── components/
-│   │   ├── account/            # Perfil de cliente, direcciones y trazabilidad de pedidos
-│   │   ├── admin/              # Panel administrativo (AdminPanel.jsx + CSS)
-│   │   ├── auth/               # Login y registro (AdminLogin.jsx + CSS)
-│   │   ├── cart/               # Confirmación, checkout y recibo
-│   │   ├── catalog/            # ProductCard, ProductGallery, ProductImage, CatalogFilters
-│   │   ├── home/               # HomeCarousel y EditorialCollections
-│   │   └── layout/             # Header, Footer, BrandLogo, BrandsDirectoryGrid, ErrorBoundary, Toast
-│   ├── context/                # AuthContext.jsx y CartContext.jsx
-│   ├── hooks/                  # useFavorites.js y useScrollReveal.js
-│   ├── lib/                    # Utilidades puras (filtros, zoom, tracking, alertas, resumen admin)
-│   ├── pages/
-│   │   ├── About/              # About.jsx + about-editorial.css
-│   │   ├── Brands/             # Brands.jsx + brands-directory.css
-│   │   ├── Cart/               # Cart.jsx + cart-polish.css
-│   │   ├── Catalog/            # Catalog.jsx + catalog-layout.css + selection-hero.css
-│   │   ├── Experience/         # Drops, Community, Closet, StyleStudio, FitBuilder, StyleDna, SizeFinder
-│   │   ├── Home/               # Home.jsx + home-catalog-button.css
-│   │   ├── Location/           # Location.jsx
-│   │   └── ProductDetail/      # ProductDetail.jsx + product-detail-polish.css
-│   ├── services/               # Capa HTTP centralizada (apiClient.js + servicios por módulo)
-│   ├── styles/                 # Hojas CSS globales (cargadas en orden en main.jsx)
-│   ├── App.jsx                 # Enrutamiento principal
-│   └── main.jsx                # Punto de entrada React
+│   ├── recursos/                 # Rutas tipadas de logotipos (brandAssets.js)
+│   ├── componentes/
+│   │   ├── Administracion/       # AdminPanel.jsx + admin-workspace.css
+│   │   ├── Autenticacion/        # AdminLogin.jsx + auth-premium.css
+│   │   ├── BarraNavegacion/      # Header, BrandLogo, BrandsDirectoryGrid, ErrorBoundary, Toast
+│   │   ├── Carrito/              # CartConfirmation, CheckoutModal, ReceiptModal + checkout-premium.css
+│   │   ├── Catalogo/             # CatalogFilters.jsx
+│   │   ├── GaleriaProducto/      # ProductGallery, ProductImage + product-gallery.css
+│   │   ├── Inicio/               # HomeCarousel, EditorialCollections + home-carousel-layout.css
+│   │   ├── PerfilPedidos/        # ClientProfileModal, OrderTracking, OrderShippingEditor + CSS
+│   │   ├── PiePagina/            # Footer.jsx
+│   │   └── TarjetaProducto/      # ProductCard.jsx
+│   ├── contextos/                # AuthContext.jsx y CartContext.jsx
+│   ├── hooks/                    # useFavorites.js y useScrollReveal.js
+│   ├── utilidades/               # Lógica pura (filtros, zoom, tracking, alertas, resumen admin)
+│   ├── paginas/
+│   │   ├── Carrito/              # Carrito.jsx + cart-polish.css
+│   │   ├── Catalogo/             # Catalogo.jsx + catalog-layout.css + selection-hero.css
+│   │   ├── DetalleProducto/      # DetalleProducto.jsx + product-detail-polish.css
+│   │   ├── Experiencia/          # Drops, Community, Closet, StyleStudio, FitBuilder, StyleDna, SizeFinder
+│   │   ├── Inicio/               # Inicio.jsx + home-catalog-button.css
+│   │   ├── Marcas/               # Marcas.jsx + brands-directory.css
+│   │   ├── Nosotros/             # Nosotros.jsx + about-editorial.css
+│   │   └── Ubicacion/            # Ubicacion.jsx
+│   ├── servicios/                # Capa HTTP centralizada (apiClient.js + servicios por módulo)
+│   ├── estilos/                  # Hojas CSS globales (cargadas en orden en main.jsx)
+│   ├── App.jsx                   # Enrutamiento principal
+│   └── main.jsx                  # Punto de entrada React
 └── tests/                      # Pruebas automatizadas
 ```
 

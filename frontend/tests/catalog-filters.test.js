@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { filterCatalog } from '../src/lib/catalogFilters.js';
+import { filterCatalog } from '../src/utilidades/catalogFilters.js';
 
 const products = [
   { id: 1, name: 'Camiseta Nike negra', brand: 'Nike', category: 'Camisetas', price: 80000, active: true, commercial: true, variants: [{ id: 'M', size: 'M', stock: 2 }] },

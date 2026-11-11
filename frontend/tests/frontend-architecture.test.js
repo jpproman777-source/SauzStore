@@ -16,10 +16,10 @@ function walkJsFiles(dir) {
   return results;
 }
 
-test("All HTTP calls are centralized in src/services/apiClient.js", () => {
+test("All HTTP calls are centralized in src/servicios/apiClient.js", () => {
   const srcFiles = walkJsFiles(path.join(frontendDir, "src"));
   for (const file of srcFiles) {
-    if (file.endsWith(path.join("services", "apiClient.js"))) continue;
+    if (file.endsWith(path.join("servicios", "apiClient.js"))) continue;
     const content = fs.readFileSync(file, "utf8");
     assert.doesNotMatch(
       content,
@@ -31,22 +31,22 @@ test("All HTTP calls are centralized in src/services/apiClient.js", () => {
 
 test("AuthContext has no hardcoded demo credentials or demo quick-login shortcuts", () => {
   const authContext = fs.readFileSync(
-    path.join(frontendDir, "src/context/AuthContext.jsx"),
+    path.join(frontendDir, "src/contextos/AuthContext.jsx"),
     "utf8",
   );
   assert.doesNotMatch(authContext, /quickLoginAdmin|quickLoginClient|admin123|cliente123/);
 });
 
-test("All main.jsx global stylesheets exist inside src/styles/", () => {
+test("All main.jsx global stylesheets exist inside src/estilos/", () => {
   const mainJsx = fs.readFileSync(path.join(frontendDir, "src/main.jsx"), "utf8");
-  const cssImports = [...mainJsx.matchAll(/import\s+['"]\.\/styles\/([^'"]+\.css)['"]/g)].map(
+  const cssImports = [...mainJsx.matchAll(/import\s+['"]\.\/estilos\/([^'"]+\.css)['"]/g)].map(
     (m) => m[1],
   );
   assert.ok(cssImports.length >= 10, "Expected global stylesheets loaded from ./styles/");
   for (const cssFile of cssImports) {
     assert.ok(
-      fs.existsSync(path.join(frontendDir, "src/styles", cssFile)),
-      `Missing global stylesheet: src/styles/${cssFile}`,
+      fs.existsSync(path.join(frontendDir, "src/estilos", cssFile)),
+      `Missing global stylesheet: src/estilos/${cssFile}`,
     );
   }
 });

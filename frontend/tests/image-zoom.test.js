@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { containImage, maxImageZoom, panBounds } from '../src/lib/imageZoom.js';
+import { containImage, maxImageZoom, panBounds } from '../src/utilidades/imageZoom.js';
 
 test('photographs retain portrait, landscape and square proportions', () => {
   assert.deepEqual(containImage(400, 400, 800, 1600), { width: 200, height: 400 });

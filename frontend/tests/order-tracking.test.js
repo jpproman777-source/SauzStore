@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { orderStage, safeTrackingUrl } from '../src/lib/orderTracking.js';
+import { orderStage, safeTrackingUrl } from '../src/utilidades/orderTracking.js';
 test('progress represents actual operational states without accepting pending orders',()=>{
   assert.equal(orderStage('Pendiente'),0);
   assert.equal(orderStage('Aceptado'),1);

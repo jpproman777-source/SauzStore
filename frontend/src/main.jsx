@@ -1,19 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { App } from './App';
-import { CartProvider } from './context/CartContext';
-import { AuthProvider } from './context/AuthContext';
-import { ErrorBoundary } from './components/layout/ErrorBoundary';
-import './styles/styles.css';
-import './styles/theme-minimal.css';
-import './styles/black-future.css';
-import './styles/home-black-edition.css';
-import './styles/brand-navigation.css';
-import './styles/shopping-experience.css';
-import './styles/catalog-premium.css';
-import './styles/editorial-collections.css';
-import './styles/motion-system.css';
-import './styles/sauz-alerts.css';
+import { CartProvider } from './contextos/CartContext';
+import { AuthProvider } from './contextos/AuthContext';
+import { ErrorBoundary } from './componentes/BarraNavegacion/ErrorBoundary';
+import './estilos/styles.css';
+import './estilos/theme-minimal.css';
+import './estilos/black-future.css';
+import './estilos/home-black-edition.css';
+import './estilos/brand-navigation.css';
+import './estilos/shopping-experience.css';
+import './estilos/catalog-premium.css';
+import './estilos/editorial-collections.css';
+import './estilos/motion-system.css';
+import './estilos/sauz-alerts.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { isCommercial, canBuy, productPath } from "../src/lib/products.js";
+import { isCommercial, canBuy, productPath } from "../src/utilidades/products.js";
 const products = JSON.parse(
   await readFile(
     new URL("../../backend/data/products.json", import.meta.url),

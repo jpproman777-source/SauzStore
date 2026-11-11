@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { filterOrdersByPeriod, overviewSeries, summarizeCategories, summarizeInventory } from '../src/lib/adminOverview.js';
+import { filterOrdersByPeriod, overviewSeries, summarizeCategories, summarizeInventory } from '../src/utilidades/adminOverview.js';
 const now = new Date(2026,10,11,16);
 const order = (day,total,status='Pendiente') => ({timestamp:+new Date(2026,10,day,10),total,orderStatus:status,items:[{quantity:2}]});
 test('calendar chart includes every day, omits cancelled/future/undated orders and accumulates exactly',()=>{

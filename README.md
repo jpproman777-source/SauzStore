@@ -23,15 +23,16 @@ SauzStore/
 │   └── README.md                            # Documentación del backend Java
 │
 ├── frontend/                                # FRONTEND WEB (React 18 + Vite — Black Edition)
-│   ├── img/                                 # Recursos públicos servidos por Vite (Productos, banners, editorial, logos)
+│   ├── img/                                 # Recursos públicos servidos por Vite (Productos, editorial, logos)
 │   ├── src/
-│   │   ├── components/                      # Componentes UI por dominio (layout, home, catalog, cart, account, auth, admin)
-│   │   ├── context/                         # Estado global (AuthContext.jsx, CartContext.jsx)
+│   │   ├── componentes/                     # Componentes UI por módulo (BarraNavegacion, PiePagina, TarjetaProducto, Carrito, etc.)
+│   │   ├── contextos/                       # Estado global (AuthContext.jsx, CartContext.jsx)
 │   │   ├── hooks/                           # Hooks reutilizables (useFavorites.js, useScrollReveal.js)
-│   │   ├── lib/                             # Utilidades puras de negocio, filtros y alertas
-│   │   ├── pages/                           # Vistas principales (Home, Catalog, ProductDetail, Brands, Cart, etc.)
-│   │   ├── services/                        # Capa HTTP centralizada (apiClient.js + servicios por módulo)
-│   │   ├── styles/                          # Hojas CSS globales Black Edition
+│   │   ├── utilidades/                      # Utilidades puras de negocio, filtros y alertas
+│   │   ├── paginas/                         # Vistas principales (Inicio, Catalogo, DetalleProducto, Carrito, Marcas, etc.)
+│   │   ├── servicios/                       # Capa HTTP centralizada (apiClient.js + servicios por módulo)
+│   │   ├── estilos/                         # Hojas CSS globales Black Edition
+│   │   ├── recursos/                        # Catálogo de logotipos (brandAssets.js)
 │   │   ├── App.jsx                          # Enrutamiento y composición principal
 │   │   └── main.jsx                         # Entrada React + orden de CSS
 │   ├── tests/                               # Pruebas unitarias (node --test)

@@ -6,7 +6,7 @@ Guía única para conectar el nuevo backend (base de datos, autenticación, cat�
 
 ## 1. Configuración de la URL de la API
 
-Todas las peticiones HTTP del frontend pasan por [`frontend/src/services/apiClient.js`](./frontend/src/services/apiClient.js).
+Todas las peticiones HTTP del frontend pasan por [`frontend/src/servicios/apiClient.js`](./frontend/src/servicios/apiClient.js).
 
 - **Desarrollo local con proxy Vite:** `frontend/vite.config.js` redirige `/api/*` a `http://localhost:3000`.
 - **Backend en otro puerto o dominio:** crea `frontend/.env` a partir de `frontend/.env.example`:
@@ -22,7 +22,7 @@ VITE_API_BASE_URL=http://localhost:3000
 
 ---
 
-## 2. Servicios centralizados (`frontend/src/services/`)
+## 2. Servicios centralizados (`frontend/src/servicios/`)
 
 | Servicio | Archivo | Módulos que lo consumen |
 | :--- | :--- | :--- |
@@ -72,3 +72,21 @@ VITE_API_BASE_URL=http://localhost:3000
 | Panel Administrativo (`/admin`) | Inventario, CRUD, subida de imagen, pedidos y clientes conectados | Pendiente protección de rol `admin` en API y almacenamiento definitivo de imágenes |
 | Favoritos | Persistidos por cuenta en `localStorage` (`useFavorites.js`) | Opcional: endpoint `/api/users/favorites` para sincronización entre dispositivos |
 | Módulos Experience (Drops, Closet, Community, Style Studio, Style DNA) | Conectados a `experienceService.js` | Pendiente persistencia real según alcance del proyecto |
+
+---
+
+## 4. Notas si el backend usa SQL en XAMPP (MySQL / MariaDB)
+
+El frontend no se conecta directo a MySQL/XAMPP; siempre consume respuestas **JSON por HTTP** a través de [`apiClient.js`](./frontend/src/servicios/apiClient.js). Para conectar una API (Node, PHP en Apache de XAMPP, Java, etc.) respaldada por SQL en XAMPP:
+
+1. **URL del servidor API (`frontend/.env`):**
+   - Si el backend corre en otro puerto o ruta de Apache (por ejemplo `http://localhost/sauz-api` o `http://localhost:8080`), configúralo en `frontend/.env`:
+     ```env
+     VITE_API_BASE_URL=http://localhost/sauz-api
+     ```
+   - Si el frontend (`http://localhost:5173`) llama directo a Apache/XAMPP sin pasar por el proxy de Vite, el backend debe responder con cabeceras **CORS** (`Access-Control-Allow-Origin`, `Access-Control-Allow-Headers: Content-Type, Authorization`, `Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS`).
+2. **Tipos de datos al serializar desde SQL a JSON:**
+   - **Precios (`price`, `previousPrice`):** enviar como número en pesos colombianos (`65000`, no string formateado `"$65.000"`).
+   - **Booleanos (`active`, `commercial`):** MySQL guarda `TINYINT(1)` (`1`/`0`); convertir a `true`/`false` en la respuesta JSON.
+   - **Listas (`variants`, `images`, `colors`, `trackingHistory`):** si en SQL están en tablas relacionadas (por ejemplo `product_variants`) o columnas `JSON`, devolverlas siempre como arreglos JSON (`[...]`) dentro de cada objeto.
+   - **Imágenes (`image`):** devolver rutas relativas accesibles desde la tienda (ej. `/Productos/archivo.png`) o URLs completas HTTP/HTTPS si el backend almacena archivos subidos en otra ruta pública.

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { selectCollectionProducts } from '../src/lib/collections.js';
+import { selectCollectionProducts } from '../src/utilidades/collections.js';
 
 const products = [
   { id: 1, name: 'Camiseta uno', category: 'Camisetas', image: '/1.png', active: true, price: 80000, commercial: true, variants: [{ id: 'M', size: 'M', stock: 2 }] },
