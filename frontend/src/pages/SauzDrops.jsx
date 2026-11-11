@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Clock, Bell, Check, Sparkles, ShieldCheck, ArrowUpRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { ProductImage } from '../components/ProductImage';
+import { ProductImage } from '../components/catalog/ProductImage';
+import { experienceService } from '../services/experienceService';
 
 // Componente de cuenta regresiva
 const CountdownTimer = ({ targetDate }) => {
@@ -71,10 +72,10 @@ export const SauzDrops = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch('/api/drops')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.drops) setDrops(data.drops);
+    experienceService
+      .getDrops()
+      .then((list) => {
+        if (list.length) setDrops(list);
       })
       .catch((e) => console.error('Error cargando drops:', e))
       .finally(() => setLoading(false));
@@ -88,13 +89,7 @@ export const SauzDrops = () => {
     }
     setSubmittingWaitlist(true);
     try {
-      const res = await fetch(`/api/drops/${selectedDrop.id}/waitlist`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: waitlistEmail }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Error al unirse');
+      const data = await experienceService.joinDropWaitlist(selectedDrop.id, waitlistEmail);
 
       showToast(data.message || '¡Te has unido a la lista de espera oficial!');
       // Actualizar conteo local

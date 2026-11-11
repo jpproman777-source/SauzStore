@@ -52,4 +52,20 @@ export const authService = {
     const res = await api.put('/api/users/profile', profileData);
     return res;
   },
+
+  /**
+   * Solicita envío de enlace de recuperación (contrato pendiente en backend nuevo)
+   * @param {string} email
+   */
+  async requestPasswordReset(email) {
+    return await api.post('/api/auth/forgot-password', { email });
+  },
+
+  /**
+   * Restablece la contraseña usando el token de recuperación
+   * @param {object} payload { token, newPassword }
+   */
+  async resetPassword(payload) {
+    return await api.post('/api/auth/reset-password', payload);
+  },
 };

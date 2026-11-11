@@ -54,4 +54,12 @@ export const productService = {
   async deleteProduct(id) {
     return await api.delete(`/api/products/${encodeURIComponent(id)}`);
   },
+
+  /**
+   * Sube una imagen de producto codificada en Data URL (Administración)
+   * @param {object} payload { filename, dataUrl }
+   */
+  async uploadImage(payload) {
+    return await api.post('/api/products/upload-image', payload);
+  },
 };

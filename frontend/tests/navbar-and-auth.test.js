@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 test('Navbar Definitivo: Validación de 6 elementos principales y exclusión de Hombre, Mujer, Kids, SAUZ Experience', () => {
-  const headerContent = fs.readFileSync(path.resolve(__dirname, '../src/components/Header.jsx'), 'utf8');
+  const headerContent = fs.readFileSync(path.resolve(__dirname, '../src/components/layout/Header.jsx'), 'utf8');
 
   // Verificar los 6 elementos oficiales en la navegación de escritorio
   const expectedItems = ['Inicio', 'Marcas', 'Ropa', 'Sneakers', 'Accesorios', 'Colecciones'];
@@ -40,7 +40,7 @@ test('Navbar Definitivo: Validación de 6 elementos principales y exclusión de 
 });
 
 test('Mega Menú: Ausencia de banners promocionales laterales que rompan la composición', () => {
-  const headerContent = fs.readFileSync(path.resolve(__dirname, '../src/components/Header.jsx'), 'utf8');
+  const headerContent = fs.readFileSync(path.resolve(__dirname, '../src/components/layout/Header.jsx'), 'utf8');
   
   // No deben existir tarjetas promocionales laterales en el mega menú
   assert.equal(
@@ -56,7 +56,7 @@ test('Mega Menú: Ausencia de banners promocionales laterales que rompan la comp
 });
 
 test('ProductCard: Visualización de Marca, Nombre, Categoría y Precio COP con jerarquía', () => {
-  const cardContent = fs.readFileSync(path.resolve(__dirname, '../src/components/ProductCard.jsx'), 'utf8');
+  const cardContent = fs.readFileSync(path.resolve(__dirname, '../src/components/catalog/ProductCard.jsx'), 'utf8');
 
   assert.ok(cardContent.includes('premium-card-brand'), 'ProductCard debe incluir el contenedor de marca');
   assert.ok(cardContent.includes('brandOf(product)'), 'ProductCard debe resolver la marca mediante brandOf');

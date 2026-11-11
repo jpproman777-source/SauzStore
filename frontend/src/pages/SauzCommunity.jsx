@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Heart, Plus, Flag, Trophy, Sparkles, MapPin, Check, MessageSquare, Tag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { ProductImage } from '../components/ProductImage';
+import { ProductImage } from '../components/catalog/ProductImage';
 import { confirmAction } from '../lib/alerts';
+import { experienceService } from '../services/experienceService';
 
 export const SauzCommunity = ({ onProductSelect }) => {
   const { products, showToast } = useCart();
@@ -23,10 +24,10 @@ export const SauzCommunity = ({ onProductSelect }) => {
 
   const loadPosts = () => {
     setLoading(true);
-    fetch('/api/community/posts')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.posts) setPosts(data.posts);
+    experienceService
+      .getCommunityPosts()
+      .then((list) => {
+        if (list.length) setPosts(list);
       })
       .catch((e) => console.error('Error cargando posts:', e))
       .finally(() => setLoading(false));
@@ -39,17 +40,10 @@ export const SauzCommunity = ({ onProductSelect }) => {
   // Votar por un look
   const handleVote = async (postId) => {
     try {
-      const res = await fetch(`/api/community/posts/${postId}/vote`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userEmail: user?.email || 'anon' }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setPosts((prev) =>
-          prev.map((p) => (p.id === postId ? { ...p, votes: data.votes } : p))
-        );
-      }
+      const data = await experienceService.voteCommunityPost(postId, user?.email || 'anon');
+      setPosts((prev) =>
+        prev.map((p) => (p.id === postId ? { ...p, votes: data.votes } : p))
+      );
     } catch (e) {
       showToast('Error al votar');
     }
@@ -66,11 +60,9 @@ export const SauzCommunity = ({ onProductSelect }) => {
     });
     if (!confirmed) return;
     try {
-      const res = await fetch(`/api/community/posts/${postId}/report`, { method: 'POST' });
-      if (res.ok) {
-        setPosts((prev) => prev.filter((p) => p.id !== postId));
-        showToast('Publicación enviada al equipo de moderación');
-      }
+      await experienceService.reportCommunityPost(postId);
+      setPosts((prev) => prev.filter((p) => p.id !== postId));
+      showToast('Publicación enviada al equipo de moderación');
     } catch (e) {
       showToast('Error al reportar');
     }
@@ -85,21 +77,15 @@ export const SauzCommunity = ({ onProductSelect }) => {
     }
     setSubmitting(true);
     try {
-      const res = await fetch('/api/community/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user?.id || null,
-          authorName: user?.name || 'Miembro SAUZ',
-          city: newCity.trim(),
-          title: newTitle.trim(),
-          caption: newCaption.trim(),
-          photo: newPhoto,
-          taggedProducts: selectedTagIds,
-        }),
+      await experienceService.createCommunityPost({
+        userId: user?.id || null,
+        authorName: user?.name || 'Miembro SAUZ',
+        city: newCity.trim(),
+        title: newTitle.trim(),
+        caption: newCaption.trim(),
+        photo: newPhoto,
+        taggedProducts: selectedTagIds,
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Error al publicar');
 
       showToast('🎉 Look publicado en la comunidad SAUZ');
       setShowCreateModal(false);

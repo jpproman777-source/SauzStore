@@ -1,12 +1,12 @@
 import React, { useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { useCart } from "../context/CartContext";
-import { ProductCard } from "../components/ProductCard";
-import { BrandsDirectoryGrid } from "../components/BrandsDirectoryGrid";
+import { ProductCard } from "../components/catalog/ProductCard";
+import { BrandsDirectoryGrid } from "../components/layout/BrandsDirectoryGrid";
 import {
   HomeCarousel,
-} from "../components/HomeCarousel";
-import { EditorialCollections } from "../components/EditorialCollections";
+} from "../components/home/HomeCarousel";
+import { EditorialCollections } from "../components/home/EditorialCollections";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 import "./home-catalog-button.css";
 

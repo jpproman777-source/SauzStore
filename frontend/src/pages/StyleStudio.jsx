@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { ArrowUpRight, Sparkles, Check, RefreshCw, ShoppingBag, Eye, ShieldCheck, ChevronRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { ProductImage } from '../components/ProductImage';
+import { ProductImage } from '../components/catalog/ProductImage';
+import { experienceService } from '../services/experienceService';
 
 const AUTHORIZED_MODELS = [
   {
@@ -134,15 +135,10 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
     setGenerating(true);
     setGenerationResult(null);
     try {
-      const res = await fetch('/api/style-studio/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          modelId: selectedModelId,
-          slots
-        })
+      const data = await experienceService.generateStyleLook({
+        modelId: selectedModelId,
+        slots,
       });
-      const data = await res.json();
       setGenerationResult(data);
       showToast('✨ Visualización de look editorial actualizada');
     } catch (e) {

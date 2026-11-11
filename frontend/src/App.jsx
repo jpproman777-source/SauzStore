@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { ArrowRight, ArrowLeft } from "lucide-react";
-import { Header } from "./components/Header";
-import { Footer } from "./components/Footer";
+import { Header } from "./components/layout/Header";
+import { Footer } from "./components/layout/Footer";
 import { Cart } from "./pages/Cart";
-import { CartConfirmation } from "./components/CartConfirmation";
-import { CheckoutModal } from "./components/CheckoutModal";
-import { ReceiptModal } from "./components/ReceiptModal";
-import { Toast } from "./components/Toast";
-import { ClientProfileModal } from "./components/ClientProfileModal";
+import { CartConfirmation } from "./components/cart/CartConfirmation";
+import { CheckoutModal } from "./components/cart/CheckoutModal";
+import { ReceiptModal } from "./components/cart/ReceiptModal";
+import { Toast } from "./components/layout/Toast";
+import { ClientProfileModal } from "./components/account/ClientProfileModal";
 const AdminPanel = lazy(() =>
-  import("./components/AdminPanel").then((module) => ({
+  import("./components/admin/AdminPanel").then((module) => ({
     default: module.AdminPanel,
   })),
 );
-import { AdminLogin } from "./components/AdminLogin";
+import { AdminLogin } from "./components/auth/AdminLogin";
 import { Home } from "./pages/Home";
 import { Catalog } from "./pages/Catalog";
 import { About } from "./pages/About";

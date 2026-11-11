@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../hooks/useFavorites";
-import { ProductGallery } from "../components/ProductGallery";
-import { ProductCard } from "../components/ProductCard";
+import { ProductGallery } from "../components/catalog/ProductGallery";
+import { ProductCard } from "../components/catalog/ProductCard";
 import { brandOf, canBuy, productVariants } from "../lib/products";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 import "./product-detail-polish.css";

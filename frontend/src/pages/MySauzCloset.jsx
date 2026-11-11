@@ -2,8 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Heart, Trash2, Share2, Plus, ShoppingBag, ArrowUpRight, Copy, Check, Lock } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { ProductImage } from '../components/ProductImage';
+import { ProductImage } from '../components/catalog/ProductImage';
 import { confirmAction } from '../lib/alerts';
+import { experienceService } from '../services/experienceService';
 
 export const MySauzCloset = ({ onProductSelect, setActivePage }) => {
   const { products, formatMoney, addToCart, showToast } = useCart();
@@ -17,11 +18,10 @@ export const MySauzCloset = ({ onProductSelect, setActivePage }) => {
   // Cargar outfits del usuario
   const loadUserCloset = () => {
     setLoading(true);
-    const query = user?.id ? `userId=${user.id}` : (user?.email ? `email=${encodeURIComponent(user.email)}` : '');
-    fetch(`/api/closet?${query}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.outfits) setOutfits(data.outfits);
+    experienceService
+      .getClosetOutfits({ userId: user?.id, email: user?.email })
+      .then((list) => {
+        if (list.length) setOutfits(list);
       })
       .catch((e) => console.error('Error cargando closet:', e))
       .finally(() => setLoading(false));
@@ -42,11 +42,9 @@ export const MySauzCloset = ({ onProductSelect, setActivePage }) => {
     });
     if (!confirmed) return;
     try {
-      const res = await fetch(`/api/closet/outfits/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        setOutfits((prev) => prev.filter((o) => o.id !== id));
-        showToast('Outfit eliminado de tu closet');
-      }
+      await experienceService.deleteClosetOutfit(id);
+      setOutfits((prev) => prev.filter((o) => o.id !== id));
+      showToast('Outfit eliminado de tu closet');
     } catch (e) {
       showToast('Error al eliminar outfit');
     }

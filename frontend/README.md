@@ -1,65 +1,68 @@
-# 🖥️ Sauz Store - Frontend (React + Vite)
+# SAUZ STORE BLACK EDITION — Frontend
 
-Capa de presentación e interfaz de usuario para la plataforma de comercio electrónico **Sauz Store**, desarrollada con **React 18**, **Vite** y un sistema de diseño moderno en paleta **Negro & Dorado**.
+Interfaz web de **SAUZ STORE BLACK EDITION**, tienda multimarca de streetwear, sneakers y accesorios desarrollada con **React 18** y **Vite 5**.
 
 ---
 
-## 📁 Estructura del Frontend
+## Tecnologías
+
+- **React 18** (`react`, `react-dom`)
+- **Vite 5** (`@vitejs/plugin-react`)
+- **Lucide React** (iconografía)
+- **Recharts** (gráficos del panel administrativo)
+- **SweetAlert2** (alertas y confirmaciones en `src/lib/alerts.js`)
+- **Node Test Runner** (`node --test tests/*.test.js`)
+
+---
+
+## Instalación, ejecución y compilación
+
+Desde `frontend/`:
+
+```bash
+npm install
+cp .env.example .env   # Opcional si cambias la URL del backend
+npm run dev            # Servidor de desarrollo (http://localhost:5173)
+npm test               # Pruebas unitarias
+npm run build          # Compilación de producción (dist/)
+```
+
+En `frontend/.env`, configura `VITE_API_BASE_URL=http://localhost:3000` si el backend corre en otro host/puerto. En desarrollo local, `vite.config.js` ya proxia `/api` a `http://localhost:3000`.
+
+---
+
+## Estructura de carpetas
 
 ```text
 frontend/
-├── dist/                      # Compilación para despliegue en producción (build)
-├── img/                       # Multimedia (fotografías de prendas, videos hero, iconos)
-│   └── Productos/             # Fotos individuales de catálogo
-├── src/                       # Código fuente de React
-│   ├── components/            # Componentes reutilizables de UI
-│   │   ├── Header.jsx         # Barra de navegación, logo y botón de bolsa
-│   │   ├── Footer.jsx         # Pie de página y enlaces informativos
-│   │   ├── ProductCard.jsx    # Tarjeta de producto con selector y botón de agregar
-│   │   ├── CartDrawer.jsx     # Bolsa de compras lateral deslizable (no invasiva)
-│   │   ├── CheckoutModal.jsx  # Modal de pago con tarjeta interactiva, transferencia o efectivo
-│   │   ├── ReceiptModal.jsx   # Comprobante digital tras confirmar el pedido
-│   │   ├── SupportChat.jsx    # Widget flotante de atención y ayuda
-│   │   └── Toast.jsx          # Notificaciones visuales de confirmación
-│   ├── context/               # Gestión de estado global
-│   │   └── CartContext.jsx    # Contexto para sincronizar bolsa, catálogo y pedidos
-│   ├── pages/                 # Vistas / Pantallas principales
-│   │   ├── Home.jsx           # Página de inicio con hero video y colecciones destacadas
-│   │   ├── Catalog.jsx        # Catálogo con buscador y filtros por categoría
-│   │   ├── ProductDetail.jsx  # Vista detallada de una prenda específica
-│   │   ├── About.jsx          # Quiénes somos: historia y pilares de la marca
-│   │   └── Location.jsx       # Tienda física: mapa interactivo, horarios y contacto
-│   ├── App.jsx                # Enrutamiento, modales globales y estructura general
-│   ├── main.jsx               # Punto de entrada y montaje de React en el DOM
-│   ├── styles.css             # Estilos principales de la interfaz
-│   └── theme-minimal.css      # Variables de diseño y tema visual
-├── index.html                 # Plantilla HTML base de Vite
-├── package.json               # Dependencias del frontend (React, Vite, etc.)
-└── vite.config.js             # Configuración de Vite y proxy reverso hacia /api
+├── img/                        # Recursos públicos servidos por Vite (publicDir: 'img')
+│   ├── Productos/              # Fotografías del catálogo (/Productos/...)
+│   ├── editorial/              # Imágenes responsive de Nosotros (/editorial/...)
+│   ├── logos/                  # Logos oficiales y copias web (/logos/web/...)
+│   ├── fonts/                  # Fuente Archivo Black local
+│   ├── SAUZ_CARRUSEL_3_IMAGENES/
+│   ├── ropa.png, new-era.webp, tenis.jpeg  # Portadas de colecciones en Home
+│   ├── 1.jpeg, 2.jpeg, 3.jpeg              # Fotografías principales de Nosotros
+│   └── sauz-placeholder.svg
+├── src/
+│   ├── assets/                 # Rutas tipadas de logotipos (brandAssets.js)
+│   ├── components/
+│   │   ├── account/            # Perfil de cliente, direcciones y trazabilidad de pedidos
+│   │   ├── admin/              # Panel administrativo (AdminPanel.jsx + CSS)
+│   │   ├── auth/               # Login y registro (AdminLogin.jsx + CSS)
+│   │   ├── cart/               # Confirmación, checkout y recibo
+│   │   ├── catalog/            # ProductCard, ProductGallery, ProductImage, CatalogFilters
+│   │   ├── home/               # HomeCarousel y EditorialCollections
+│   │   └── layout/             # Header, Footer, BrandLogo, BrandsDirectoryGrid, ErrorBoundary, Toast
+│   ├── context/                # AuthContext.jsx y CartContext.jsx
+│   ├── hooks/                  # useFavorites.js y useScrollReveal.js
+│   ├── lib/                    # Utilidades puras (filtros, zoom, tracking, alertas, resumen admin)
+│   ├── pages/                  # Home, Catalog, ProductDetail, Brands, About, Location, Cart y Experience
+│   ├── services/               # Capa HTTP centralizada (apiClient.js + servicios por módulo)
+│   ├── styles/                 # Hojas CSS globales (cargadas en orden en main.jsx)
+│   ├── App.jsx                 # Enrutamiento principal
+│   └── main.jsx                # Punto de entrada React
+└── tests/                      # Pruebas automatizadas
 ```
 
----
-
-## 🔄 Conexión con el Backend
-
-El frontend se comunica con el servidor Node.js a través de peticiones HTTP tipo REST consumidas en [`src/context/CartContext.jsx`](file:///c:/Users/rstan/Documents/SauzStore/frontend/src/context/CartContext.jsx):
-
-* **Catálogo:** `GET /api/products` para consultar prendas en tiempo real.
-* **Sincronización:** `GET /api/cart` y `POST /api/cart/items` para mantener actualizada la bolsa de compras.
-* **Checkout:** `POST /api/checkout` para transmitir los datos del comprador y la pasarela de pago seleccionada.
-
----
-
-## 🚀 Comandos de Ejecución
-
-```bash
-# 1. Instalar dependencias
-npm install
-
-# 2. Iniciar servidor de desarrollo con Vite (puerto 5173 por defecto)
-npm run dev
-
-# 3. Compilar para producción (genera la carpeta dist/)
-npm run build
-```
-
+Consulta [`../BACKEND_INTEGRATION.md`](../BACKEND_INTEGRATION.md) para ver los endpoints y contratos esperados por el frontend.

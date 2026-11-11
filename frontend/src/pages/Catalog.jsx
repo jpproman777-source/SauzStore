@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Search, SlidersHorizontal, X, ChevronDown, Check } from "lucide-react";
 import { useCart } from "../context/CartContext";
-import { ProductCard } from "../components/ProductCard";
-import { CatalogFilters } from "../components/CatalogFilters";
+import { ProductCard } from "../components/catalog/ProductCard";
+import { CatalogFilters } from "../components/catalog/CatalogFilters";
 import "./catalog-layout.css";
 import "./selection-hero.css";
 import { brandOf, hasPrice, productVariants } from "../lib/products";

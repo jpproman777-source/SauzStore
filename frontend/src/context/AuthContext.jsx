@@ -130,15 +130,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Accesos rápidos de demostración
-  const quickLoginAdmin = () => {
-    return login('admin@sauzstore.com', 'admin123');
-  };
-
-  const quickLoginClient = () => {
-    return login('cliente@sauzstore.com', 'cliente123');
-  };
-
   const isAdmin = user?.role === 'admin';
   const isClient = user?.role === 'cliente';
 
@@ -159,8 +150,6 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         updateProfile,
-        quickLoginAdmin,
-        quickLoginClient
       }}
     >
       {children}

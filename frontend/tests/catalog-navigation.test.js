@@ -8,7 +8,7 @@ const frontendDir = path.resolve(import.meta.dirname, "..");
 const repoDir = path.resolve(frontendDir, "..");
 
 test("Header Ropa mega menu removes Siluetas Urbanas and Explorar Catálogo columns", () => {
-  const header = fs.readFileSync(path.join(frontendDir, "src/components/Header.jsx"), "utf8");
+  const header = fs.readFileSync(path.join(frontendDir, "src/components/layout/Header.jsx"), "utf8");
   const ropaSectionMatch = header.match(
     /activeDropdown === "ropa" && \(([\s\S]*?)activeDropdown === "sneakers"/,
   );

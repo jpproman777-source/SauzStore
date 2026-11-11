@@ -23,7 +23,7 @@ test("brandAssets exposes proportional official logos including New Era", () => 
 test("Brands page and Home #marcas section reuse the 2x2 official brand cards grid", () => {
   const brandsJsx = fs.readFileSync(path.join(frontendDir, "src/pages/Brands.jsx"), "utf8");
   const gridJsx = fs.readFileSync(
-    path.join(frontendDir, "src/components/BrandsDirectoryGrid.jsx"),
+    path.join(frontendDir, "src/components/layout/BrandsDirectoryGrid.jsx"),
     "utf8",
   );
   const homeJsx = fs.readFileSync(path.join(frontendDir, "src/pages/Home.jsx"), "utf8");
@@ -57,8 +57,8 @@ test("Brands page and Home #marcas section reuse the 2x2 official brand cards gr
 
 test("App, Header, and Footer wire /marcas route cleanly", () => {
   const app = fs.readFileSync(path.join(frontendDir, "src/App.jsx"), "utf8");
-  const header = fs.readFileSync(path.join(frontendDir, "src/components/Header.jsx"), "utf8");
-  const footer = fs.readFileSync(path.join(frontendDir, "src/components/Footer.jsx"), "utf8");
+  const header = fs.readFileSync(path.join(frontendDir, "src/components/layout/Header.jsx"), "utf8");
+  const footer = fs.readFileSync(path.join(frontendDir, "src/components/layout/Footer.jsx"), "utf8");
 
   assert.match(app, /if \(path === "\/marcas" \|\| path === "\/brands"\) return "brands"/);
   assert.match(app, /else if \(page === "brands"\) path = "\/marcas"/);

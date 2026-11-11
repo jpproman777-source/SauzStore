@@ -6,6 +6,9 @@ import React, {
   useCallback,
   useRef,
 } from "react";
+import { productService } from "../services/productService";
+import { cartService } from "../services/cartService";
+import { orderService } from "../services/orderService";
 
 const CartContext = createContext();
 const copFormatter = new Intl.NumberFormat("es-CO", {
@@ -62,10 +65,8 @@ export const CartProvider = ({ children }) => {
   const fetchProducts = useCallback(async () => {
     setLoadingProducts(true);
     try {
-      const res = await fetch("/api/products");
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      setProducts(data.products || []);
+      const list = await productService.getProducts();
+      setProducts(Array.isArray(list) ? list : []);
     } catch (err) {
       console.error("Error al cargar productos:", err);
       showToast("⚠️ No se pudo conectar con el catálogo de Sauz Store.");
@@ -78,14 +79,12 @@ export const CartProvider = ({ children }) => {
   const fetchOrders = useCallback(async (clientEmail = null) => {
     setLoadingOrders(true);
     try {
-      const url = clientEmail
-        ? `/api/orders?email=${encodeURIComponent(clientEmail)}`
-        : "/api/orders";
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      setOrders(data.orders || []);
-      return data.orders || [];
+      const list = await orderService.getOrders(
+        clientEmail ? { email: clientEmail } : {},
+      );
+      const normalized = Array.isArray(list) ? list : [];
+      setOrders(normalized);
+      return normalized;
     } catch (err) {
       console.error("Error al cargar pedidos:", err);
       return [];
@@ -99,10 +98,8 @@ export const CartProvider = ({ children }) => {
     setCartLoading(true);
     setCartLoadError(null);
     try {
-      const res = await fetch("/api/cart");
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      if (data.cart) {
+      const data = await cartService.getCart();
+      if (data?.cart) {
         setCart(data.cart);
       }
     } catch (err) {
@@ -135,13 +132,7 @@ export const CartProvider = ({ children }) => {
     pendingAdds.current.add(key);
     setCartConfirmation(null);
     try {
-      const res = await fetch("/api/cart/items", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, quantity, variantId }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al agregar prenda");
+      const data = await cartService.addItem({ productId, quantity, variantId });
       setCart(data.cart);
       const item = data.cart?.items?.find(
         (item) => `${item.productId}:${item.variantId}` === key,
@@ -166,13 +157,7 @@ export const CartProvider = ({ children }) => {
   // Modificar cantidad
   const updateQuantity = async (productId, quantity, variantId) => {
     try {
-      const res = await fetch(`/api/cart/items/${productId}?variantId=${encodeURIComponent(variantId)}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ quantity }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al actualizar");
+      const data = await cartService.updateItem(productId, { variantId, quantity });
       setCart(data.cart);
       return data;
     } catch (err) {
@@ -184,11 +169,7 @@ export const CartProvider = ({ children }) => {
   // Eliminar prenda individual
   const removeItem = async (productId, variantId) => {
     try {
-      const res = await fetch(`/api/cart/items/${productId}?variantId=${encodeURIComponent(variantId)}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al eliminar");
+      const data = await cartService.removeItem(productId, { variantId });
       setCart(data.cart);
       showToast(data.message || "Prenda eliminada de la bolsa");
       return data;
@@ -201,11 +182,7 @@ export const CartProvider = ({ children }) => {
   // Vaciar carrito
   const clearCart = async () => {
     try {
-      const res = await fetch("/api/cart", {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al vaciar");
+      const data = await cartService.clearCart();
       setCart(data.cart);
       showToast("🗑️ Bolsa vaciada");
       return data;
@@ -218,13 +195,7 @@ export const CartProvider = ({ children }) => {
   // Procesar Checkout (descuenta stock en tiempo real)
   const processCheckout = async (customer, payment) => {
     try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customer, payment }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al procesar compra");
+      const data = await orderService.checkout({ customer, payment });
 
       setCart(data.cart);
       if (data.products) {
@@ -246,13 +217,7 @@ export const CartProvider = ({ children }) => {
   // Reabastecer stock de un producto existente ("Llegaron productos al slot")
   const restockProduct = async (productId, amount, variantId) => {
     try {
-      const res = await fetch("/api/products/restock", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, amount, variantId }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al reabastecer stock");
+      const data = await productService.restockProduct({ productId, amount, variantId });
       if (data.products) {
         setProducts(data.products);
       } else {
@@ -269,13 +234,7 @@ export const CartProvider = ({ children }) => {
   // Crear nuevo slot de producto en inventario
   const createNewProduct = async (productData) => {
     try {
-      const res = await fetch("/api/products", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(productData),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al crear producto");
+      const data = await productService.createProduct(productData);
       if (data.products) {
         setProducts(data.products);
       } else {
@@ -292,14 +251,7 @@ export const CartProvider = ({ children }) => {
   // Actualizar datos de un producto (Admin)
   const updateProduct = async (productId, updatedData) => {
     try {
-      const res = await fetch(`/api/products/${productId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedData),
-      });
-      const data = await res.json();
-      if (!res.ok)
-        throw new Error(data.error || "Error al actualizar producto");
+      const data = await productService.updateProduct(productId, updatedData);
       if (data.products) {
         setProducts(data.products);
       } else {
@@ -316,11 +268,7 @@ export const CartProvider = ({ children }) => {
   // Eliminar slot de producto
   const deleteProduct = async (productId) => {
     try {
-      const res = await fetch(`/api/products/${productId}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al eliminar producto");
+      const data = await productService.deleteProduct(productId);
       if (data.products) {
         setProducts(data.products);
       } else {
@@ -337,15 +285,12 @@ export const CartProvider = ({ children }) => {
   // Actualizar estado de una orden (Admin)
   const updateOrderStatus = async (orderId, newStatus, note, location, shippingTracking) => {
     try {
-      let token;
-      try { token=JSON.parse(localStorage.getItem("sauz_auth_user") || "null")?.token; } catch {}
-      const res = await fetch(`/api/orders/${orderId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json", ...(token ? { Authorization:`Bearer ${token}` } : {}) },
-        body: JSON.stringify({ orderStatus: newStatus, note, location, shippingTracking }),
+      const data = await orderService.updateOrderStatus(orderId, {
+        orderStatus: newStatus,
+        note,
+        location,
+        shippingTracking,
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al actualizar pedido");
       fetchOrders();
       showToast(newStatus ? `Pedido ${orderId}: ${newStatus}` : `Guía del pedido ${orderId} actualizada`);
       return data;

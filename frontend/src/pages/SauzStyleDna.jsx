@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Sparkles, Check, ArrowRight, RefreshCw, ShoppingBag, Eye, ShieldCheck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { ProductImage } from '../components/ProductImage';
+import { ProductImage } from '../components/catalog/ProductImage';
+import { experienceService } from '../services/experienceService';
 
 const PROFILES = {
   'Dark Essentials': {
@@ -128,18 +129,14 @@ export const SauzStyleDna = ({ onProductSelect, setActivePage }) => {
   const savePreferences = async (profileName, allAnswers) => {
     setSaving(true);
     try {
-      await fetch('/api/users/style-dna', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user?.id || null,
-          email: user?.email || '',
-          styleDna: {
-            profile: profileName,
-            answers: allAnswers,
-            updatedAt: new Date().toISOString(),
-          },
-        }),
+      await experienceService.saveStyleDna({
+        userId: user?.id || null,
+        email: user?.email || '',
+        styleDna: {
+          profile: profileName,
+          answers: allAnswers,
+          updatedAt: new Date().toISOString(),
+        },
       });
       showToast(`🧬 Perfil ${profileName} guardado en tu cuenta`);
     } catch (e) {

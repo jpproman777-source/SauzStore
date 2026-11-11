@@ -2,7 +2,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { ArrowUpRight, ShoppingBag, Sparkles, Check, DollarSign, Sliders, ShieldCheck, Heart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { ProductImage } from '../components/ProductImage';
+import { ProductImage } from '../components/catalog/ProductImage';
+import { experienceService } from '../services/experienceService';
 
 export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActivePage }) => {
   const { products, formatMoney, addToCart, showToast } = useCart();
@@ -142,22 +143,16 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
   const handleSaveToCloset = async () => {
     setSavingOutfit(true);
     try {
-      const res = await fetch('/api/closet/outfits', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user?.id || null,
-          userEmail: user?.email || '',
-          userName: user?.name || 'Miembro SAUZ',
-          name: outfitName.trim() || 'Look Urbano SAUZ',
-          style: mode === 'budget' ? `Budget Fit ($${budgetCOP.toLocaleString('es-CO')})` : 'Urban Streetwear',
-          slots,
-          subtotalCOP: totalOutfitPrice,
-          isPublic: true,
-        }),
+      await experienceService.saveClosetOutfit({
+        userId: user?.id || null,
+        userEmail: user?.email || '',
+        userName: user?.name || 'Miembro SAUZ',
+        name: outfitName.trim() || 'Look Urbano SAUZ',
+        style: mode === 'budget' ? `Budget Fit ($${budgetCOP.toLocaleString('es-CO')})` : 'Urban Streetwear',
+        slots,
+        subtotalCOP: totalOutfitPrice,
+        isPublic: true,
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Error al guardar outfit');
       showToast('✨ Outfit guardado en My SAUZ Closet con éxito');
     } catch (e) {
       showToast(e.message);
