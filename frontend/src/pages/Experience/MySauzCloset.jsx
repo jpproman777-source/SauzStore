@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Heart, Trash2, Share2, Plus, ShoppingBag, ArrowUpRight, Copy, Check, Lock } from 'lucide-react';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import { ProductImage } from '../components/catalog/ProductImage';
-import { confirmAction } from '../lib/alerts';
-import { experienceService } from '../services/experienceService';
+import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
+import { ProductImage } from '../../components/catalog/ProductImage';
+import { confirmAction } from '../../lib/alerts';
+import { experienceService } from '../../services/experienceService';
 
 export const MySauzCloset = ({ onProductSelect, setActivePage }) => {
   const { products, formatMoney, addToCart, showToast } = useCart();

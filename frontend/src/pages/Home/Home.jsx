@@ -1,13 +1,13 @@
 import React, { useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { useCart } from "../context/CartContext";
-import { ProductCard } from "../components/catalog/ProductCard";
-import { BrandsDirectoryGrid } from "../components/layout/BrandsDirectoryGrid";
+import { useCart } from "../../context/CartContext";
+import { ProductCard } from "../../components/catalog/ProductCard";
+import { BrandsDirectoryGrid } from "../../components/layout/BrandsDirectoryGrid";
 import {
   HomeCarousel,
-} from "../components/home/HomeCarousel";
-import { EditorialCollections } from "../components/home/EditorialCollections";
-import { useScrollReveal } from "../hooks/useScrollReveal";
+} from "../../components/home/HomeCarousel";
+import { EditorialCollections } from "../../components/home/EditorialCollections";
+import { useScrollReveal } from "../../hooks/useScrollReveal";
 import "./home-catalog-button.css";
 
 export const Home = ({

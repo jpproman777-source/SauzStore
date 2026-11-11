@@ -24,7 +24,7 @@ test("Header Ropa mega menu removes Siluetas Urbanas and Explorar Catálogo colu
 
 test("handleCatalogFilter resets stale query and URL filters when entering Camisetas", () => {
   const app = fs.readFileSync(path.join(frontendDir, "src/App.jsx"), "utf8");
-  const catalog = fs.readFileSync(path.join(frontendDir, "src/pages/Catalog.jsx"), "utf8");
+  const catalog = fs.readFileSync(path.join(frontendDir, "src/pages/Catalog/Catalog.jsx"), "utf8");
 
   assert.match(
     app,
@@ -54,8 +54,8 @@ test("Camisetas category returns active products when query and brand are clean"
 });
 
 test("Catalog selection hero uses isolated styles without altering catalog body", () => {
-  const catalog = fs.readFileSync(path.join(frontendDir, "src/pages/Catalog.jsx"), "utf8");
-  const heroCss = fs.readFileSync(path.join(frontendDir, "src/pages/selection-hero.css"), "utf8");
+  const catalog = fs.readFileSync(path.join(frontendDir, "src/pages/Catalog/Catalog.jsx"), "utf8");
+  const heroCss = fs.readFileSync(path.join(frontendDir, "src/pages/Catalog/selection-hero.css"), "utf8");
 
   assert.match(catalog, /<header className="selection-hero"/);
   assert.match(catalog, /SAUZ STORE \/ BLACK EDITION/);

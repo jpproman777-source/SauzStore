@@ -7,11 +7,11 @@ import {
   ShoppingBag,
   Trash2,
 } from "lucide-react";
-import { useCart } from "../context/CartContext";
-import { useFavorites } from "../hooks/useFavorites";
-import { ProductImage } from "../components/catalog/ProductImage";
-import { brandOf, productPath } from "../lib/products";
-import { confirmAction } from "../lib/alerts";
+import { useCart } from "../../context/CartContext";
+import { useFavorites } from "../../hooks/useFavorites";
+import { ProductImage } from "../../components/catalog/ProductImage";
+import { brandOf, productPath } from "../../lib/products";
+import { confirmAction } from "../../lib/alerts";
 import "./cart-polish.css";
 
 const CartLine = ({

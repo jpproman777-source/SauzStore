@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Bell, Check, Sparkles, ShieldCheck, ArrowUpRight } from 'lucide-react';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import { ProductImage } from '../components/catalog/ProductImage';
-import { experienceService } from '../services/experienceService';
+import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
+import { ProductImage } from '../../components/catalog/ProductImage';
+import { experienceService } from '../../services/experienceService';
 
 // Componente de cuenta regresiva
 const CountdownTimer = ({ targetDate }) => {

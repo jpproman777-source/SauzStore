@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Search, SlidersHorizontal, X, ChevronDown, Check } from "lucide-react";
-import { useCart } from "../context/CartContext";
-import { ProductCard } from "../components/catalog/ProductCard";
-import { CatalogFilters } from "../components/catalog/CatalogFilters";
+import { useCart } from "../../context/CartContext";
+import { ProductCard } from "../../components/catalog/ProductCard";
+import { CatalogFilters } from "../../components/catalog/CatalogFilters";
 import "./catalog-layout.css";
 import "./selection-hero.css";
-import { brandOf, hasPrice, productVariants } from "../lib/products";
-import { filterCatalog, matchesCategory } from "../lib/catalogFilters";
-import { useScrollReveal } from "../hooks/useScrollReveal";
+import { brandOf, hasPrice, productVariants } from "../../lib/products";
+import { filterCatalog, matchesCategory } from "../../lib/catalogFilters";
+import { useScrollReveal } from "../../hooks/useScrollReveal";
 
 const readFilters = () => {
   const params = new URLSearchParams(window.location.search);

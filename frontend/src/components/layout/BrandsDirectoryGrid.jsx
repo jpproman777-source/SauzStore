@@ -1,7 +1,7 @@
 import React from "react";
 import { ArrowUpRight } from "lucide-react";
 import { approvedBrandAssets } from "../../assets/brandAssets";
-import "../../pages/brands-directory.css";
+import "../../pages/Brands/brands-directory.css";
 
 export const BRAND_DIRECTORY = [
   {

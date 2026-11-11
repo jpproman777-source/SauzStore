@@ -57,7 +57,15 @@ frontend/
 │   ├── context/                # AuthContext.jsx y CartContext.jsx
 │   ├── hooks/                  # useFavorites.js y useScrollReveal.js
 │   ├── lib/                    # Utilidades puras (filtros, zoom, tracking, alertas, resumen admin)
-│   ├── pages/                  # Home, Catalog, ProductDetail, Brands, About, Location, Cart y Experience
+│   ├── pages/
+│   │   ├── About/              # About.jsx + about-editorial.css
+│   │   ├── Brands/             # Brands.jsx + brands-directory.css
+│   │   ├── Cart/               # Cart.jsx + cart-polish.css
+│   │   ├── Catalog/            # Catalog.jsx + catalog-layout.css + selection-hero.css
+│   │   ├── Experience/         # Drops, Community, Closet, StyleStudio, FitBuilder, StyleDna, SizeFinder
+│   │   ├── Home/               # Home.jsx + home-catalog-button.css
+│   │   ├── Location/           # Location.jsx
+│   │   └── ProductDetail/      # ProductDetail.jsx + product-detail-polish.css
 │   ├── services/               # Capa HTTP centralizada (apiClient.js + servicios por módulo)
 │   ├── styles/                 # Hojas CSS globales (cargadas en orden en main.jsx)
 │   ├── App.jsx                 # Enrutamiento principal

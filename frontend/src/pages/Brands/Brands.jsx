@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrandsDirectoryGrid } from "../components/layout/BrandsDirectoryGrid";
+import { BrandsDirectoryGrid } from "../../components/layout/BrandsDirectoryGrid";
 import "./brands-directory.css";
 
 export default function Brands({ onCatalogFilter }) {

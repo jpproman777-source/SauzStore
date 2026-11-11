@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { ArrowUpRight, ShoppingBag, Sparkles, Check, DollarSign, Sliders, ShieldCheck, Heart } from 'lucide-react';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import { ProductImage } from '../components/catalog/ProductImage';
-import { experienceService } from '../services/experienceService';
+import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
+import { ProductImage } from '../../components/catalog/ProductImage';
+import { experienceService } from '../../services/experienceService';
 
 export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActivePage }) => {
   const { products, formatMoney, addToCart, showToast } = useCart();

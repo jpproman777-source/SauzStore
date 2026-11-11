@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Header } from "./components/layout/Header";
 import { Footer } from "./components/layout/Footer";
-import { Cart } from "./pages/Cart";
+import { Cart } from "./pages/Cart/Cart";
 import { CartConfirmation } from "./components/cart/CartConfirmation";
 import { CheckoutModal } from "./components/cart/CheckoutModal";
 import { ReceiptModal } from "./components/cart/ReceiptModal";
@@ -14,19 +14,19 @@ const AdminPanel = lazy(() =>
   })),
 );
 import { AdminLogin } from "./components/auth/AdminLogin";
-import { Home } from "./pages/Home";
-import { Catalog } from "./pages/Catalog";
-import { About } from "./pages/About";
-import Brands from "./pages/Brands";
-import { Location } from "./pages/Location";
-import { ProductDetail } from "./pages/ProductDetail";
-import { StyleStudio } from "./pages/StyleStudio";
-import { SauzFitBuilder } from "./pages/SauzFitBuilder";
-import { SauzStyleDna } from "./pages/SauzStyleDna";
-import { MySauzCloset } from "./pages/MySauzCloset";
-import { SauzDrops } from "./pages/SauzDrops";
-import { SauzCommunity } from "./pages/SauzCommunity";
-import { SauzSizeFinder } from "./pages/SauzSizeFinder";
+import { Home } from "./pages/Home/Home";
+import { Catalog } from "./pages/Catalog/Catalog";
+import { About } from "./pages/About/About";
+import Brands from "./pages/Brands/Brands";
+import { Location } from "./pages/Location/Location";
+import { ProductDetail } from "./pages/ProductDetail/ProductDetail";
+import { StyleStudio } from "./pages/Experience/StyleStudio";
+import { SauzFitBuilder } from "./pages/Experience/SauzFitBuilder";
+import { SauzStyleDna } from "./pages/Experience/SauzStyleDna";
+import { MySauzCloset } from "./pages/Experience/MySauzCloset";
+import { SauzDrops } from "./pages/Experience/SauzDrops";
+import { SauzCommunity } from "./pages/Experience/SauzCommunity";
+import { SauzSizeFinder } from "./pages/Experience/SauzSizeFinder";
 import { useAuth } from "./context/AuthContext";
 
 const readProductId = () => {

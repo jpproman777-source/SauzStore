@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { ArrowUpRight, Sparkles, Check, RefreshCw, ShoppingBag, Eye, ShieldCheck, ChevronRight } from 'lucide-react';
-import { useCart } from '../context/CartContext';
-import { ProductImage } from '../components/catalog/ProductImage';
-import { experienceService } from '../services/experienceService';
+import { useCart } from '../../context/CartContext';
+import { ProductImage } from '../../components/catalog/ProductImage';
+import { experienceService } from '../../services/experienceService';
 
 const AUTHORIZED_MODELS = [
   {

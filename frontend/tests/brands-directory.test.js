@@ -21,13 +21,13 @@ test("brandAssets exposes proportional official logos including New Era", () => 
 });
 
 test("Brands page and Home #marcas section reuse the 2x2 official brand cards grid", () => {
-  const brandsJsx = fs.readFileSync(path.join(frontendDir, "src/pages/Brands.jsx"), "utf8");
+  const brandsJsx = fs.readFileSync(path.join(frontendDir, "src/pages/Brands/Brands.jsx"), "utf8");
   const gridJsx = fs.readFileSync(
     path.join(frontendDir, "src/components/layout/BrandsDirectoryGrid.jsx"),
     "utf8",
   );
-  const homeJsx = fs.readFileSync(path.join(frontendDir, "src/pages/Home.jsx"), "utf8");
-  const css = fs.readFileSync(path.join(frontendDir, "src/pages/brands-directory.css"), "utf8");
+  const homeJsx = fs.readFileSync(path.join(frontendDir, "src/pages/Home/Home.jsx"), "utf8");
+  const css = fs.readFileSync(path.join(frontendDir, "src/pages/Brands/brands-directory.css"), "utf8");
 
   assert.match(brandsJsx, /SAUZ STORE \/ BRAND DIRECTORY/);
   assert.match(brandsJsx, /LAS MARCAS\./);

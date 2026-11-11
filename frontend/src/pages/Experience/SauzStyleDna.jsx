@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { Sparkles, Check, ArrowRight, RefreshCw, ShoppingBag, Eye, ShieldCheck } from 'lucide-react';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import { ProductImage } from '../components/catalog/ProductImage';
-import { experienceService } from '../services/experienceService';
+import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
+import { ProductImage } from '../../components/catalog/ProductImage';
+import { experienceService } from '../../services/experienceService';
 
 const PROFILES = {
   'Dark Essentials': {

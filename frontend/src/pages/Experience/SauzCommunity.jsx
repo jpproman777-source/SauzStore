@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Plus, Flag, Trophy, Sparkles, MapPin, Check, MessageSquare, Tag } from 'lucide-react';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import { ProductImage } from '../components/catalog/ProductImage';
-import { confirmAction } from '../lib/alerts';
-import { experienceService } from '../services/experienceService';
+import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
+import { ProductImage } from '../../components/catalog/ProductImage';
+import { confirmAction } from '../../lib/alerts';
+import { experienceService } from '../../services/experienceService';
 
 export const SauzCommunity = ({ onProductSelect }) => {
   const { products, showToast } = useCart();
