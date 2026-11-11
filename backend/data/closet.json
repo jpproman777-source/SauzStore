@@ -1,0 +1,19 @@
+[
+  {
+    "id": "outfit-mateo-01",
+    "userId": 2,
+    "userEmail": "cliente@sauzstore.com",
+    "userName": "Mateo Gómez",
+    "name": "Street Minimalist All-Black",
+    "style": "Street Minimal",
+    "createdAt": "2026-11-10T16:00:00.000Z",
+    "isPublic": true,
+    "slots": {
+      "top": { "productId": 8, "size": "L", "color": "Negro" },
+      "bottom": { "productId": 64, "size": "32", "color": "Negro" },
+      "sneakers": { "productId": 27, "size": "10 US", "color": "Negro / Rojo" },
+      "cap": { "productId": 39, "size": "Única", "color": "Negro" }
+    },
+    "subtotalCOP": 789700
+  }
+]

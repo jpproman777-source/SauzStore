@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useMemo, useRef } from "react";
+import { ArrowUpRight } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { ProductCard } from "../components/ProductCard";
 import { BrandLogo } from "../components/BrandLogo";
 import {
   HomeCarousel,
-  CampaignImage,
-  campaignSlides,
 } from "../components/HomeCarousel";
-import { FitLab } from "../components/FitLab";
+import { EditorialCollections } from "../components/EditorialCollections";
+import { useScrollReveal } from "../hooks/useScrollReveal";
+
 export const Home = ({
   setActivePage,
   onCategorySelect,
@@ -15,63 +16,27 @@ export const Home = ({
   onProductSelect,
 }) => {
   const { products, loadingProducts } = useCart();
-  const categories = [
-    ...new Set(products.map((p) => p.category).filter(Boolean)),
-  ];
+  const main = useRef(null);
+  useScrollReveal(main, [products.length, loadingProducts], '.bf-home > .bf-section [data-reveal], .bf-home > .bf-statement[data-reveal]');
+
+  const categories = useMemo(() => {
+    return [...new Set(products.map((p) => p.category).filter(Boolean))];
+  }, [products]);
+
+  const categoryCounts = useMemo(() => {
+    const counts = {};
+    products.forEach((p) => {
+      if (p.category) counts[p.category] = (counts[p.category] || 0) + 1;
+    });
+    return counts;
+  }, [products]);
+
   return (
-    <main className="bf-home">
+    <main className="bf-home" ref={main}>
       <HomeCarousel onCollectionSelect={onCollectionSelect} />
-      <section
-        className="edition-categories"
-        id="categorias"
-        aria-label="Explorar categorías"
-      >
-        <div className="edition-category-heading">
-          <span className="edition-eyebrow">ELIGE TU PRÓXIMO MOVIMIENTO</span>
-          <h2>Tu estilo. Sin límites.</h2>
-        </div>
-        <div className="edition-category-grid">
-          {[
-            {
-              name: "Camisetas",
-              slide: campaignSlides[1],
-              description: "Siluetas que hablan por ti.",
-            },
-            {
-              name: "Gorras",
-              slide: campaignSlides[2],
-              description: "El detalle que hace la diferencia.",
-            },
-            {
-              name: "Sneakers",
-              slide: campaignSlides[0],
-              description: "Actitud en cada paso.",
-            },
-          ].map((category, i) => (
-            <button
-              className="edition-category-card"
-              key={category.name}
-              onClick={() => onCollectionSelect(category.name)}
-            >
-              <div className="edition-category-photo">
-                <CampaignImage slide={category.slide} />
-                <span className="edition-category-number">
-                  0{i + 1} / COLECCIÓN
-                </span>
-              </div>
-              <div className="edition-category-info">
-                <div>
-                  <h3>{category.name}</h3>
-                  <p>{category.description}</p>
-                </div>
-                <span aria-hidden="true">↗</span>
-              </div>
-            </button>
-          ))}
-        </div>
-      </section>
+      <EditorialCollections onCollectionSelect={onCollectionSelect} />
       <section className="bf-section" id="coleccion">
-        <div className="bf-section-heading">
+        <div className="bf-section-heading" data-reveal>
           <div>
             <span className="bf-eyebrow">01 / SELECCIÓN SAUZ</span>
             <h2>Tu próximo esencial.</h2>
@@ -83,14 +48,28 @@ export const Home = ({
             VER TODO EL CATÁLOGO ↗
           </button>
         </div>
-        <div className="bf-category-row">
-          {categories.map((c, i) => (
-            <button key={c} onClick={() => onCategorySelect(c)}>
-              <span>0{i + 1}</span>
-              {c}
-              <span>↗</span>
-            </button>
-          ))}
+        <div className="bf-category-row" role="region" aria-label="Explorar por categoría" data-reveal>
+          {categories.map((c, i) => {
+            const count = categoryCounts[c] || 0;
+            return (
+              <button
+                key={c}
+                type="button"
+                className="bf-category-card"
+                onClick={() => onCategorySelect(c)}
+                aria-label={`Ver colección de ${c}, ${count} referencias`}
+              >
+                <div className="bf-cat-top">
+                  <span className="bf-cat-index">0{i + 1}</span>
+                  <ArrowUpRight size={15} className="bf-cat-arrow" aria-hidden="true" />
+                </div>
+                <div className="bf-cat-content">
+                  <span className="bf-cat-name">{c}</span>
+                  <span className="bf-cat-count">{count > 0 ? `${count} piezas` : "Ver piezas"}</span>
+                </div>
+              </button>
+            );
+          })}
         </div>
         <div className="bf-grid">
           {loadingProducts ? (
@@ -113,7 +92,7 @@ export const Home = ({
           )}
         </div>
       </section>
-      <section className="bf-statement" id="marcas">
+      <section className="bf-statement" id="marcas" data-reveal>
         <span className="bf-eyebrow">CURADURÍA CON ACTITUD</span>
         <h2>
           NO ES SOLO
@@ -136,7 +115,6 @@ export const Home = ({
           catálogo.
         </small>
       </section>
-      <FitLab onProductSelect={onProductSelect} />
     </main>
   );
 };

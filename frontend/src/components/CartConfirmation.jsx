@@ -69,7 +69,7 @@ export const CartConfirmation = ({ onViewBag }) => {
         </button>
       </div>
       <div className="bag-confirmation-product">
-        <ProductImage src={item.image} alt={item.name} />
+        <ProductImage mode="thumb" src={item.image} alt={item.name} />
         <div>
           <span className="bag-item-brand">{brandOf(item)}</span>
           <h3>{item.name}</h3>

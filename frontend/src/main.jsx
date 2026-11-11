@@ -10,6 +10,9 @@ import './black-future.css';
 import './home-black-edition.css';
 import './brand-navigation.css';
 import './shopping-experience.css';
+import './catalog-premium.css';
+import './editorial-collections.css';
+import './motion-system.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

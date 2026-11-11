@@ -1,0 +1,83 @@
+.collection-experience {
+  max-width: 1920px;
+  margin: auto;
+  padding: clamp(72px, 8vw, 125px) 5.5% 95px;
+  background: #0a0a0a;
+  color: #f5f5f3;
+  scroll-margin-top: var(--edition-header-h, 88px);
+}
+.collection-heading { margin-bottom: 48px; }
+.collection-kicker { font-size: .67rem; letter-spacing: .2em; color: #b1b1b1; font-weight: 700; }
+.collection-heading h2 {
+  font-family: "SAUZ Archivo Black", Arial, sans-serif;
+  font-size: clamp(2.6rem, 5.4vw, 6.3rem);
+  font-weight: 900;
+  letter-spacing: -.06em;
+  line-height: 1.02;
+  max-width: 16ch;
+  margin: 18px 0 24px;
+}
+.collection-heading h2 em { font-style: normal; white-space: nowrap; }
+.collection-heading h2 em::after { content: ""; display: inline-block; width: .14em; height: .14em; background: #cc3036; border-radius: 50%; margin-left: .03em; }
+.collection-heading p { font-size: clamp(1rem, 1.3vw, 1.22rem); color: #c4c4c4; margin: 0; }
+.collection-editorial-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.collection-editorial-card {
+  position: relative;
+  display: block;
+  min-width: 0;
+  aspect-ratio: 4 / 5.15;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 3px;
+  background: #171717;
+  color: #fff;
+  text-decoration: none;
+}
+.collection-editorial-card img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.collection-editorial-card.is-wide::before { content: ""; position: absolute; inset: 0; background: var(--editorial-image) center / cover; opacity: .25; }
+.collection-editorial-card.is-wide img { position: relative; object-fit: contain; }
+.collection-editorial-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 36%, #0002 51%, #000c 82%, #000e 100%);
+  transition: opacity 220ms ease;
+}
+.collection-editorial-content { position: absolute; left: 7%; right: 21%; bottom: 7%; display: grid; gap: 9px; }
+.collection-editorial-label { color: #eee; font-size: .64rem; font-weight: 800; letter-spacing: .17em; text-transform: uppercase; }
+.collection-editorial-title { font-family: "SAUZ Archivo Black", Arial, sans-serif; font-size: clamp(1.65rem, 2.4vw, 3rem); line-height: 1.06; letter-spacing: -.045em; }
+.collection-editorial-description { max-width: 25ch; color: #ddd; font-size: clamp(.8rem, 1vw, .98rem); line-height: 1.45; }
+.collection-editorial-arrow {
+  position: absolute;
+  right: 7%;
+  bottom: 7%;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #ffffffa8;
+  border-radius: 50%;
+  background: #1116;
+  transition: background-color 180ms ease, transform 180ms ease, border-color 180ms ease;
+}
+.collection-editorial-card:hover .collection-editorial-shade,
+.collection-editorial-card:focus-visible .collection-editorial-shade { opacity: .88; }
+.collection-editorial-card:hover .collection-editorial-arrow,
+.collection-editorial-card:focus-visible .collection-editorial-arrow { background: #c53b40; border-color: #c53b40; transform: translate(2px, -2px); }
+.collection-experience :focus-visible { outline: 2px solid #e35b60; outline-offset: 3px; }
+@media (max-width: 1000px) {
+  .collection-experience { padding-inline: 4%; }
+  .collection-heading h2 { font-size: clamp(2.7rem, 6vw, 4.5rem); }
+  .collection-editorial-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .collection-experience { padding: 72px 5% 75px; }
+  .collection-heading { margin-bottom: 34px; }
+  .collection-heading h2 { font-size: clamp(2.4rem, 10vw, 3.5rem); max-width: 11ch; overflow-wrap: anywhere; }
+  .collection-heading h2 em { white-space: normal; }
+  .collection-editorial-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .collection-editorial-card { aspect-ratio: 4 / 4.9; }
+  .collection-editorial-title { font-size: clamp(1.8rem, 7vw, 2.7rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .collection-experience *, .collection-experience *::before, .collection-experience *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

@@ -42,7 +42,7 @@ export const ReceiptModal = () => {
           <div className="ticket-items">
             {orderCompleted.items?.map((item, idx) => (
               <div key={idx} className="ticket-item-row">
-                <span>{item.quantity}x {item.name}</span>
+                <span>{item.quantity}x {item.name}{item.size ? ` · Talla ${item.size}` : ''}</span>
                 <strong>{formatMoney(item.price * item.quantity)}</strong>
               </div>
             ))}

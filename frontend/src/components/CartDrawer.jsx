@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 export const CartDrawer = ({ setActivePage }) => {
   const {
     cart,
+    products,
     isCartOpen,
     setIsCartOpen,
     updateQuantity,
@@ -130,14 +131,15 @@ export const CartDrawer = ({ setActivePage }) => {
                 </div>
               ) : (
                 cart.items.map((item) => (
-                  <div key={item.productId} style={{ display: 'flex', gap: '20px', marginBottom: '25px', paddingBottom: '25px', borderBottom: '1px solid var(--border-color)' }}>
+                  <div key={`${item.productId}:${item.variantId}`} style={{ display: 'flex', gap: '20px', marginBottom: '25px', paddingBottom: '25px', borderBottom: '1px solid var(--border-color)' }}>
                     <div style={{ width: '80px', height: '100px', backgroundColor: 'var(--panel-bg)', borderRadius: '0px', overflow: 'hidden' }}>
-                      <ProductImage src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }} />
+                      <ProductImage mode="thumb" src={item.image} alt={item.name} style={{ width: '100%', height: '100%', opacity: 0.9 }} />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingTop: '5px' }}>
                       <div>
                         <div style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-color)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>{item.name}</div>
                         <div style={{ fontSize: '0.9rem', color: 'var(--text-color)', fontWeight: '400', letterSpacing: '1px' }}>{formatMoney(item.price)}</div>
+                        {item.size && <div style={{ fontSize: '0.75rem', color: 'var(--text-color)' }}>Talla: {item.size}</div>}
                       </div>
                       
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' }}>
@@ -145,23 +147,24 @@ export const CartDrawer = ({ setActivePage }) => {
                           <button 
                             style={{ padding: '5px 12px', background: 'transparent', color: 'var(--text-color)', border: 'none', borderRight: '1px solid var(--border-color)', cursor: 'pointer', fontSize: '1rem', transition: 'color 0.2s' }}
                             onClick={() => {
-                              if (item.quantity > 1) updateQuantity(item.productId, item.quantity - 1);
-                              else removeItem(item.productId);
+                              if (item.quantity > 1) updateQuantity(item.productId, item.quantity - 1, item.variantId);
+                              else removeItem(item.productId, item.variantId);
                             }}
                             onMouseOver={(e) => e.target.style.color = 'var(--gold-accent)'}
                             onMouseOut={(e) => e.target.style.color = 'var(--text-color)'}
                           >-</button>
                           <span style={{ padding: '0 15px', fontSize: '0.85rem', color: 'var(--text-color)', minWidth: '40px', textAlign: 'center' }}>{item.quantity}</span>
                           <button 
+                            disabled={item.quantity >= (products.find(product => product.id === item.productId)?.variants?.find(variant => variant.id === item.variantId)?.stock ?? Infinity)}
                             style={{ padding: '5px 12px', background: 'transparent', color: 'var(--text-color)', border: 'none', borderLeft: '1px solid var(--border-color)', cursor: 'pointer', fontSize: '1rem', transition: 'color 0.2s' }}
-                            onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.productId, item.quantity + 1, item.variantId)}
                             onMouseOver={(e) => e.target.style.color = 'var(--gold-accent)'}
                             onMouseOut={(e) => e.target.style.color = 'var(--text-color)'}
                           >+</button>
                         </div>
 
                         <button 
-                          onClick={() => removeItem(item.productId)}
+                          onClick={() => removeItem(item.productId, item.variantId)}
                           style={{ background: 'transparent', color: 'var(--text-color)', border: 'none', padding: '5px', cursor: 'pointer', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1px', transition: 'color 0.2s' }}
                           onMouseOver={(e) => e.target.style.color = 'var(--gold-accent)'}
                           onMouseOut={(e) => e.target.style.color = 'var(--text-color)'}

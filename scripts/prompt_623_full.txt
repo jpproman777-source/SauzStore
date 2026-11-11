@@ -1,0 +1,653 @@
+<USER_REQUEST>
+# SAUZ STORE BLACK EDITION — ACTUALIZACIÓN INTEGRAL DE E-COMMERCE + STYLE STUDIO + HISTORIAS DE USUARIO
+
+Actúa como Senior Full Stack Developer, Software Architect, Senior UI/UX Designer, especialista en e-commerce, bases de datos y QA Automation.
+
+Estoy desarrollando **SAUZ STORE BLACK EDITION**, una tienda virtual multimarca de ropa, sneakers y accesorios, orientada al mercado colombiano.
+
+La aplicación ya está construida. Tiene frontend, backend, catálogo de productos, sistema de autenticación, carrito y panel administrativo en diferentes estados de implementación.
+
+**NO QUIERO CREAR OTRO PROYECTO. NECESITO ACTUALIZAR Y COMPLETAR EL EXISTENTE.**
+
+Te adjunto una captura de la ficha de producto actual para que identifiques los problemas visuales.
+
+Quiero implementar tres grandes bloques de mejoras:
+
+1. Rediseño profesional y funcional de productos y compras.
+2. Implementación de nueve historias de usuario.
+3. Creación de SAUZ STYLE STUDIO, un probador virtual fotográfico con IA.
+
+Trabaja directamente en el código. No te limites a proponer cambios.
+
+---
+
+# FASE 0 — AUDITORÍA OBLIGATORIA
+
+Antes de escribir código:
+
+- Inspecciona la estructura del proyecto.
+- Identifica el framework y las dependencias actuales.
+- Revisa frontend, backend y base de datos.
+- Localiza los componentes de catálogo, product cards, detalle de producto, carrito, checkout, autenticación y administración.
+- Comprueba las rutas y modelos existentes.
+- Identifica qué funcionalidades ya están implementadas y cuáles faltan.
+- Revisa los productos actuales y sus imágenes.
+- Detecta productos con precios, tallas, colores o stock sin configurar.
+- Identifica posibles errores de responsive y elementos ocultos bajo el navbar.
+
+Presenta un diagnóstico breve y después implementa los cambios por fases.
+
+No dupliques componentes que ya existan.
+
+No borres datos existentes.
+
+No utilices información ficticia como si fuera real.
+
+---
+
+# FASE 1 — REDISEÑO PROFESIONAL DEL CATÁLOGO Y LAS FICHAS DE PRODUCTO
+
+## 1. Corregir las proporciones de las fotografías
+
+Actualmente, en la ficha de producto, la fotografía ocupa demasiado espacio y genera una distribución desequilibrada.
+
+Quiero una presentación más profesional, parecida a las tiendas de Nike y Mercado Libre.
+
+En desktop:
+
+- Utilizar un contenedor principal con ancho máximo de aproximadamente 1280–1440 px.
+- Centrar el contenido horizontalmente.
+- Distribuir la página en dos columnas equilibradas.
+- Columna izquierda: galería fotográfica, aproximadamente 50–55 %.
+- Columna derecha: información comercial, aproximadamente 45–50 %.
+- Mantener un espacio entre columnas de 32–48 px.
+- Evitar que la imagen se extienda innecesariamente.
+- Evitar que los títulos aparezcan ocultos detrás del navbar.
+- Utilizar imágenes proporcionadas y centradas.
+- Conservar el producto completo, sin cortes.
+
+No quiero una sudadera gigante ocupando casi toda la pantalla.
+
+Tampoco quiero una fotografía diminuta.
+
+La imagen debe tener una escala comercial equilibrada.
+
+En móvil:
+
+- Imagen principal arriba.
+- Información del producto debajo.
+- Selectores accesibles.
+- Botones adaptados al ancho.
+- Sin desplazamiento horizontal.
+- Sin elementos superpuestos.
+
+## 2. Eliminar el efecto sticker
+
+En algunas tarjetas y fichas, los productos aparecen como fotografías pegadas sobre recuadros negros.
+
+Analiza:
+
+- Fondo incorporado en la imagen.
+- Padding.
+- Contenedores anidados.
+- Object-fit.
+- Márgenes vacíos.
+- Diferencias entre el fondo de la fotografía y el de la tarjeta.
+
+Corrige el problema desde su origen.
+
+Si es necesario normalizar imágenes, crea copias optimizadas sin modificar los archivos originales.
+
+No recortes prendas, zapatillas ni accesorios.
+
+No apliques zoom indiscriminadamente.
+
+## 3. Tipografía estilo Nike
+
+Quiero una tipografía comercial limpia, moderna y natural.
+
+Utiliza Helvetica Neue, Arial o una alternativa sans-serif equivalente.
+
+Evita textos excesivamente pequeños, mayúsculas forzadas y letter-spacing exagerado.
+
+Jerarquía sugerida:
+
+- Nombre del producto: 28–36 px en desktop y 24–28 px en móvil.
+- Precio principal: 26–32 px.
+- Categoría: 15–16 px.
+- Descripción: 15–16 px.
+- Etiquetas comerciales: 14–16 px.
+- Botones: 14–16 px.
+
+Utiliza tamaños responsive.
+
+El nombre del producto debe tener suficiente espacio para mostrarse correctamente.
+
+## 4. Mostrar precios en pesos colombianos
+
+Todos los productos comercializables deben mostrar su precio en COP.
+
+Formato de ejemplo:
+
+$ 249.900
+
+Implementa formateo mediante Intl.NumberFormat con configuración es-CO y moneda COP.
+
+El precio debe obtenerse del backend o de la fuente de datos comercial existente.
+
+**No inventes precios.**
+
+Si los productos todavía no tienen precio, crea la funcionalidad administrativa para asignarlo.
+
+Permite al administrador configurar:
+
+- Precio de venta.
+- Precio anterior opcional.
+- Descuento real.
+- Estado comercial.
+- Disponibilidad.
+- Stock por variante.
+
+No marques productos como disponibles para compra sin precio y stock confirmados.
+
+## 5. Habilitar productos para venta
+
+Actualmente algunas fichas muestran:
+
+- Próximamente.
+- Precio pendiente.
+- Tallas pendientes.
+- No disponible para compra.
+- Consultar disponibilidad.
+
+Quiero que los productos puedan venderse realmente.
+
+Implementa la gestión necesaria para que el administrador configure precios, tallas, colores y existencias.
+
+Cuando un producto esté correctamente configurado y habilitado:
+
+- Mostrar precio.
+- Mostrar tallas disponibles.
+- Mostrar colores disponibles.
+- Mostrar stock real.
+- Habilitar agregar al carrito.
+- Permitir comprar.
+
+Si un producto no está configurado, debe permanecer como pendiente y mostrarse claramente qué datos faltan.
+
+No elimines validaciones de seguridad ni habilites productos ficticiamente.
+
+## 6. Experiencia de compra inspirada en Mercado Libre
+
+Quiero incorporar la claridad y funcionalidad comercial de Mercado Libre, pero sin copiar su diseño visual.
+
+La ficha debe incluir:
+
+- Galería de fotografías.
+- Nombre completo.
+- Marca.
+- Categoría.
+- Precio COP.
+- Precio anterior y descuento, si corresponde.
+- Selector de talla.
+- Selector de color.
+- Cantidad.
+- Disponibilidad.
+- Información de envío.
+- Botón "Comprar ahora".
+- Botón "Agregar al carrito".
+- Favoritos.
+- Descripción.
+- Información de cambios y devoluciones.
+
+El botón "Comprar ahora" debe iniciar el checkout real.
+
+El botón "Agregar al carrito" debe guardar la variante seleccionada.
+
+No agregues botones sin funcionalidad.
+
+Si todavía no existe una pasarela de pagos configurada, no simules cobros exitosos: implementa el flujo de checkout disponible y deja explícita la integración de pagos pendiente.
+
+## 7. Galería fotográfica
+
+Si el producto tiene varias imágenes:
+
+- Mostrar imagen principal.
+- Miniaturas seleccionables.
+- Ampliación o zoom.
+- Navegación entre imágenes.
+
+Si solo tiene una imagen, mostrar únicamente esa fotografía.
+
+No duplicar imágenes para simular vistas adicionales.
+
+Optimizar la carga y el responsive.
+
+---
+
+# FASE 2 — IMPLEMENTACIÓN DE HISTORIAS DE USUARIO
+
+Implementa las siguientes nueve historias.
+
+## US-16 — Editar datos personales
+
+Permitir que el usuario autenticado edite:
+
+- Nombre.
+- Apellidos.
+- Teléfono.
+- Correo electrónico, con validación y reverificación cuando corresponda.
+
+Los cambios deben persistir en la base de datos.
+
+Validar frontend y backend.
+
+Proteger los datos del usuario.
+
+## US-17 — Cerrar sesión
+
+Implementar cierre de sesión real:
+
+- Opción visible.
+- Invalidación de sesión o revocación según la arquitectura.
+- Limpieza segura de credenciales del cliente.
+- Redirección.
+- Protección de rutas privadas.
+
+No permitir acceso a información privada después de cerrar sesión.
+
+## US-18 — Visualizar imágenes de productos
+
+Implementar una galería funcional con:
+
+- Imagen principal.
+- Miniaturas reales.
+- Cambio de fotografía.
+- Ampliación.
+- Manejo de errores.
+- Responsive.
+
+No inventar fotografías inexistentes.
+
+## US-19 — Seleccionar talla
+
+Implementar tallas según categoría:
+
+Ropa:
+- XS, S, M, L, XL, etc., según inventario.
+
+Sneakers:
+- Tallas según el sistema configurado y las variantes reales.
+
+Validar que la talla seleccionada tenga stock.
+
+Guardar la talla en carrito y pedido.
+
+## US-20 — Seleccionar color
+
+Implementar:
+
+- Selector visual de colores.
+- Nombre del color.
+- Actualización de fotografía cuando exista.
+- Disponibilidad por color y talla.
+- Persistencia de la variante en carrito y pedido.
+
+No inventar colores.
+
+## US-21 — Visualizar subtotal y total del carrito
+
+Mostrar:
+
+- Precio unitario.
+- Cantidad.
+- Subtotal por producto.
+- Subtotal general.
+- Descuentos reales.
+- Costo de envío, cuando se conozca.
+- Total final.
+
+Calcular y validar los importes en backend.
+
+No confiar en precios enviados desde el navegador.
+
+Utilizar COP.
+
+## US-23 — Registrar dirección de entrega
+
+Permitir guardar y editar:
+
+- Nombre del destinatario.
+- Teléfono.
+- Departamento.
+- Ciudad.
+- Barrio.
+- Dirección.
+- Complemento.
+- Referencias opcionales.
+
+Permitir seleccionar una dirección durante el checkout.
+
+Restringir acceso a las direcciones del propietario.
+
+## US-24 — Consultar estado del pedido
+
+Crear sección "Mis pedidos".
+
+Mostrar:
+
+- Número del pedido.
+- Fecha.
+- Productos.
+- Total.
+- Dirección.
+- Estado.
+- Historial de seguimiento, cuando exista.
+
+Estados sugeridos:
+
+- Pendiente.
+- Confirmado.
+- En preparación.
+- Enviado.
+- Entregado.
+- Cancelado.
+
+Adaptarlos al flujo real del proyecto.
+
+Permitir al administrador actualizar estados con controles de autorización.
+
+## US-25 — Consultar productos con bajo stock
+
+Implementar en el panel administrativo:
+
+- Listado de productos con stock bajo.
+- SKU.
+- Marca.
+- Variante.
+- Cantidad disponible.
+- Umbral mínimo.
+- Estado de inventario.
+- Filtros.
+- Alertas.
+
+Permitir configurar el umbral mínimo.
+
+Restringir acceso a administradores.
+
+No inventar existencias.
+
+---
+
+# FASE 3 — SAUZ STYLE STUDIO
+
+## 8. Crear el probador fotográfico
+
+Quiero una experiencia llamada:
+
+SAUZ STYLE STUDIO — CREATE YOUR LOOK
+
+El usuario debe poder construir un outfit utilizando productos reales del catálogo.
+
+No quiero un modelo 3D.
+
+Quiero un modelo fotográfico realista, con una estética editorial de moda urbana.
+
+## 9. Selección de modelos
+
+Permitir seleccionar modelos fotográficos autorizados.
+
+Inicialmente:
+
+- Un modelo masculino.
+- Un modelo femenino.
+
+Preparar la arquitectura para agregar más modelos posteriormente.
+
+## 10. Crear combinaciones
+
+Permitir seleccionar:
+
+- Camiseta, sudadera o chaqueta.
+- Pantalón.
+- Sneakers.
+- Gorra opcional.
+
+Utilizar los productos reales de SAUZ STORE.
+
+Permitir combinar marcas.
+
+Mostrar:
+
+- Nombre.
+- Imagen.
+- Talla.
+- Color.
+- Precio.
+- Disponibilidad.
+
+## 11. Generación fotográfica real
+
+Integrar un proveedor real de IA o virtual try-on compatible con los requisitos.
+
+La fotografía generada debe intentar conservar:
+
+- Modelo base.
+- Colores.
+- Prendas.
+- Diseños.
+- Proporciones corporales.
+- Apariencia natural.
+
+Estilo:
+
+- Moda urbana.
+- Fotografía editorial.
+- Escaleras de concreto.
+- Calles modernas.
+- Estudios minimalistas.
+- Luz natural.
+- Poses auténticas.
+
+Evitar el aspecto artificial y las prendas superpuestas como stickers.
+
+No inventes APIs.
+
+No simules generaciones exitosas.
+
+Si faltan credenciales, deja preparada la arquitectura y documenta qué falta para habilitar el servicio.
+
+## 12. Integración comercial
+
+Cuando el usuario termine de crear su outfit:
+
+- Mostrar los productos seleccionados.
+- Mostrar precios reales.
+- Calcular subtotal.
+- Permitir seleccionar variantes.
+- Permitir guardar el outfit.
+- Agregar al carrito productos disponibles.
+- Consultar fichas individuales.
+
+No permitir compras de productos sin precio o stock confirmado.
+
+---
+
+# FASE 4 — PANEL ADMINISTRATIVO
+
+## 13. Gestión comercial completa
+
+El administrador debe poder:
+
+- Asignar precios.
+- Modificar precios.
+- Configurar colores.
+- Configurar tallas.
+- Registrar existencias por variante.
+- Habilitar o deshabilitar productos.
+- Agregar fotografías.
+- Actualizar estados de pedidos.
+- Consultar stock bajo.
+
+Reutiliza el panel administrativo existente.
+
+No crees un segundo panel innecesariamente.
+
+Implementa validaciones, permisos y persistencia real.
+
+---
+
+# FASE 5 — DISEÑO VISUAL Y RENDIMIENTO
+
+## 14. Identidad SAUZ BLACK EDITION
+
+Conservar:
+
+- Negro profundo.
+- Gris carbón.
+- Blanco.
+- Rojo SAUZ.
+- Tipografía limpia estilo Nike.
+- Fotografías protagonistas.
+- Diseño minimalista.
+- Espaciado equilibrado.
+
+No quiero una copia visual de Mercado Libre.
+
+Quiero su claridad comercial integrada con nuestra identidad premium.
+
+## 15. Animaciones fluidas
+
+Implementar:
+
+- Hover sutil.
+- Transiciones de 180–250 ms.
+- Cambios de imágenes suaves.
+- Feedback al seleccionar talla y color.
+- Confirmaciones de carrito.
+- Apertura fluida de modales.
+
+Evitar:
+
+- Zoom agresivo.
+- Saltos de layout.
+- Animaciones pesadas.
+- Desplazamientos bruscos.
+- Efectos que provoquen tirones en Windows.
+
+Respetar prefers-reduced-motion.
+
+## 16. Responsive
+
+Verificar:
+
+- Desktop.
+- Laptop.
+- Tablet.
+- Móvil.
+
+Especialmente:
+
+- Imágenes proporcionadas.
+- Títulos completos.
+- Navbar sin superposiciones.
+- Botones accesibles.
+- Selectores correctamente alineados.
+- Galerías funcionales.
+- Checkout usable.
+
+---
+
+# FASE 6 — PRUEBAS Y VALIDACIÓN
+
+Realiza pruebas de:
+
+1. Registro e inicio de sesión existentes.
+2. Edición de perfil.
+3. Cierre de sesión.
+4. Galería de productos.
+5. Selección de talla.
+6. Selección de color.
+7. Agregar al carrito.
+8. Cálculo de subtotal.
+9. Cálculo de total.
+10. Registro de dirección.
+11. Creación y consulta de pedidos.
+12. Gestión administrativa de stock.
+13. Permisos y seguridad.
+14. Responsive.
+15. Rendimiento.
+16. Integración de SAUZ STYLE STUDIO cuando esté configurada.
+
+No declares funcional una característica sin verificar su backend y persistencia.
+
+No inventes resultados de pruebas.
+
+---
+
+# ORDEN OBLIGATORIO DE IMPLEMENTACIÓN
+
+Para evitar errores, trabaja en este orden:
+
+**ETAPA 1 — Catálogo comercial**
+- Corregir proporciones de las fichas.
+- Mejorar imágenes.
+- Aplicar tipografía.
+- Implementar precios COP.
+- Configurar variantes.
+- Habilitar compra con datos reales.
+
+**ETAPA 2 — Historias de usuario**
+- US-16.
+- US-17.
+- US-18.
+- US-19.
+- US-20.
+- US-21.
+- US-23.
+- US-24.
+- US-25.
+
+**ETAPA 3 — SAUZ STYLE STUDIO**
+- Interfaz.
+- Selección de modelos.
+- Constructor de outfits.
+- Integración con catálogo.
+- Backend de generación fotográfica.
+- Integración comercial.
+
+Implementa y valida cada etapa antes de continuar con la siguiente.
+
+No dejes el proyecto con cambios incompletos que impidan su ejecución.
+
+---
+
+# RESULTADO FINAL ESPERADO
+
+Quiero transformar SAUZ STORE BLACK EDITION en una tienda virtual completa, profesional y funcional.
+
+Los productos deben:
+
+- Tener fotografías proporcionadas.
+- Verse correctamente dentro de las cards.
+- Mostrar precios en COP.
+- Permitir seleccionar talla y color.
+- Mostrar disponibilidad.
+- Agregarse al carrito.
+- Permitir finalizar pedidos mediante el flujo comercial implementado.
+
+Además, quiero implementar las nueve historias de usuario y desarrollar SAUZ STYLE STUDIO como una experiencia diferencial de personalización de outfits.
+
+**Trabaja sobre el proyecto existente, realiza cambios reales en el código, conserva la información actual y verifica el funcionamiento de cada módulo.**
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-11-10T20:45:29-05:00.
+
+The user's current state is as follows:
+Other open documents:
+- c:\Users\Juan\Desktop\SauzStore\frontend\src\components\FitLab.jsx (LANGUAGE_UNSPECIFIED)
+- c:\Users\Juan\Desktop\SauzStore\frontend\src\components\Footer.jsx (LANGUAGE_UNSPECIFIED)
+- c:\Users\Juan\Desktop\SauzStore\frontend\src\components\Header.jsx (LANGUAGE_UNSPECIFIED)
+- c:\Users\Juan\Desktop\SauzStore\frontend\src\pages\Home.jsx (LANGUAGE_UNSPECIFIED)
+- c:\Users\Juan\Desktop\SauzStore\docs\catalog-migration\ENTREGA-STICKER-CARDS.md (LANGUAGE_UNSPECIFIED)
+</ADDITIONAL_METADATA>

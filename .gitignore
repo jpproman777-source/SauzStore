@@ -21,3 +21,8 @@ Thumbs.db
 # IDEs
 .vscode/
 .idea/
+
+# Temporales y respaldos locales
+.tmp*
+*.before-catalog*
+

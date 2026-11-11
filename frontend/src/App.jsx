@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { Cart } from "./pages/Cart";
@@ -18,6 +18,13 @@ import { Catalog } from "./pages/Catalog";
 import { About } from "./pages/About";
 import { Location } from "./pages/Location";
 import { ProductDetail } from "./pages/ProductDetail";
+import { StyleStudio } from "./pages/StyleStudio";
+import { SauzFitBuilder } from "./pages/SauzFitBuilder";
+import { SauzStyleDna } from "./pages/SauzStyleDna";
+import { MySauzCloset } from "./pages/MySauzCloset";
+import { SauzDrops } from "./pages/SauzDrops";
+import { SauzCommunity } from "./pages/SauzCommunity";
+import { SauzSizeFinder } from "./pages/SauzSizeFinder";
 import { useAuth } from "./context/AuthContext";
 
 const readProductId = () => {
@@ -33,7 +40,7 @@ const readCatalogLocation = () => {
   const params = new URLSearchParams(window.location.search);
   const collection = params.get("coleccion") || "Todas";
   return {
-    category: collection === "Jordan" ? "Todas" : collection,
+    category: collection === "Jordan" ? "Todas" : collection === "Sneakers" ? "Zapatillas" : collection,
     search: params.get("q") || (collection === "Jordan" ? "Jordan" : ""),
   };
 };
@@ -50,6 +57,13 @@ export const App = () => {
     if (path.startsWith("/producto/")) return "productDetail";
     if (path === "/admin/login") return "adminLogin";
     if (path === "/admin") return "admin";
+    if (path === "/style-studio" || path === "/studio") return "styleStudio";
+    if (path === "/fit-builder" || path === "/budget-fit") return "fitBuilder";
+    if (path === "/style-dna") return "styleDna";
+    if (path === "/closet" || path === "/my-closet") return "closet";
+    if (path === "/drops") return "drops";
+    if (path === "/community") return "community";
+    if (path === "/size-finder" || path === "/tallas") return "sizeFinder";
     if (path === "/catalogo" || path === "/catalog") return "catalog";
     if (path === "/nosotros" || path === "/about") return "about";
     if (path === "/ubicacion" || path === "/location") return "location";
@@ -64,6 +78,7 @@ export const App = () => {
     () => readCatalogLocation().search,
   );
   const [selectedProductId, setSelectedProductId] = useState(readProductId);
+  const catalogUrl = useRef(null);
 
   // Sincronizar URL del navegador y escuchar navegación hacia atrás/adelante
   useEffect(() => {
@@ -122,7 +137,14 @@ export const App = () => {
     // Rutas públicas
     let path = "/";
     if (page === "cart") path = "/carrito";
-    else if (page === "catalog") path = "/catalogo";
+    else if (page === "styleStudio") path = "/style-studio";
+    else if (page === "fitBuilder") path = "/fit-builder";
+    else if (page === "styleDna") path = "/style-dna";
+    else if (page === "closet") path = "/closet";
+    else if (page === "drops") path = "/drops";
+    else if (page === "community") path = "/community";
+    else if (page === "sizeFinder") path = "/size-finder";
+    else if (page === "catalog") path = activePage === "productDetail" && catalogUrl.current ? catalogUrl.current : "/catalogo";
     else if (page === "about") path = "/nosotros";
     else if (page === "location") path = "/ubicacion";
 
@@ -134,20 +156,53 @@ export const App = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleCatalogFilter = ({ category, brand, query, sort } = {}) => {
+    if (category !== undefined) {
+      setSelectedCategory(category === "Sneakers" ? "Zapatillas" : category);
+    }
+    if (query !== undefined) {
+      setSearchQuery(query);
+    }
+    const params = new URLSearchParams(window.location.search);
+    if (brand !== undefined) {
+      if (brand && brand !== "Todas") params.set("marca", brand);
+      else params.delete("marca");
+    }
+    if (sort !== undefined) {
+      if (sort && sort !== "destacados") params.set("orden", sort);
+      else params.delete("orden");
+    }
+    if (category !== undefined) {
+      if (category && category !== "Todas") params.set("coleccion", category === "Sneakers" ? "Zapatillas" : category);
+      else params.delete("coleccion");
+    }
+    if (query !== undefined) {
+      if (query.trim()) params.set("q", query.trim());
+      else params.delete("q");
+    }
+    const qStr = params.toString();
+    const targetUrl = "/catalogo" + (qStr ? "?" + qStr : "");
+    window.history.pushState(null, "", targetUrl);
+    setActivePage("catalog");
+    window.dispatchEvent(new Event("sauz:navigation"));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
+    setSelectedCategory(category === "Sneakers" ? "Zapatillas" : category);
     handleNavigate("catalog");
   };
 
   const handleCollectionSelect = (collection) => {
     setSelectedCategory(
-      collection === "Jordan" || collection === "Todas" ? "Todas" : collection,
+      collection === "Jordan" || collection === "Todas" ? "Todas" : collection === "Sneakers" ? "Zapatillas" : collection,
     );
     setSearchQuery(collection === "Jordan" ? "Jordan" : "");
     handleNavigate("catalog");
   };
 
   const handleProductSelect = (productId) => {
+    if (activePage === "catalog") catalogUrl.current = window.location.pathname + window.location.search;
     setSelectedProductId(productId);
     window.history.pushState(
       null,
@@ -215,6 +270,8 @@ export const App = () => {
         setActivePage={handleNavigate}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        onFilterCatalog={handleCatalogFilter}
+        onCategorySelect={handleCategorySelect}
       />
 
       {/* Vistas según página activa */}
@@ -253,6 +310,56 @@ export const App = () => {
         />
       )}
 
+      {activePage === "styleStudio" && (
+        <StyleStudio
+          onProductSelect={handleProductSelect}
+          setActivePage={handleNavigate}
+        />
+      )}
+
+      {activePage === "fitBuilder" && (
+        <SauzFitBuilder
+          onProductSelect={handleProductSelect}
+          setActivePage={handleNavigate}
+        />
+      )}
+
+      {activePage === "styleDna" && (
+        <SauzStyleDna
+          onProductSelect={handleProductSelect}
+          setActivePage={handleNavigate}
+          onCategorySelect={handleCategorySelect}
+        />
+      )}
+
+      {activePage === "closet" && (
+        <MySauzCloset
+          onProductSelect={handleProductSelect}
+          setActivePage={handleNavigate}
+        />
+      )}
+
+      {activePage === "drops" && (
+        <SauzDrops
+          onProductSelect={handleProductSelect}
+          setActivePage={handleNavigate}
+        />
+      )}
+
+      {activePage === "community" && (
+        <SauzCommunity
+          onProductSelect={handleProductSelect}
+          setActivePage={handleNavigate}
+        />
+      )}
+
+      {activePage === "sizeFinder" && (
+        <SauzSizeFinder
+          setActivePage={handleNavigate}
+          onCategorySelect={handleCategorySelect}
+        />
+      )}
+
       {activePage === "about" && <About setActivePage={handleNavigate} />}
 
       {activePage === "location" && <Location />}
@@ -261,6 +368,7 @@ export const App = () => {
       <Footer
         setActivePage={handleNavigate}
         onCategorySelect={handleCategorySelect}
+        onCollectionSelect={handleCollectionSelect}
       />
 
       {/* Componentes Globales de Comercio y Autenticación de Clientes */}

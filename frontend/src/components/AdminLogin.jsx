@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck, AlertCircle, Loader2, User, Phone, MapPin, CheckCircle2 } from 'lucide-react';
+import { authService } from '../services/authService';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, AlertCircle, Loader2, User, Phone, MapPin, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { BrandLogo } from './BrandLogo';
 
 export const AdminLogin = ({ setActivePage }) => {
-  const { user, login, register, logout, authLoading, authError, setAuthError } = useAuth();
+  const { login, register, authLoading, authError, setAuthError } = useAuth();
   const { showToast } = useCart();
 
-  const [mode, setMode] = useState('login'); // 'login' | 'register'
+  const [mode, setMode] = useState('login'); // 'login' | 'register' | 'forgot'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -15,776 +17,406 @@ export const AdminLogin = ({ setActivePage }) => {
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('Medellín');
   const [showPassword, setShowPassword] = useState(false);
-  const [customError, setCustomError] = useState(null);
+  const [localError, setLocalError] = useState(null);
+  const [recoverySent, setRecoverySent] = useState(false);
+
+  const resetForm = () => {
+    setLocalError(null);
+    if (setAuthError) setAuthError(null);
+    setRecoverySent(false);
+  };
+
+  const handleModeChange = (newMode) => {
+    resetForm();
+    setMode(newMode);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setCustomError(null);
+    setLocalError(null);
     if (setAuthError) setAuthError(null);
 
-    try {
-      if (mode === 'login') {
-        if (!email.trim() || !password) {
-          setCustomError('Por favor ingrese su correo electrónico y contraseña.');
-          return;
-        }
+    // MODO RECUPERACIÓN DE CONTRASEÑA
+    if (mode === 'forgot') {
+      if (!email.trim() || !email.includes('@')) {
+        setLocalError('Por favor ingrese un correo electrónico válido.');
+        return;
+      }
+      setRecoverySent(true);
+      return;
+    }
 
+    // MODO INICIO DE SESIÓN
+    if (mode === 'login') {
+      if (!email.trim() || !email.includes('@')) {
+        setLocalError('Por favor ingrese un correo electrónico válido.');
+        return;
+      }
+      if (!password) {
+        setLocalError('Por favor ingrese su contraseña.');
+        return;
+      }
+
+      try {
         const loggedUser = await login(email.trim(), password);
-        
+
         if (loggedUser.role === 'admin') {
-          showToast('Bienvenido al Panel de Administración');
+          showToast('Sesión de Administrador iniciada');
           if (typeof window !== 'undefined' && window.history) {
             window.history.pushState(null, '', '/admin');
           }
           setActivePage('admin');
         } else {
-          showToast(`Bienvenido a Sauz Store, ${loggedUser.name}`);
+          showToast(`Bienvenido a SAUZ STORE, ${loggedUser.name}`);
           if (typeof window !== 'undefined' && window.history) {
             window.history.pushState(null, '', '/');
           }
           setActivePage('home');
         }
-      } else {
-        if (!name.trim() || !email.trim() || !password) {
-          setCustomError('Nombre, correo y contraseña son obligatorios.');
-          return;
-        }
+      } catch (err) {
+        setLocalError(err.message || 'Credenciales incorrectas. Verifique su correo y contraseña.');
+      }
+      return;
+    }
 
+    // MODO REGISTRO DE CLIENTE
+    if (mode === 'register') {
+      if (!name.trim()) {
+        setLocalError('El nombre completo es requerido.');
+        return;
+      }
+      if (!email.trim() || !email.includes('@')) {
+        setLocalError('Ingrese un correo electrónico válido.');
+        return;
+      }
+      if (!password || password.length < 6) {
+        setLocalError('La contraseña debe tener al menos 6 caracteres.');
+        return;
+      }
+
+      try {
         const newUser = await register({
           name: name.trim(),
           email: email.trim(),
           password,
           phone: phone.trim(),
           address: address.trim(),
-          city: city.trim()
+          city: city.trim(),
         });
 
-        showToast(`Cuenta creada con éxito, ${newUser.name}`);
+        showToast(`Cuenta creada exitosamente, ${newUser.name}`);
         if (typeof window !== 'undefined' && window.history) {
           window.history.pushState(null, '', '/');
         }
         setActivePage('home');
+      } catch (err) {
+        setLocalError(err.message || 'No fue posible completar el registro. Intente nuevamente.');
       }
-    } catch (err) {
-      setCustomError(err.message || 'Error de autenticación. Verifique los datos ingresados.');
     }
   };
 
-  const handleFillAdminDemo = () => {
+  const handleFillDemo = (type) => {
+    resetForm();
     setMode('login');
-    setEmail('admin@sauzstore.com');
-    setPassword('admin123');
-    setCustomError(null);
+    if (type === 'admin') {
+      setEmail('admin@sauzstore.com');
+      setPassword('admin123');
+    } else {
+      setEmail('cliente@sauzstore.com');
+      setPassword('cliente123');
+    }
   };
 
-  const handleFillClientDemo = () => {
-    setMode('login');
-    setEmail('cliente@sauzstore.com');
-    setPassword('cliente123');
-    setCustomError(null);
-  };
-
-  const handleGoStore = () => {
+  const handleBackToStore = () => {
     if (typeof window !== 'undefined' && window.history) {
       window.history.pushState(null, '', '/');
     }
     setActivePage('home');
   };
 
-  const displayError = customError || authError;
+  const displayError = localError || authError;
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        width: '100%',
-        display: 'flex',
-        backgroundColor: 'var(--bf-secondary)',
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-        color: 'var(--bf-text)'
-      }}
-    >
-      {/* ==============================================================
-          ZONA VISUAL EDITORIAL (IZQUIERDA EN DESKTOP)
-          ============================================================== */}
-      <div
-        style={{
-          flex: '1 1 50%',
-          backgroundColor: 'var(--bf-secondary)',
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: 'clamp(32px, 5vw, 64px)',
-          overflow: 'hidden'
-        }}
-        className="admin-login-visual-zone"
-      >
-        {/* Fondo sutil de imagen editorial de moda */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: "url('/Productos/Monastery_lado1.png')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center 30%',
-            opacity: 0.15,
-            filter: 'grayscale(100%) contrast(120%)',
-            pointerEvents: 'none'
-          }}
-        />
+    <div className="sauz-auth-container">
+      {/* Barra superior con navegación de regreso */}
+      <header className="sauz-auth-top-bar">
+        <button
+          type="button"
+          className="sauz-auth-back-btn"
+          onClick={handleBackToStore}
+          aria-label="Volver a la tienda"
+        >
+          <ArrowLeft size={16} />
+          <span>Volver a la tienda</span>
+        </button>
+        <span className="sauz-auth-badge">BLACK EDITION / ACCESO SEGURO</span>
+      </header>
 
-        {/* Gradiente de superposición para legibilidad editorial */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(180deg, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.92) 50%, #0A0A0A 100%)',
-            pointerEvents: 'none'
-          }}
-        />
-
-        {/* Cabecera superior de marca */}
-        <div style={{ position: 'relative', zIndex: 2 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-            <span
-              style={{
-                width: '10px',
-                height: '10px',
-                backgroundColor: 'var(--bf-secondary)',
-                borderRadius: '50%',
-                display: 'inline-block'
-              }}
-            />
-            <span
-              style={{
-                fontSize: '0.8rem',
-                fontWeight: '700',
-                letterSpacing: '3px',
-                textTransform: 'uppercase',
-                color: 'var(--bf-text)'
-              }}
-            >
-              SAUZ STORE
-            </span>
+      {/* Tarjeta Central Minimalista */}
+      <main className="sauz-auth-card" role="main">
+        {/* Identidad de Marca */}
+        <div className="sauz-auth-header">
+          <div className="sauz-auth-logo-wrap">
+            <BrandLogo variant="header" />
           </div>
-          <span style={{ fontSize: '0.72rem', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--bf-muted)', fontWeight: '500' }}>
-            Haute Streetwear · Colombia
-          </span>
-        </div>
-
-        {/* Contenido central editorial */}
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: '520px', margin: '48px 0' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '6px 14px',
-              backgroundColor: 'rgba(255, 255, 255, 0.08)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: '6px',
-              color: 'var(--bf-text)',
-              fontSize: '0.72rem',
-              fontWeight: '600',
-              letterSpacing: '1.2px',
-              textTransform: 'uppercase',
-              marginBottom: '24px'
-            }}
-          >
-            <ShieldCheck size={14} strokeWidth={2} />
-            <span>Portal de Acceso Único</span>
-          </div>
-
-          <h1
-            style={{
-              fontSize: 'clamp(1.9rem, 3.2vw, 2.75rem)',
-              fontWeight: '800',
-              lineHeight: 1.15,
-              color: 'var(--bf-text)',
-              letterSpacing: '-0.03em',
-              margin: '0 0 18px 0'
-            }}
-          >
-            Moda de vanguardia, control operativo y gestión exclusiva.
+          <h1 className="sauz-auth-title">
+            {mode === 'login' && 'Iniciar Sesión'}
+            {mode === 'register' && 'Crear Cuenta'}
+            {mode === 'forgot' && 'Recuperar Contraseña'}
           </h1>
-
-          <p
-            style={{
-              fontSize: '0.95rem',
-              lineHeight: 1.6,
-              color: 'var(--bf-muted)',
-              margin: 0,
-              fontWeight: '400'
-            }}
-          >
-            Accede con tus credenciales de Administrador o Cliente para gestionar el panel ejecutivo, realizar pedidos y revisar el historial de compras.
+          <p className="sauz-auth-subtitle">
+            {mode === 'login' && 'Ingresa con tu correo y contraseña para gestionar tus pedidos y perfil.'}
+            {mode === 'register' && 'Regístrate para guardar favoritos, rastrear envíos y acelerar tu compra.'}
+            {mode === 'forgot' && 'Ingresa tu correo para recibir las instrucciones de restablecimiento.'}
           </p>
         </div>
 
-        {/* Pie editorial inferior */}
-        <div
-          style={{
-            position: 'relative',
-            zIndex: 2,
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-            paddingTop: '20px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            fontSize: '0.75rem',
-            color: 'var(--bf-muted)'
-          }}
-        >
-          <span>Sauz Store Colombia © {new Date().getFullYear()}</span>
-          <span>Acceso Seguro y Cifrado</span>
-        </div>
-      </div>
-
-      {/* ==============================================================
-          ZONA DE ACCESO / FORMULARIO (DERECHA)
-          ============================================================== */}
-      <div
-        style={{
-          flex: '1 1 50%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: 'clamp(28px, 4.5vw, 64px)',
-          backgroundColor: 'var(--bf-secondary)',
-          overflowY: 'auto'
-        }}
-      >
-        {/* Barra superior de navegación */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          <button
-            type="button"
-            onClick={handleGoStore}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: 'none',
-              border: 'none',
-              color: 'var(--bf-muted)',
-              fontSize: '0.84rem',
-              fontWeight: '500',
-              cursor: 'pointer',
-              padding: '8px 12px',
-              borderRadius: '6px',
-              transition: 'color 0.15s, background-color 0.15s'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.color = 'var(--bf-bg)';
-              e.currentTarget.style.backgroundColor = 'var(--bf-surface)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.color = 'var(--bf-muted)';
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
-          >
-            <ArrowLeft size={16} />
-            <span>Volver a la tienda</span>
-          </button>
-        </div>
-
-        {/* Contenedor central del formulario */}
-        <div style={{ maxWidth: '440px', width: '100%', margin: '30px auto' }}>
-          {/* Si ya hay sesión iniciada en este navegador, mostrar banner de estado */}
-          {user && (
-            <div
-              style={{
-                backgroundColor: 'var(--bf-surface)',
-                border: '1px solid var(--bf-border)',
-                borderRadius: '8px',
-                padding: '16px 18px',
-                marginBottom: '28px'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                <CheckCircle2 size={16} color="#15803D" />
-                <span style={{ fontSize: '0.84rem', fontWeight: '700', color: 'var(--bf-text)' }}>
-                  Sesión activa en este navegador
-                </span>
-              </div>
-              <p style={{ margin: '0 0 12px 0', fontSize: '0.78rem', color: 'var(--bf-muted)' }}>
-                Conectado como <strong>{user.name}</strong> ({user.email}) · Rol: <strong>{user.role === 'admin' ? 'Administrador' : 'Cliente'}</strong>
-              </p>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                {user.role === 'admin' ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (typeof window !== 'undefined' && window.history) {
-                        window.history.pushState(null, '', '/admin');
-                      }
-                      setActivePage('admin');
-                    }}
-                    style={{
-                      flex: 1,
-                      padding: '8px',
-                      backgroundColor: 'var(--bf-secondary)',
-                      color: 'var(--bf-text)',
-                      border: 'none',
-                      borderRadius: '4px',
-                      fontSize: '0.78rem',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Ir al Dashboard Admin
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (typeof window !== 'undefined' && window.history) {
-                        window.history.pushState(null, '', '/');
-                      }
-                      setActivePage('home');
-                    }}
-                    style={{
-                      flex: 1,
-                      padding: '8px',
-                      backgroundColor: 'var(--bf-secondary)',
-                      color: 'var(--bf-text)',
-                      border: 'none',
-                      borderRadius: '4px',
-                      fontSize: '0.78rem',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Ir a la Tienda
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    logout();
-                    showToast('Sesión cerrada con éxito');
-                  }}
-                  style={{
-                    padding: '8px 14px',
-                    backgroundColor: 'var(--bf-secondary)',
-                    border: '1px solid var(--bf-border)',
-                    borderRadius: '4px',
-                    fontSize: '0.78rem',
-                    fontWeight: '600',
-                    color: '#DC2626',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Cerrar sesión
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Títulos corporativos */}
-          <div style={{ marginBottom: '24px' }}>
-            <span
-              style={{
-                fontSize: '0.72rem',
-                fontWeight: '700',
-                letterSpacing: '1.5px',
-                textTransform: 'uppercase',
-                color: 'var(--bf-muted)',
-                display: 'block',
-                marginBottom: '8px'
-              }}
-            >
-              {mode === 'login' ? 'Acceso a tu Cuenta' : 'Registro de Cliente'}
-            </span>
-            <h2
-              style={{
-                fontSize: '1.85rem',
-                fontWeight: '800',
-                letterSpacing: '-0.025em',
-                color: 'var(--bf-text)',
-                margin: '0 0 8px 0'
-              }}
-            >
-              {mode === 'login' ? 'Bienvenido de nuevo' : 'Crear nueva cuenta'}
-            </h2>
-            <p style={{ fontSize: '0.88rem', color: 'var(--bf-muted)', margin: 0, lineHeight: 1.5 }}>
-              {mode === 'login'
-                ? 'Ingresa tus credenciales para acceder al sistema.'
-                : 'Completa tus datos para registrarte como cliente en Sauz Store.'}
-            </p>
-          </div>
-
-          {/* Selector de Modo (Iniciar Sesión vs Registro) */}
-          <div style={{ display: 'flex', backgroundColor: 'var(--bf-surface)', padding: '3px', borderRadius: '6px', marginBottom: '20px' }}>
+        {/* Selector de Pestañas (Login / Registro) */}
+        {mode !== 'forgot' && (
+          <div className="sauz-auth-tabs" role="tablist">
             <button
               type="button"
-              onClick={() => { setMode('login'); setCustomError(null); }}
-              style={{
-                flex: 1,
-                padding: '7px',
-                border: 'none',
-                borderRadius: '4px',
-                backgroundColor: mode === 'login' ? 'var(--bf-text)' : 'transparent',
-                color: mode === 'login' ? 'var(--bf-bg)' : 'var(--bf-muted)',
-                fontSize: '0.8rem',
-                fontWeight: mode === 'login' ? '700' : '500',
-                cursor: 'pointer',
-                boxShadow: mode === 'login' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none'
-              }}
+              role="tab"
+              aria-selected={mode === 'login'}
+              className={`sauz-auth-tab ${mode === 'login' ? 'active' : ''}`}
+              onClick={() => handleModeChange('login')}
             >
               Iniciar Sesión
             </button>
             <button
               type="button"
-              onClick={() => { setMode('register'); setCustomError(null); }}
-              style={{
-                flex: 1,
-                padding: '7px',
-                border: 'none',
-                borderRadius: '4px',
-                backgroundColor: mode === 'register' ? 'var(--bf-text)' : 'transparent',
-                color: mode === 'register' ? 'var(--bf-bg)' : 'var(--bf-muted)',
-                fontSize: '0.8rem',
-                fontWeight: mode === 'register' ? '700' : '500',
-                cursor: 'pointer',
-                boxShadow: mode === 'register' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none'
-              }}
+              role="tab"
+              aria-selected={mode === 'register'}
+              className={`sauz-auth-tab ${mode === 'register' ? 'active' : ''}`}
+              onClick={() => handleModeChange('register')}
             >
-              Registrarse
+              Crear Cuenta
             </button>
           </div>
+        )}
 
-          {/* Alerta de error */}
-          {displayError && (
-            <div
-              role="alert"
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '12px',
-                padding: '14px 16px',
-                backgroundColor: 'var(--bf-surface)',
-                border: '1px solid #FECACA',
-                borderRadius: '6px',
-                color: '#DC2626',
-                fontSize: '0.84rem',
-                lineHeight: 1.45,
-                marginBottom: '20px'
-              }}
+        {/* Mensaje de Alerta / Error */}
+        {displayError && (
+          <div className="sauz-auth-error" role="alert">
+            <AlertCircle size={16} className="sauz-auth-error-icon" />
+            <span>{displayError}</span>
+          </div>
+        )}
+
+        {/* Estado de Recuperación Enviada */}
+        {mode === 'forgot' && recoverySent ? (
+          <div className="sauz-auth-recovery-notice">
+            <CheckCircle2 size={36} color="#e65a5d" />
+            <h3>Solicitud Registrada</h3>
+            <p>
+              Si el correo <strong>{email}</strong> se encuentra registrado en nuestro sistema,
+              recibirás un enlace de restablecimiento.
+            </p>
+            <p className="sauz-auth-support-note">
+              ¿No recibiste el correo? Puedes contactar a nuestro equipo en <strong>soporte@sauzstore.com</strong>.
+            </p>
+            <button
+              type="button"
+              className="sauz-auth-submit-btn"
+              onClick={() => handleModeChange('login')}
             >
-              <AlertCircle size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
-              <div>{displayError}</div>
-            </div>
-          )}
-
-          {/* Formulario */}
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              Regresar al Inicio de Sesión
+            </button>
+          </div>
+        ) : (
+          <form className="sauz-auth-form" onSubmit={handleSubmit} noValidate>
+            {/* Campo Nombre (solo en registro) */}
             {mode === 'register' && (
-              <div>
-                <label
-                  htmlFor="user-name"
-                  style={{ display: 'block', fontSize: '0.78rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}
-                >
-                  Nombre completo *
-                </label>
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                  <User size={18} style={{ position: 'absolute', left: '14px', color: 'var(--bf-muted)', pointerEvents: 'none' }} />
+              <div className="sauz-auth-field">
+                <label htmlFor="auth-name">Nombre Completo</label>
+                <div className="sauz-auth-input-wrap">
+                  <User size={18} className="sauz-auth-input-icon" />
                   <input
-                    id="user-name"
+                    id="auth-name"
                     type="text"
+                    autoComplete="name"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ej. Mateo Gómez"
-                    style={{
-                      width: '100%',
-                      height: '44px',
-                      padding: '0 14px 0 42px',
-                      backgroundColor: 'var(--bf-secondary)',
-                      border: '1px solid var(--bf-border)',
-                      borderRadius: '6px',
-                      color: 'var(--bf-text)',
-                      fontSize: '0.88rem',
-                      outline: 'none',
-                      boxSizing: 'border-box'
-                    }}
+                    disabled={authLoading}
                   />
                 </div>
               </div>
             )}
 
-            {/* Campo Email */}
-            <div>
-              <label
-                htmlFor="user-email"
-                style={{ display: 'block', fontSize: '0.78rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}
-              >
-                Correo electrónico *
-              </label>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <Mail size={18} style={{ position: 'absolute', left: '14px', color: 'var(--bf-muted)', pointerEvents: 'none' }} />
+            {/* Campo Correo Electrónico */}
+            <div className="sauz-auth-field">
+              <label htmlFor="auth-email">Correo Electrónico</label>
+              <div className="sauz-auth-input-wrap">
+                <Mail size={18} className="sauz-auth-input-icon" />
                 <input
-                  id="user-email"
+                  id="auth-email"
                   type="email"
-                  required
                   autoComplete="email"
+                  required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="ejemplo@sauzstore.com"
-                  style={{
-                    width: '100%',
-                    height: '44px',
-                    padding: '0 14px 0 42px',
-                    backgroundColor: 'var(--bf-secondary)',
-                    border: '1px solid var(--bf-border)',
-                    borderRadius: '6px',
-                    color: 'var(--bf-text)',
-                    fontSize: '0.88rem',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
+                  placeholder="tu@correo.com"
+                  disabled={authLoading}
                 />
               </div>
             </div>
 
-            {/* Campo Contraseña */}
-            <div>
-              <label
-                htmlFor="user-password"
-                style={{ display: 'block', fontSize: '0.78rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}
-              >
-                Contraseña *
-              </label>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <Lock size={18} style={{ position: 'absolute', left: '14px', color: 'var(--bf-muted)', pointerEvents: 'none' }} />
-                <input
-                  id="user-password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  style={{
-                    width: '100%',
-                    height: '44px',
-                    padding: '0 44px 0 42px',
-                    backgroundColor: 'var(--bf-secondary)',
-                    border: '1px solid var(--bf-border)',
-                    borderRadius: '6px',
-                    color: 'var(--bf-text)',
-                    fontSize: '0.88rem',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
-                  style={{
-                    position: 'absolute',
-                    right: '12px',
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--bf-muted)',
-                    cursor: 'pointer',
-                    padding: '4px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+            {/* Campo Contraseña (en login y registro) */}
+            {mode !== 'forgot' && (
+              <div className="sauz-auth-field">
+                <div className="sauz-auth-field-header">
+                  <label htmlFor="auth-password">Contraseña</label>
+                  {mode === 'login' && (
+                    <button
+                      type="button"
+                      className="sauz-auth-forgot-link"
+                      onClick={() => handleModeChange('forgot')}
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </button>
+                  )}
+                </div>
+                <div className="sauz-auth-input-wrap">
+                  <Lock size={18} className="sauz-auth-input-icon" />
+                  <input
+                    id="auth-password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={mode === 'register' ? 'Mínimo 6 caracteres' : '••••••••'}
+                    disabled={authLoading}
+                  />
+                  <button
+                    type="button"
+                    className="sauz-auth-eye-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
+            {/* Campos adicionales de Registro */}
             {mode === 'register' && (
               <>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                      Teléfono móvil
-                    </label>
-                    <input
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+57 300 123 4567"
-                      style={{
-                        width: '100%',
-                        height: '42px',
-                        padding: '0 12px',
-                        backgroundColor: 'var(--bf-secondary)',
-                        border: '1px solid var(--bf-border)',
-                        borderRadius: '6px',
-                        fontSize: '0.84rem',
-                        outline: 'none',
-                        boxSizing: 'border-box'
-                      }}
-                    />
+                <div className="sauz-auth-field-grid">
+                  <div className="sauz-auth-field">
+                    <label htmlFor="auth-phone">Teléfono / WhatsApp</label>
+                    <div className="sauz-auth-input-wrap">
+                      <Phone size={18} className="sauz-auth-input-icon" />
+                      <input
+                        id="auth-phone"
+                        type="tel"
+                        autoComplete="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="+57 300 000 0000"
+                        disabled={authLoading}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                      Ciudad
-                    </label>
-                    <input
-                      type="text"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      placeholder="Medellín"
-                      style={{
-                        width: '100%',
-                        height: '42px',
-                        padding: '0 12px',
-                        backgroundColor: 'var(--bf-secondary)',
-                        border: '1px solid var(--bf-border)',
-                        borderRadius: '6px',
-                        fontSize: '0.84rem',
-                        outline: 'none',
-                        boxSizing: 'border-box'
-                      }}
-                    />
+                  <div className="sauz-auth-field">
+                    <label htmlFor="auth-city">Ciudad</label>
+                    <div className="sauz-auth-input-wrap">
+                      <MapPin size={18} className="sauz-auth-input-icon" />
+                      <input
+                        id="auth-city"
+                        type="text"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="Medellín, Bogotá..."
+                        disabled={authLoading}
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                    Dirección de despacho
-                  </label>
-                  <input
-                    type="text"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Calle 10 # 42-15 Apto 502"
-                    style={{
-                      width: '100%',
-                      height: '42px',
-                      padding: '0 12px',
-                      backgroundColor: 'var(--bf-secondary)',
-                      border: '1px solid var(--bf-border)',
-                      borderRadius: '6px',
-                      fontSize: '0.84rem',
-                      outline: 'none',
-                      boxSizing: 'border-box'
-                    }}
-                  />
+                <div className="sauz-auth-field">
+                  <label htmlFor="auth-address">Dirección de Entrega</label>
+                  <div className="sauz-auth-input-wrap">
+                    <MapPin size={18} className="sauz-auth-input-icon" />
+                    <input
+                      id="auth-address"
+                      type="text"
+                      autoComplete="street-address"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="Calle 10 # 42-15 Apto 502"
+                      disabled={authLoading}
+                    />
+                  </div>
                 </div>
               </>
             )}
 
-            {/* Botón Principal Negro */}
+            {/* Botón Principal de Envío */}
             <button
               type="submit"
+              className="sauz-auth-submit-btn"
               disabled={authLoading}
-              style={{
-                width: '100%',
-                height: '46px',
-                marginTop: '6px',
-                backgroundColor: 'var(--bf-secondary)',
-                color: 'var(--bf-text)',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '0.88rem',
-                fontWeight: '600',
-                cursor: authLoading ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                transition: 'background-color 0.15s',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.06)'
-              }}
-              onMouseOver={(e) => !authLoading && (e.currentTarget.style.backgroundColor = 'var(--bf-raised)')}
-              onMouseOut={(e) => !authLoading && (e.currentTarget.style.backgroundColor = 'var(--bf-bg)')}
             >
               {authLoading ? (
                 <>
-                  <Loader2 size={18} className="spin-animation" />
-                  <span>Validando...</span>
+                  <Loader2 size={18} className="sauz-spin" />
+                  <span>Procesando...</span>
                 </>
               ) : (
                 <>
-                  <span>{mode === 'login' ? 'Ingresar' : 'Registrarme'}</span>
+                  <span>
+                    {mode === 'login' && 'INICIAR SESIÓN'}
+                    {mode === 'register' && 'CREAR MI CUENTA'}
+                    {mode === 'forgot' && 'ENVIAR ENLACE'}
+                  </span>
                   <ArrowRight size={16} />
                 </>
               )}
             </button>
 
-            {/* Botones de demostración rápida */}
-            <div style={{ marginTop: '10px' }}>
-              <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', display: 'block', marginBottom: '6px', textAlign: 'center' }}>
-                Accesos rápidos de demostración:
-              </span>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                <button
-                  type="button"
-                  onClick={handleFillAdminDemo}
-                  style={{
-                    padding: '8px',
-                    backgroundColor: 'var(--bf-surface)',
-                    border: '1px solid var(--bf-border)',
-                    borderRadius: '6px',
-                    color: 'var(--bf-text)',
-                    fontSize: '0.74rem',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    textAlign: 'center'
-                  }}
-                >
-                  Admin Demo
-                </button>
-                <button
-                  type="button"
-                  onClick={handleFillClientDemo}
-                  style={{
-                    padding: '8px',
-                    backgroundColor: 'var(--bf-surface)',
-                    border: '1px solid var(--bf-border)',
-                    borderRadius: '6px',
-                    color: 'var(--bf-text)',
-                    fontSize: '0.74rem',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    textAlign: 'center'
-                  }}
-                >
-                  Cliente Demo
-                </button>
-              </div>
-            </div>
+            {/* Botón de Cancelar en Modo Olvido */}
+            {mode === 'forgot' && (
+              <button
+                type="button"
+                className="sauz-auth-cancel-btn"
+                onClick={() => handleModeChange('login')}
+              >
+                Volver a Iniciar Sesión
+              </button>
+            )}
           </form>
-        </div>
+        )}
 
-        {/* Pie de página corporativo */}
-        <div
-          style={{
-            textAlign: 'center',
-            fontSize: '0.75rem',
-            color: 'var(--bf-muted)',
-            borderTop: '1px solid var(--bf-border)',
-            paddingTop: '20px'
-          }}
-        >
-          Sauz Store Colombia · Sistema Unificado de Autenticación
+        {/* Accesos Rápidos de Prueba (Demo Credentials) */}
+        <div className="sauz-auth-demo-box">
+          <div className="sauz-auth-demo-label">
+            <ShieldCheck size={14} />
+            <span>ACCESOS DE DEMOSTRACIÓN</span>
+          </div>
+          <div className="sauz-auth-demo-buttons">
+            <button
+              type="button"
+              className="sauz-auth-demo-pill"
+              onClick={() => handleFillDemo('cliente')}
+            >
+              <span>Cliente:</span>
+              <strong>cliente@sauzstore.com</strong>
+            </button>
+            <button
+              type="button"
+              className="sauz-auth-demo-pill"
+              onClick={() => handleFillDemo('admin')}
+            >
+              <span>Admin:</span>
+              <strong>admin@sauzstore.com</strong>
+            </button>
+          </div>
         </div>
-      </div>
-
-      <style>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        .spin-animation {
-          animation: spin 1s linear infinite;
-        }
-        @media (max-width: 900px) {
-          .admin-login-visual-zone {
-            display: none !important;
-          }
-        }
-      `}</style>
+      </main>
     </div>
   );
 };

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "post-01",
+    "userId": 2,
+    "authorName": "Mateo Gómez",
+    "city": "Medellín",
+    "title": "Minimal Dark Fit en el Museo de Arte Moderno",
+    "caption": "Silueta oversize con hoodie Monastery, cargo técnico y Jordan Retro. El corte de los pantalones complementa la altura del calzado.",
+    "photo": "/Productos/Monastery_lado1.png",
+    "taggedProducts": [7, 64, 27],
+    "votes": 84,
+    "votedUsers": ["cliente@sauzstore.com"],
+    "isFitOfTheWeek": true,
+    "createdAt": "2026-11-09T14:30:00.000Z",
+    "reported": false
+  },
+  {
+    "id": "post-02",
+    "userId": 3,
+    "authorName": "Camilo Restrepo",
+    "city": "Bogotá",
+    "title": "Retro Sport Vibe — Chapinero Alto",
+    "caption": "Chaqueta tres rayas con gorra New Era Dodgers azul rey y zapatillas Nike en contraste.",
+    "photo": "/Productos/sauz-019.png",
+    "taggedProducts": [30, 40, 25],
+    "votes": 59,
+    "votedUsers": [],
+    "isFitOfTheWeek": false,
+    "createdAt": "2026-11-10T11:00:00.000Z",
+    "reported": false
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "drop-01",
+    "name": "Air Jordan 1 Retro High 'Bred Toe' Black Edition",
+    "brand": "Jordan",
+    "category": "Zapatillas",
+    "releaseDate": "2026-11-15T10:00:00.000Z",
+    "priceCOP": 849900,
+    "image": "/Productos/sauz-015.png",
+    "description": "Lanzamiento exclusivo para miembros SAUZ. Piel de flor entera, amortiguación Air encapsulada y silueta legendaria.",
+    "waitlistCount": 142,
+    "waitlistEmails": ["mateo@sauzstore.com"]
+  },
+  {
+    "id": "drop-02",
+    "name": "Hoodie Heavyweight Monastery Tonal Obsidian",
+    "brand": "SAUZ",
+    "category": "Sudaderas",
+    "releaseDate": "2026-11-18T18:00:00.000Z",
+    "priceCOP": 289900,
+    "image": "/Productos/Monastery_lado1.png",
+    "description": "Algodón peinado de 450 gsm. Caída oversize estructurada, bordado tonal de alta densidad en espalda.",
+    "waitlistCount": 98,
+    "waitlistEmails": []
+  },
+  {
+    "id": "drop-03",
+    "name": "Gorra New Era LA Dodgers 59FIFTY Royal Edition",
+    "brand": "New Era",
+    "category": "Gorras",
+    "releaseDate": "2026-11-22T12:00:00.000Z",
+    "priceCOP": 219900,
+    "image": "/Productos/sauz-030.png",
+    "description": "Corona alta estructurada de 6 paneles, visera plana con bajovisera gris clásica y pin conmemorativo oficial.",
+    "waitlistCount": 65,
+    "waitlistEmails": []
+  },
+  {
+    "id": "drop-04",
+    "name": "Chaqueta Adidas Originals Tracktop Core Black",
+    "brand": "Adidas",
+    "category": "Chaquetas",
+    "releaseDate": "2026-11-26T15:00:00.000Z",
+    "priceCOP": 379900,
+    "image": "/Productos/sauz-019.png",
+    "description": "Tejido tricot premium con las icónicas tres rayas laterales, cremallera bidireccional y corte regular relaxed.",
+    "waitlistCount": 47,
+    "waitlistEmails": []
+  }
+]

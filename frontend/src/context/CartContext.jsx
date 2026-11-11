@@ -129,8 +129,8 @@ export const CartProvider = ({ children }) => {
   }, [isCartOpen, isCheckoutOpen, orderCompleted]);
 
   // Agregar prenda al carrito
-  const addToCart = async (productId, quantity = 1) => {
-    const key = String(productId);
+  const addToCart = async (productId, quantity = 1, variantId) => {
+    const key = `${productId}:${variantId}`;
     if (pendingAdds.current.has(key)) return null;
     pendingAdds.current.add(key);
     setCartConfirmation(null);
@@ -138,16 +138,16 @@ export const CartProvider = ({ children }) => {
       const res = await fetch("/api/cart/items", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, quantity }),
+        body: JSON.stringify({ productId, quantity, variantId }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al agregar prenda");
       setCart(data.cart);
       const item = data.cart?.items?.find(
-        (item) => String(item.productId) === key,
+        (item) => `${item.productId}:${item.variantId}` === key,
       );
       if (item) {
-        const product = products.find((product) => String(product.id) === key);
+        const product = products.find((product) => String(product.id) === String(productId));
         setCartConfirmation({
           item: { ...product, ...item },
           quantity,
@@ -164,9 +164,9 @@ export const CartProvider = ({ children }) => {
   };
 
   // Modificar cantidad
-  const updateQuantity = async (productId, quantity) => {
+  const updateQuantity = async (productId, quantity, variantId) => {
     try {
-      const res = await fetch(`/api/cart/items/${productId}`, {
+      const res = await fetch(`/api/cart/items/${productId}?variantId=${encodeURIComponent(variantId)}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quantity }),
@@ -182,9 +182,9 @@ export const CartProvider = ({ children }) => {
   };
 
   // Eliminar prenda individual
-  const removeItem = async (productId) => {
+  const removeItem = async (productId, variantId) => {
     try {
-      const res = await fetch(`/api/cart/items/${productId}`, {
+      const res = await fetch(`/api/cart/items/${productId}?variantId=${encodeURIComponent(variantId)}`, {
         method: "DELETE",
       });
       const data = await res.json();
@@ -244,12 +244,12 @@ export const CartProvider = ({ children }) => {
   };
 
   // Reabastecer stock de un producto existente ("Llegaron productos al slot")
-  const restockProduct = async (productId, amount) => {
+  const restockProduct = async (productId, amount, variantId) => {
     try {
       const res = await fetch("/api/products/restock", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, amount }),
+        body: JSON.stringify({ productId, amount, variantId }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al reabastecer stock");
@@ -335,12 +335,12 @@ export const CartProvider = ({ children }) => {
   };
 
   // Actualizar estado de una orden (Admin)
-  const updateOrderStatus = async (orderId, newStatus) => {
+  const updateOrderStatus = async (orderId, newStatus, note, location) => {
     try {
       const res = await fetch(`/api/orders/${orderId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderStatus: newStatus }),
+        body: JSON.stringify({ orderStatus: newStatus, note, location }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al actualizar pedido");

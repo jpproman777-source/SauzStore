@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { addressService } from '../services/addressService';
 
 export const CheckoutModal = () => {
   const {
@@ -15,17 +16,39 @@ export const CheckoutModal = () => {
   const [paymentMethod, setPaymentMethod] = useState('card'); // 'card' | 'transfer' | 'cash'
   const [loading, setLoading] = useState(false);
 
-  // Datos de envío
+  // Datos de envío (US-23)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    address: '',
+    department: 'Antioquia',
     city: 'Medellín',
-    notes: ''
+    neighborhood: '',
+    address: '',
+    complement: '',
+    notes: '',
   });
 
-  // Autocompletar con los datos del usuario conectado
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState('');
+
+  const applyAddress = (addr) => {
+    if (!addr) return;
+    setSelectedAddressId(addr.id);
+    setFormData((prev) => ({
+      ...prev,
+      name: addr.recipient || prev.name,
+      phone: addr.phone || prev.phone,
+      department: addr.department || prev.department,
+      city: addr.city || prev.city,
+      neighborhood: addr.neighborhood || prev.neighborhood,
+      address: addr.address || prev.address,
+      complement: addr.complement || prev.complement,
+      notes: addr.references || prev.notes,
+    }));
+  };
+
+  // Cargar direcciones guardadas del cliente
   useEffect(() => {
     if (user && isCheckoutOpen) {
       setFormData((prev) => ({
@@ -34,8 +57,20 @@ export const CheckoutModal = () => {
         email: user.email || prev.email,
         phone: user.phone || prev.phone,
         address: user.address || prev.address,
-        city: user.city || prev.city || 'Medellín'
+        city: user.city || prev.city || 'Medellín',
       }));
+
+      if (user.id) {
+        addressService.getAddresses({ userId: user.id })
+          .then((addrs) => {
+            if (addrs && addrs.length > 0) {
+              setSavedAddresses(addrs);
+              const def = addrs.find((a) => a.isDefault) || addrs[0];
+              if (def) applyAddress(def);
+            }
+          })
+          .catch((e) => console.error('Error cargando direcciones:', e));
+      }
     }
   }, [user, isCheckoutOpen]);
 
@@ -104,12 +139,28 @@ export const CheckoutModal = () => {
       };
     }
 
+    const shippingAddress = {
+      recipient: formData.name.trim(),
+      phone: formData.phone.trim(),
+      department: (formData.department || 'Antioquia').trim(),
+      city: formData.city.trim(),
+      neighborhood: (formData.neighborhood || '').trim(),
+      address: formData.address.trim(),
+      complement: (formData.complement || '').trim(),
+      references: (formData.notes || '').trim(),
+    };
+
     const customerPayload = {
       name: formData.name.trim(),
       email: formData.email.trim(),
       phone: formData.phone.trim(),
-      address: formData.notes ? `${formData.address.trim()} (${formData.notes.trim()})` : formData.address.trim(),
-      city: formData.city.trim()
+      address: formData.complement
+        ? `${formData.address.trim()} (${formData.complement.trim()})`
+        : formData.address.trim(),
+      city: formData.city.trim(),
+      department: (formData.department || 'Antioquia').trim(),
+      neighborhood: (formData.neighborhood || '').trim(),
+      shippingAddress,
     };
 
     setLoading(true);
@@ -150,16 +201,47 @@ export const CheckoutModal = () => {
           {/* Paso 1: Datos de Entrega */}
           <div className="checkout-step">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-              <h4 style={{ margin: 0 }}>📍 1. Datos de Entrega</h4>
+              <h4 style={{ margin: 0 }}>📍 1. Datos de Entrega (US-23)</h4>
               {user && (
                 <span style={{ fontSize: '0.72rem', backgroundColor: '#e0f2fe', color: '#0369a1', padding: '3px 8px', borderRadius: '12px', fontWeight: '700' }}>
-                  ✓ Datos cargados de tu cuenta ({user.name.split(' ')[0]})
+                  ✓ Cuenta activa ({user.name.split(' ')[0]})
                 </span>
               )}
             </div>
+
+            {/* Selector de direcciones guardadas (US-23) */}
+            {savedAddresses.length > 0 && (
+              <div style={{ marginBottom: '14px', background: '#16161b', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <label style={{ fontSize: '0.75rem', color: '#a1a1aa', fontWeight: '700', display: 'block', marginBottom: '6px' }}>
+                  Usar dirección guardada:
+                </label>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {savedAddresses.map((addr) => (
+                    <button
+                      key={addr.id}
+                      type="button"
+                      onClick={() => applyAddress(addr)}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        fontSize: '0.78rem',
+                        background: selectedAddressId === addr.id ? '#e65a5d' : 'rgba(255,255,255,0.08)',
+                        color: '#fff',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontWeight: selectedAddressId === addr.id ? '700' : '400',
+                      }}
+                    >
+                      📍 {addr.recipient} — {addr.address} ({addr.city})
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="form-grid">
               <div className="form-group full">
-                <label htmlFor="name">Nombre Completo *</label>
+                <label htmlFor="name">Nombre Completo del Destinatario *</label>
                 <input
                   type="text"
                   id="name"
@@ -191,14 +273,14 @@ export const CheckoutModal = () => {
                   required
                 />
               </div>
-              <div className="form-group full">
-                <label htmlFor="address">Dirección de Entrega *</label>
+              <div className="form-group">
+                <label htmlFor="department">Departamento *</label>
                 <input
                   type="text"
-                  id="address"
-                  value={formData.address}
+                  id="department"
+                  value={formData.department}
                   onChange={handleInputChange}
-                  placeholder="Calle 45 # 12 - 34, Apto 302"
+                  placeholder="Antioquia, Cundinamarca..."
                   required
                 />
               </div>
@@ -209,18 +291,49 @@ export const CheckoutModal = () => {
                   id="city"
                   value={formData.city}
                   onChange={handleInputChange}
-                  placeholder="Bogotá, Medellín, Cali..."
+                  placeholder="Medellín, Bogotá, Cali..."
                   required
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="notes">Instrucciones (Opcional)</label>
+                <label htmlFor="neighborhood">Barrio</label>
+                <input
+                  type="text"
+                  id="neighborhood"
+                  value={formData.neighborhood}
+                  onChange={handleInputChange}
+                  placeholder="Ej. El Poblado, Laureles"
+                />
+              </div>
+              <div className="form-group full">
+                <label htmlFor="address">Dirección de Entrega Exacta *</label>
+                <input
+                  type="text"
+                  id="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  placeholder="Calle 10 # 43E - 20"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="complement">Complemento (Apto, Torre, Int)</label>
+                <input
+                  type="text"
+                  id="complement"
+                  value={formData.complement}
+                  onChange={handleInputChange}
+                  placeholder="Apto 502, Torre B"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="notes">Referencias / Instrucciones</label>
                 <input
                   type="text"
                   id="notes"
                   value={formData.notes}
                   onChange={handleInputChange}
-                  placeholder="Timbre, portería, etc."
+                  placeholder="Timbre, portería, portón negro..."
                 />
               </div>
             </div>

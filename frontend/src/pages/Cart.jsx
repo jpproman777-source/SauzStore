@@ -25,6 +25,7 @@ const CartLine = ({
   const [draft, setDraft] = useState(String(item.quantity));
   const cancelCommit = useRef(false);
   const saved = ids.includes(String(item.productId));
+  const maxStock = product?.variants?.find(variant => variant.id === item.variantId)?.stock;
   useEffect(() => setDraft(String(item.quantity)), [item.quantity]);
   const commit = async () => {
     if (cancelCommit.current) {
@@ -37,10 +38,15 @@ const CartLine = ({
       showToast("Introduce una cantidad entera mayor que cero.");
       return;
     }
+    if (Number.isInteger(maxStock) && quantity > maxStock) {
+      setDraft(String(item.quantity));
+      showToast(`Solo hay ${maxStock} unidades de la talla ${item.size}.`);
+      return;
+    }
     if (quantity !== item.quantity) {
-      const response = await onQuantity(item.productId, quantity);
+      const response = await onQuantity(item.productId, quantity, item.variantId);
       const confirmed = response?.cart?.items?.find(
-        (line) => String(line.productId) === String(item.productId),
+        (line) => String(line.productId) === String(item.productId) && line.variantId === item.variantId,
       );
       setDraft(String(confirmed?.quantity ?? item.quantity));
     }
@@ -63,7 +69,7 @@ const CartLine = ({
         href={productPath(item.productId)}
         onClick={openProduct}
       >
-        <ProductImage src={item.image} alt={item.name} />
+        <ProductImage mode="thumb" src={item.image} alt={item.name} />
       </a>
       <div className="bag-item-content">
         <div className="bag-item-heading">
@@ -91,18 +97,19 @@ const CartLine = ({
             <button
               aria-label={`Reducir cantidad de ${item.name}`}
               disabled={busy || item.quantity <= 1}
-              onClick={() => onQuantity(item.productId, item.quantity - 1)}
+              onClick={() => onQuantity(item.productId, item.quantity - 1, item.variantId)}
             >
               <Minus size={15} />
             </button>
-            <label className="sr-only" htmlFor={`quantity-${item.productId}`}>
+            <label className="sr-only" htmlFor={`quantity-${item.productId}-${item.variantId}`}>
               Cantidad de {item.name}
             </label>
             <input
-              id={`quantity-${item.productId}`}
+              id={`quantity-${item.productId}-${item.variantId}`}
               type="number"
               inputMode="numeric"
               min="1"
+              max={maxStock}
               step="1"
               value={draft}
               disabled={busy}
@@ -119,8 +126,8 @@ const CartLine = ({
             />
             <button
               aria-label={`Aumentar cantidad de ${item.name}`}
-              disabled={busy}
-              onClick={() => onQuantity(item.productId, item.quantity + 1)}
+              disabled={busy || (Number.isInteger(maxStock) && item.quantity >= maxStock)}
+              onClick={() => onQuantity(item.productId, item.quantity + 1, item.variantId)}
             >
               <Plus size={15} />
             </button>
@@ -137,7 +144,7 @@ const CartLine = ({
             className="bag-remove"
             aria-label={`Eliminar ${item.name} de la bolsa`}
             disabled={busy}
-            onClick={() => onRemove(item.productId)}
+            onClick={() => onRemove(item.productId, item.variantId)}
           >
             <Trash2 size={17} />
             <span>Eliminar</span>
@@ -243,16 +250,16 @@ export const Cart = ({ setActivePage, onProductSelect, onExplore }) => {
             </div>
             {items.map((item) => (
               <CartLine
-                key={item.productId}
+                key={`${item.productId}:${item.variantId}`}
                 item={item}
                 product={products.find(
                   (p) => String(p.id) === String(item.productId),
                 )}
                 busy={busy}
-                onQuantity={(id, quantity) =>
-                  run(() => updateQuantity(id, quantity))
+                onQuantity={(id, quantity, variantId) =>
+                  run(() => updateQuantity(id, quantity, variantId))
                 }
-                onRemove={(id) => run(() => removeItem(id))}
+                onRemove={(id, variantId) => run(() => removeItem(id, variantId))}
                 onProductSelect={onProductSelect}
               />
             ))}

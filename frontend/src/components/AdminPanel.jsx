@@ -41,6 +41,7 @@ import {
   ArrowRight,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   Clock,
   Truck,
   PackageCheck,
@@ -176,7 +177,8 @@ export const AdminPanel = ({ setActivePage }) => {
     name: '',
     category: 'Camisetas',
     price: '',
-    stock: 15,
+    stock: '',
+    variantsText: '',
     description: '',
     image: '/Productos/jordan_Blanca.png'
   });
@@ -188,9 +190,39 @@ export const AdminPanel = ({ setActivePage }) => {
 
   // Reabastecimiento personalizado
   const [customRestockInputs, setCustomRestockInputs] = useState({});
+  const [restockVariants, setRestockVariants] = useState({});
 
   // Tooltip en gráfica
   const [hoveredChartPoint, setHoveredChartPoint] = useState(null);
+
+  // US-25: Alerta de stock bajo en panel administrativo
+  const [lowStockThreshold, setLowStockThreshold] = useState(5);
+  const [lowStockAlerts, setLowStockAlerts] = useState([]);
+  const [loadingLowStock, setLoadingLowStock] = useState(false);
+
+  // US-24: Nota para historial de seguimiento del pedido
+  const [orderTrackingNote, setOrderTrackingNote] = useState('');
+
+  const fetchLowStockAlerts = async (thresh = lowStockThreshold) => {
+    setLoadingLowStock(true);
+    try {
+      const res = await fetch(`/api/admin/low-stock?threshold=${thresh}`);
+      const data = await res.json();
+      if (data.items) {
+        setLowStockAlerts(data.items);
+      }
+    } catch (e) {
+      console.error('Error al consultar stock bajo:', e);
+    } finally {
+      setLoadingLowStock(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'inventory') {
+      fetchLowStockAlerts(lowStockThreshold);
+    }
+  }, [activeTab, lowStockThreshold, products]);
 
   // Carga inicial y refresco de pedidos y clientes
   useEffect(() => {
@@ -417,7 +449,8 @@ export const AdminPanel = ({ setActivePage }) => {
       name: '',
       category: 'Camisetas',
       price: '',
-      stock: 12,
+      stock: '',
+      variantsText: '',
       description: '',
       image: '/Productos/jordan_Blanca.png'
     });
@@ -429,9 +462,13 @@ export const AdminPanel = ({ setActivePage }) => {
     setEditingProduct(prod);
     setProductForm({
       name: prod.name,
+      brand: prod.brand || '',
+      subcategory: prod.subcategory || '',
+      sizes: (prod.sizes || []).join(', '),
+      variantsText: (prod.variants || []).map(variant => `${variant.size},${variant.stock}`).join('\n'),
       category: prod.category,
-      price: prod.price,
-      stock: prod.stock,
+      price: prod.price ?? '',
+      stock: prod.stock ?? '',
       description: prod.description || '',
       image: prod.image
     });
@@ -440,8 +477,20 @@ export const AdminPanel = ({ setActivePage }) => {
 
   const handleSaveProductSubmit = async (e) => {
     e.preventDefault();
-    if (!productForm.name.trim() || !productForm.price) {
-      showToast('El nombre y el precio son obligatorios');
+    if (!productForm.name.trim()) {
+      showToast('El nombre es obligatorio');
+      return;
+    }
+
+    const lines = (productForm.variantsText || '').split('\n').map(line => line.trim()).filter(Boolean);
+    const variants = lines.map((line) => {
+      const [size, rawStock] = line.split(',').map(part => part.trim());
+      const previous = editingProduct?.variants?.find(variant => variant.size.toLowerCase() === (size || '').toLowerCase());
+      return { id: previous?.id || `size-${(size || '').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, size, stock: Number(rawStock) };
+    });
+    if (variants.some(variant => !variant.size || !Number.isInteger(variant.stock) || variant.stock < 0) ||
+        new Set(variants.map(variant => variant.size.toLowerCase())).size !== variants.length) {
+      showToast('Cada variante debe tener talla única y stock entero. Usa una línea por talla: M,3');
       return;
     }
 
@@ -449,18 +498,24 @@ export const AdminPanel = ({ setActivePage }) => {
       if (editingProduct) {
         await updateProduct(editingProduct.id, {
           name: productForm.name.trim(),
+          brand: productForm.brand || '',
+          subcategory: productForm.subcategory || '',
+          sizes: (productForm.sizes || '').split(',').map(size => size.trim()).filter(Boolean),
+          variants,
           category: productForm.category,
-          price: parseFloat(productForm.price),
-          stock: parseInt(productForm.stock, 10) || 0,
+          price: productForm.price === '' || productForm.price == null ? null : parseFloat(productForm.price),
+          stock: productForm.stock === '' || productForm.stock == null ? null : parseInt(productForm.stock, 10),
           description: productForm.description.trim(),
           image: productForm.image
         });
       } else {
         await createNewProduct({
           name: productForm.name.trim(),
+          brand: productForm.brand || '',
+          subcategory: productForm.subcategory || '',
+          variants,
           category: productForm.category,
-          price: parseFloat(productForm.price),
-          stock: parseInt(productForm.stock, 10) || 0,
+          price: productForm.price === '' ? null : parseFloat(productForm.price),
           description: productForm.description.trim(),
           image: productForm.image
         });
@@ -485,7 +540,8 @@ export const AdminPanel = ({ setActivePage }) => {
   const handleQuickRestock = async (productId, amount) => {
     const qty = parseInt(amount, 10);
     if (!qty || qty <= 0) return;
-    await restockProduct(productId, qty);
+    const product = products.find(item => item.id === productId);
+    await restockProduct(productId, qty, restockVariants[productId] || product?.variants?.[0]?.id);
     setCustomRestockInputs(prev => ({ ...prev, [productId]: '' }));
   };
 
@@ -1785,7 +1841,7 @@ export const AdminPanel = ({ setActivePage }) => {
                             <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--bf-muted)', width: '16px' }}>
                               0{idx + 1}
                             </span>
-                            <ProductImage
+                            <ProductImage mode='thumb'
                               src={item.image}
                               alt={item.name}
                               style={{ width: '36px', height: '36px', objectFit: 'cover', borderRadius: '4px', backgroundColor: 'var(--bf-surface)' }}
@@ -2010,7 +2066,7 @@ export const AdminPanel = ({ setActivePage }) => {
                         <tr key={p.id} style={{ borderBottom: '1px solid var(--bf-border)' }}>
                           <td style={{ padding: '12px 18px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                              <ProductImage
+                              <ProductImage mode='thumb'
                                 src={p.image}
                                 alt={p.name}
                                 style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '4px', backgroundColor: 'var(--bf-surface)' }}
@@ -2080,7 +2136,7 @@ export const AdminPanel = ({ setActivePage }) => {
                       }}
                     >
                       <div style={{ height: '220px', backgroundColor: 'var(--bf-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', position: 'relative' }}>
-                        <ProductImage
+                        <ProductImage mode='thumb'
                           src={p.image}
                           alt={p.name}
                           style={{ maxWidth: '85%', maxHeight: '85%', objectFit: 'contain' }}
@@ -2179,6 +2235,132 @@ export const AdminPanel = ({ setActivePage }) => {
                 </div>
               </div>
 
+              {/* US-25: Módulo de Alerta de Stock Bajo con Umbral Configurable */}
+              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid rgba(230,90,93,0.3)', borderRadius: '12px', padding: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '18px', borderBottom: '1px solid var(--bf-border)', paddingBottom: '14px' }}>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: '800', color: '#e65a5d', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <AlertTriangle size={18} />
+                      <span>Alerta de Productos con Stock Bajo (US-25)</span>
+                    </h4>
+                    <span style={{ fontSize: '0.74rem', color: 'var(--bf-muted)' }}>
+                      Monitoreo en tiempo real de variantes con existencias críticas según umbral establecido.
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '0.74rem', fontWeight: '700', color: 'var(--bf-text)' }}>Umbral Mínimo:</span>
+                    {[3, 5, 10, 15].map((thresh) => (
+                      <button
+                        key={thresh}
+                        type="button"
+                        onClick={() => {
+                          setLowStockThreshold(thresh);
+                          fetchLowStockAlerts(thresh);
+                        }}
+                        style={{
+                          padding: '4px 10px',
+                          borderRadius: '6px',
+                          fontSize: '0.74rem',
+                          fontWeight: '700',
+                          cursor: 'pointer',
+                          background: lowStockThreshold === thresh ? '#e65a5d' : 'var(--bf-surface)',
+                          color: '#fff',
+                          border: '1px solid var(--bf-border)',
+                        }}
+                      >
+                        ≤ {thresh} uds
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {loadingLowStock ? (
+                  <p style={{ textAlign: 'center', padding: '20px', color: 'var(--bf-muted)' }}>Escaneando inventario...</p>
+                ) : lowStockAlerts.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '24px', background: 'var(--bf-surface)', borderRadius: '8px' }}>
+                    <span style={{ color: '#16a34a', fontWeight: '700', fontSize: '0.88rem' }}>✓ Ningún producto ni variante por debajo del umbral de {lowStockThreshold} unidades.</span>
+                  </div>
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid var(--bf-border)', color: 'var(--bf-muted)' }}>
+                          <th style={{ padding: '8px 10px' }}>SKU / Prenda</th>
+                          <th style={{ padding: '8px 10px' }}>Categoría & Marca</th>
+                          <th style={{ padding: '8px 10px' }}>Variante</th>
+                          <th style={{ padding: '8px 10px' }}>Stock Actual</th>
+                          <th style={{ padding: '8px 10px' }}>Estado</th>
+                          <th style={{ padding: '8px 10px', textAlign: 'right' }}>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {lowStockAlerts.slice(0, 15).map((item, idx) => (
+                          <tr key={idx} style={{ borderBottom: '1px solid var(--bf-border)' }}>
+                            <td style={{ padding: '10px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#e65a5d', background: 'rgba(230,90,93,0.1)', padding: '2px 6px', borderRadius: '4px' }}>
+                                  {item.sku}
+                                </span>
+                                <strong style={{ color: 'var(--bf-text)' }}>{item.productName}</strong>
+                              </div>
+                            </td>
+                            <td style={{ padding: '10px', color: 'var(--bf-muted)' }}>
+                              {item.category} · {item.brand}
+                            </td>
+                            <td style={{ padding: '10px' }}>
+                              <span style={{ background: 'var(--bf-surface)', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem' }}>
+                                {item.color} / Talla {item.size}
+                              </span>
+                            </td>
+                            <td style={{ padding: '10px' }}>
+                              <strong style={{ color: item.stock === 0 ? '#ef4444' : '#f59e0b', fontSize: '0.9rem' }}>
+                                {item.stock} uds
+                              </strong>
+                            </td>
+                            <td style={{ padding: '10px' }}>
+                              <span
+                                style={{
+                                  display: 'inline-block',
+                                  padding: '2px 8px',
+                                  borderRadius: '12px',
+                                  fontSize: '0.68rem',
+                                  fontWeight: '800',
+                                  textTransform: 'uppercase',
+                                  background: item.stock === 0 ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)',
+                                  color: item.stock === 0 ? '#f87171' : '#fbbf24',
+                                  border: item.stock === 0 ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(245,158,11,0.3)',
+                                }}
+                              >
+                                {item.status}
+                              </span>
+                            </td>
+                            <td style={{ padding: '10px', textAlign: 'right' }}>
+                              <button
+                                type="button"
+                                onClick={() => handleQuickRestock(item.productId, 10, item.variantId)}
+                                style={{
+                                  padding: '4px 10px',
+                                  background: 'var(--bf-surface)',
+                                  border: '1px solid var(--bf-border)',
+                                  color: 'var(--bf-text)',
+                                  borderRadius: '4px',
+                                  fontSize: '0.72rem',
+                                  cursor: 'pointer',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                +10 uds rápido
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
               {/* Herramienta de Reabastecimiento Rápido */}
               <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
@@ -2226,7 +2408,7 @@ export const AdminPanel = ({ setActivePage }) => {
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                          <ProductImage
+                          <ProductImage mode='thumb'
                             src={p.image}
                             alt={p.name}
                             style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)' }}
@@ -2238,6 +2420,14 @@ export const AdminPanel = ({ setActivePage }) => {
                           {renderStockBadge(p.stock)}
                         </div>
 
+                        {p.variants?.length > 0 && (
+                          <label style={{ display: 'block', marginBottom: '10px', fontSize: '0.75rem' }}>
+                            Variante para reabastecer
+                            <select value={restockVariants[p.id] || p.variants[0].id} onChange={event => setRestockVariants({ ...restockVariants, [p.id]: event.target.value })} style={{ display: 'block', width: '100%', marginTop: '5px', padding: '8px', background: 'var(--bf-surface)', color: 'var(--bf-text)', border: '1px solid var(--bf-border)' }}>
+                              {p.variants.map(variant => <option key={variant.id} value={variant.id}>{variant.size} · {variant.stock} uds</option>)}
+                            </select>
+                          </label>
+                        )}
                         {/* Botones rápidos */}
                         <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
                           {[5, 10, 25].map(qty => (
@@ -2950,6 +3140,17 @@ export const AdminPanel = ({ setActivePage }) => {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <label>Marca
+                  <input value={productForm.brand || ''} onChange={(e) => setProductForm({ ...productForm, brand: e.target.value })} />
+                </label>
+                <label>Subcategoría
+                  <input value={productForm.subcategory || ''} onChange={(e) => setProductForm({ ...productForm, subcategory: e.target.value })} />
+                </label>
+                <label>Variantes confirmadas (talla,stock por línea)
+                  <textarea rows="4" placeholder={'M,3\nL,0'} value={productForm.variantsText || ''} onChange={(e) => setProductForm({ ...productForm, variantsText: e.target.value })} />
+                </label>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
                     Categoría *
@@ -2972,22 +3173,48 @@ export const AdminPanel = ({ setActivePage }) => {
                     <option value="Sudaderas">Sudaderas</option>
                     <option value="Chaquetas">Chaquetas</option>
                     <option value="Pantalones">Pantalones</option>
+                    <option value="Zapatillas">Zapatillas</option>
+                    <option value="Gorras">Gorras</option>
+                    <option value="Conjuntos">Conjuntos</option>
                     <option value="Accesorios">Accesorios</option>
                   </select>
                 </div>
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                    Precio (COP) *
+                    Precio Comercial (COP) *
                   </label>
                   <input
                     type="number"
-                    required
+                    required={false}
                     min="1000"
                     step="1000"
-                    placeholder="85000"
+                    placeholder="249000"
                     value={productForm.price}
                     onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      border: '1px solid var(--bf-border)',
+                      borderRadius: '6px',
+                      fontSize: '0.86rem',
+                      outline: 'none',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
+                    Precio Anterior Opcional (COP)
+                  </label>
+                  <input
+                    type="number"
+                    min="1000"
+                    step="1000"
+                    placeholder="299000"
+                    value={productForm.previousPrice || ''}
+                    onChange={(e) => setProductForm({ ...productForm, previousPrice: e.target.value })}
                     style={{
                       width: '100%',
                       padding: '9px 12px',
@@ -3004,14 +3231,48 @@ export const AdminPanel = ({ setActivePage }) => {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                    Stock Inicial *
+                    Colores Disponibles (separados por coma)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Negro, Blanco, Rojo"
+                    value={productForm.colors || ''}
+                    onChange={(e) => setProductForm({ ...productForm, colors: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      border: '1px solid var(--bf-border)',
+                      borderRadius: '6px',
+                      fontSize: '0.86rem',
+                      outline: 'none',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingTop: '20px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.84rem', fontWeight: '700' }}>
+                    <input
+                      type="checkbox"
+                      checked={Boolean(productForm.commercial)}
+                      onChange={(e) => setProductForm({ ...productForm, commercial: e.target.checked })}
+                    />
+                    <span>Habilitar para compra comercial</span>
+                  </label>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
+                    Stock total (calculado desde variantes)
                   </label>
                   <input
                     type="number"
-                    required
+                    required={false}
                     min="0"
                     value={productForm.stock}
-                    onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })}
+                    readOnly
                     style={{
                       width: '100%',
                       padding: '9px 12px',
@@ -3042,6 +3303,7 @@ export const AdminPanel = ({ setActivePage }) => {
                       backgroundColor: 'var(--bf-secondary)'
                     }}
                   >
+                    {productForm.image?.startsWith('/Productos/sauz-') && <option value={productForm.image}>{productForm.image.split('/').pop()}</option>}
                     <option value="/Productos/jordan_Blanca.png">Camisa Jordan Blanca</option>
                     <option value="/Productos/Jordan_negra.png">Camisa Jordan Negra</option>
                     <option value="/Productos/hellstart_negra.png">Camisa Hellstar</option>
@@ -3228,13 +3490,13 @@ export const AdminPanel = ({ setActivePage }) => {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <ProductImage
+                      <ProductImage mode='thumb'
                         src={item.image}
                         alt={item.name}
                         style={{ width: '36px', height: '36px', objectFit: 'cover', borderRadius: '4px', backgroundColor: 'var(--bf-surface)' }}
                       />
                       <div>
-                        <strong style={{ fontSize: '0.82rem', color: 'var(--bf-text)', display: 'block' }}>{item.name}</strong>
+                        <strong style={{ fontSize: '0.82rem', color: 'var(--bf-text)', display: 'block' }}>{item.name}{item.size ? ` · Talla ${item.size}` : ''}</strong>
                         <span style={{ fontSize: '0.7rem', color: 'var(--bf-muted)' }}>
                           {item.quantity} ud(s) × {formatMoney(item.price)}
                         </span>
@@ -3264,32 +3526,92 @@ export const AdminPanel = ({ setActivePage }) => {
               </div>
             </div>
 
-            {/* Selector de Estado Operativo dentro del Modal */}
-            <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--bf-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '0.78rem', color: 'var(--bf-muted)' }}>Actualizar estado operativo:</span>
-              <select
-                value={selectedOrderDetails.orderStatus || 'En proceso'}
-                onChange={async (e) => {
-                  const newStatus = e.target.value;
-                  await updateOrderStatus(selectedOrderDetails.orderId, newStatus);
-                  setSelectedOrderDetails({ ...selectedOrderDetails, orderStatus: newStatus });
-                }}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  border: '1px solid var(--bf-border)',
-                  backgroundColor: 'var(--bf-surface)',
-                  fontSize: '0.78rem',
-                  fontWeight: '600',
-                  color: 'var(--bf-text)',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="En proceso">En proceso</option>
-                <option value="Enviado">Enviado</option>
-                <option value="Entregado">Entregado</option>
-                <option value="Cancelado">Cancelado</option>
-              </select>
+            {/* Historial de Seguimiento (US-24) */}
+            <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid var(--bf-border)' }}>
+              <strong style={{ fontSize: '0.8rem', color: 'var(--bf-text)', display: 'block', marginBottom: '8px' }}>
+                Historial de Seguimiento (US-24)
+              </strong>
+              {selectedOrderDetails.trackingHistory && selectedOrderDetails.trackingHistory.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '14px' }}>
+                  {selectedOrderDetails.trackingHistory.map((step, idx) => (
+                    <div key={idx} style={{ fontSize: '0.74rem', background: 'var(--bf-surface)', padding: '6px 10px', borderRadius: '4px', borderLeft: '3px solid #e65a5d' }}>
+                      <div style={{ fontWeight: '700', color: 'var(--bf-text)' }}>{step.status} · <small style={{ color: 'var(--bf-muted)' }}>{step.dateFormatted || step.timestamp}</small></div>
+                      <div style={{ color: 'var(--bf-muted)' }}>{step.note}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <span style={{ fontSize: '0.74rem', color: 'var(--bf-muted)', display: 'block', marginBottom: '10px' }}>Sin eventos de seguimiento registrados aún.</span>
+              )}
+
+              {/* Selector de Estado y Nota de Despacho */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--bf-muted)' }}>Nuevo estado operativo:</span>
+                  <select
+                    id="adminOrderStatusSelect"
+                    defaultValue={selectedOrderDetails.orderStatus || 'En proceso'}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      border: '1px solid var(--bf-border)',
+                      backgroundColor: 'var(--bf-surface)',
+                      fontSize: '0.78rem',
+                      fontWeight: '600',
+                      color: 'var(--bf-text)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En proceso">En proceso</option>
+                    <option value="Enviado">Enviado</option>
+                    <option value="Entregado">Entregado</option>
+                    <option value="Cancelado">Cancelado</option>
+                  </select>
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    type="text"
+                    placeholder="Nota de seguimiento (ej. Guía #982137 de Envía)"
+                    value={orderTrackingNote}
+                    onChange={(e) => setOrderTrackingNote(e.target.value)}
+                    style={{
+                      flex: 1,
+                      padding: '6px 10px',
+                      borderRadius: '4px',
+                      border: '1px solid var(--bf-border)',
+                      background: 'var(--bf-surface)',
+                      color: 'var(--bf-text)',
+                      fontSize: '0.76rem',
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const sel = document.getElementById('adminOrderStatusSelect');
+                      const newStatus = sel ? sel.value : selectedOrderDetails.orderStatus;
+                      const res = await updateOrderStatus(selectedOrderDetails.orderId, newStatus, orderTrackingNote);
+                      if (res && res.order) {
+                        setSelectedOrderDetails(res.order);
+                      }
+                      setOrderTrackingNote('');
+                    }}
+                    style={{
+                      padding: '6px 12px',
+                      background: '#e65a5d',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '4px',
+                      fontSize: '0.75rem',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Actualizar Estado
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
