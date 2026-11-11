@@ -3,6 +3,7 @@ import { Heart, Trash2, Share2, Plus, ShoppingBag, ArrowUpRight, Copy, Check, Lo
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { ProductImage } from '../components/ProductImage';
+import { confirmAction } from '../lib/alerts';
 
 export const MySauzCloset = ({ onProductSelect, setActivePage }) => {
   const { products, formatMoney, addToCart, showToast } = useCart();
@@ -32,7 +33,14 @@ export const MySauzCloset = ({ onProductSelect, setActivePage }) => {
 
   // Eliminar outfit
   const handleDeleteOutfit = async (id) => {
-    if (!confirm('¿Deseas eliminar este outfit de tu armario?')) return;
+    const confirmed = await confirmAction({
+      title: 'Eliminar outfit',
+      text: '¿Deseas eliminar este outfit de tu armario?',
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
+      danger: true,
+    });
+    if (!confirmed) return;
     try {
       const res = await fetch(`/api/closet/outfits/${id}`, { method: 'DELETE' });
       if (res.ok) {
@@ -89,7 +97,7 @@ export const MySauzCloset = ({ onProductSelect, setActivePage }) => {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
         <div>
-          <span style={{ fontSize: '0.74rem', color: '#e65a5d', fontWeight: '800', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
+          <span style={{ fontSize: '0.74rem', color: '#ff1724', fontWeight: '800', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
             MY SAUZ CLOSET · ARMARIO DIGITAL PRIVADO
           </span>
           <h1 style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: '900', margin: 0, textTransform: 'uppercase' }}>
@@ -105,7 +113,7 @@ export const MySauzCloset = ({ onProductSelect, setActivePage }) => {
           onClick={() => setActivePage('fitBuilder')}
           style={{
             padding: '12px 20px',
-            background: '#e65a5d',
+            background: '#ff1724',
             color: '#fff',
             border: 'none',
             borderRadius: '8px',
@@ -127,7 +135,7 @@ export const MySauzCloset = ({ onProductSelect, setActivePage }) => {
       {!user && (
         <div style={{ background: '#141418', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '16px 20px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Lock size={18} color="#e65a5d" />
+            <Lock size={18} color="#ff1724" />
             <span style={{ fontSize: '0.85rem', color: '#d1d1d6' }}>Inicia sesión para sincronizar tu armario digital en todos tus dispositivos.</span>
           </div>
           <button
@@ -149,7 +157,7 @@ export const MySauzCloset = ({ onProductSelect, setActivePage }) => {
             padding: '12px 18px',
             background: 'transparent',
             border: 'none',
-            borderBottom: activeTab === 'outfits' ? '2px solid #e65a5d' : '2px solid transparent',
+            borderBottom: activeTab === 'outfits' ? '2px solid #ff1724' : '2px solid transparent',
             color: activeTab === 'outfits' ? '#fff' : '#8e8e99',
             fontWeight: '700',
             fontSize: '0.9rem',
@@ -173,7 +181,7 @@ export const MySauzCloset = ({ onProductSelect, setActivePage }) => {
           <button
             type="button"
             onClick={() => setActivePage('fitBuilder')}
-            style={{ padding: '10px 22px', background: '#e65a5d', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '0.84rem', fontWeight: '700', cursor: 'pointer' }}
+            style={{ padding: '10px 22px', background: '#ff1724', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '0.84rem', fontWeight: '700', cursor: 'pointer' }}
           >
             Ir al Fit Builder ↗
           </button>
@@ -207,7 +215,7 @@ export const MySauzCloset = ({ onProductSelect, setActivePage }) => {
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                     <div>
-                      <span style={{ fontSize: '0.68rem', color: '#e65a5d', fontWeight: '700', textTransform: 'uppercase' }}>
+                      <span style={{ fontSize: '0.68rem', color: '#ff1724', fontWeight: '700', textTransform: 'uppercase' }}>
                         {outfit.style || 'Streetwear'}
                       </span>
                       <h4 style={{ margin: '2px 0 0', fontSize: '1.05rem', fontWeight: '800', color: '#fff' }}>
@@ -228,7 +236,7 @@ export const MySauzCloset = ({ onProductSelect, setActivePage }) => {
                         type="button"
                         onClick={() => handleDeleteOutfit(outfit.id)}
                         title="Eliminar outfit"
-                        style={{ padding: '6px', background: 'rgba(239,68,68,0.1)', border: 'none', borderRadius: '6px', color: '#f87171', cursor: 'pointer' }}
+                        style={{ padding: '6px', background: 'rgba(255, 23, 36,0.1)', border: 'none', borderRadius: '6px', color: '#ff1724', cursor: 'pointer' }}
                       >
                         <Trash2 size={14} />
                       </button>

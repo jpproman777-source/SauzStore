@@ -11,6 +11,8 @@ import { useCart } from "../context/CartContext";
 import { useFavorites } from "../hooks/useFavorites";
 import { ProductImage } from "../components/ProductImage";
 import { brandOf, productPath } from "../lib/products";
+import { confirmAction } from "../lib/alerts";
+import "./cart-polish.css";
 
 const CartLine = ({
   item,
@@ -69,7 +71,7 @@ const CartLine = ({
         href={productPath(item.productId)}
         onClick={openProduct}
       >
-        <ProductImage mode="thumb" src={item.image} alt={item.name} />
+        <ProductImage mode="thumb" sizes="(max-width: 620px) 105px, 180px" src={item.image} alt={item.name} />
       </a>
       <div className="bag-item-content">
         <div className="bag-item-heading">
@@ -217,11 +219,11 @@ export const Cart = ({ setActivePage, onProductSelect, onExplore }) => {
         <div>
           <span className="edition-eyebrow">SAUZ STORE / TU SELECCIÓN</span>
           <h1>
-            Bolsa de compra<span>{cart.count}</span>
+            Tu bolsa<span aria-label={`${cart.count} artículos`}>{cart.count}</span>
           </h1>
         </div>
         <button
-          className="bf-text-button"
+          className="bf-text-button bag-explore"
           onClick={() => setActivePage("catalog")}
         >
           SEGUIR EXPLORANDO <ArrowRight size={16} />
@@ -236,16 +238,18 @@ export const Cart = ({ setActivePage, onProductSelect, onExplore }) => {
               </span>
               <button
                 disabled={busy}
-                onClick={() => {
-                  if (
-                    window.confirm(
-                      "¿Deseas vaciar todas las prendas de tu bolsa de compras?",
-                    )
-                  )
-                    run(clearCart);
+                onClick={async () => {
+                  const confirmed = await confirmAction({
+                    title: "Vaciar bolsa",
+                    text: "¿Deseas vaciar todas las prendas de tu bolsa de compras?",
+                    confirmText: "Vaciar bolsa",
+                    cancelText: "Cancelar",
+                    danger: true,
+                  });
+                  if (confirmed) run(clearCart);
                 }}
               >
-                Vaciar bolsa
+                <Trash2 size={13} aria-hidden="true" /> Vaciar bolsa
               </button>
             </div>
             {items.map((item) => (
@@ -268,7 +272,7 @@ export const Cart = ({ setActivePage, onProductSelect, onExplore }) => {
             <span className="edition-eyebrow">
               LISTO PARA EL SIGUIENTE PASO
             </span>
-            <h2>Resumen</h2>
+            <h2><ShoppingBag size={22} aria-hidden="true" /> Tu pedido</h2>
             <dl>
               <div>
                 <dt>Subtotal</dt>
@@ -295,7 +299,7 @@ export const Cart = ({ setActivePage, onProductSelect, onExplore }) => {
                 </div>
               )}
               <div className="bag-summary-total">
-                <dt>Total</dt>
+                <dt>Total <small className="bag-currency">COP</small></dt>
                 <dd>{formatMoney(cart.total)}</dd>
               </div>
             </dl>

@@ -1,0 +1,38 @@
+.sauz-auth-container.sauz-login-refined { box-sizing:border-box; min-height:100svh; padding:0 24px 36px; background:#090909; color:#eee; font-family:var(--font-nike,"Helvetica Neue",Arial,sans-serif); }
+.sauz-login-refined *, .sauz-login-refined *::before, .sauz-login-refined *::after { box-sizing:border-box; }
+.sauz-login-refined .sauz-auth-top-bar { width:100%; max-width:1100px; padding:18px 0; margin:0 auto; }
+.sauz-login-refined .sauz-auth-back-btn { gap:8px; min-height:44px; padding:8px 0; font:500 11px/1.5 var(--font-nike); color:#999; background:none; }
+.sauz-login-refined .sauz-auth-card { width:100%; max-width:480px; margin:auto; padding:24px 0; border:0; border-radius:0; background:transparent; box-shadow:none; }
+.sauz-login-refined .sauz-auth-header { margin-bottom:32px; }
+.sauz-login-refined .sauz-auth-logo-wrap { display:flex; justify-content:center; align-items:center; width:100%; height:90px; margin:0 auto 28px; }
+.sauz-login-refined .sauz-auth-logo-wrap .integrated-brand-logo { display:block; width:150px; height:auto; max-height:90px; max-width:100%; object-fit:contain; }
+.sauz-login-refined .sauz-auth-title { font-family:"SAUZ Archivo Black",Arial,sans-serif; font-size:28px; font-weight:900; line-height:1.2; letter-spacing:-.045em; margin:0 0 12px; }
+.sauz-login-refined .sauz-auth-subtitle { font-size:13px; line-height:1.6; color:#999; margin:0; }
+.sauz-login-refined .sauz-auth-form { gap:22px; }
+.sauz-login-refined .sauz-auth-field { min-width:0; gap:9px; }
+.sauz-login-refined .sauz-auth-field label { font-family:inherit; font-size:12px; font-weight:500; color:#ccc; }
+.sauz-login-refined .sauz-auth-input-wrap input { width:100%; min-width:0; height:54px; padding:14px 44px 14px 16px; font-family:inherit; font-size:14px; color:#eee; border:1px solid #353535; border-radius:9px; background:#151515; }
+.sauz-login-refined .sauz-auth-input-icon { display:none; }
+.sauz-login-refined .sauz-auth-input-wrap input:focus { border-color:var(--sauz-red); background:#191919; box-shadow:0 0 0 2px rgba(var(--sauz-red-rgb), 0.102); }
+.sauz-login-refined .sauz-auth-input-wrap input::placeholder { color:#777; }
+.sauz-login-refined .sauz-auth-eye-btn { right:5px; width:44px; height:44px; padding:12px; border-radius:6px; color:#aaa; }
+.sauz-auth-actions { display:flex; width:100%; margin-top:2px; }
+.sauz-login-refined .sauz-auth-submit-btn { display:flex; align-items:center; justify-content:center; gap:9px; width:100%; min-height:52px; margin:0; padding:14px 18px; border:0; border-radius:9px; background:#f2f2ed; color:#111; font-family:inherit; font-size:13px; font-weight:700; letter-spacing:0; text-transform:none; transition:background-color 180ms ease; }
+.sauz-auth-links { text-align:center; border-top:1px solid #292929; padding-top:17px; margin-top:2px; }
+.sauz-auth-links p { margin:12px 0 0; font-size:11px; line-height:1.7; color:#888; }
+.sauz-login-refined .sauz-auth-forgot-link,.sauz-login-refined .sauz-auth-secondary-btn { border:0; background:none; padding:6px 2px; font-family:inherit; font-size:11px; font-weight:500; color:#bbb; cursor:pointer; }
+.sauz-login-refined .sauz-auth-secondary-btn { color:#eee; font-weight:650; text-decoration:underline; text-underline-offset:4px; }
+.sauz-login-refined .sauz-auth-cancel-btn { background:none; border:0; font-family:inherit; font-size:12px; color:#aaa; text-decoration:underline; text-underline-offset:4px; }
+.sauz-login-refined .sauz-auth-error { font-size:12px; line-height:1.6; margin-bottom:20px; }
+.sauz-login-refined :focus-visible { outline:2px solid var(--sauz-red); outline-offset:3px; }
+.sauz-login-refined button:disabled { opacity:.5; cursor:wait; }
+@media(hover:hover) { .sauz-login-refined .sauz-auth-submit-btn:hover:not(:disabled) { background:#deded8; color:#111; transform:none; } .sauz-login-refined .sauz-auth-forgot-link:hover,.sauz-login-refined .sauz-auth-secondary-btn:hover { color:var(--sauz-red); } }
+@media(max-width:620px) {
+ .sauz-auth-container.sauz-login-refined { padding:0 24px 24px; }
+ .sauz-login-refined .sauz-auth-card { padding:22px 0; }
+ .sauz-login-refined .sauz-auth-top-bar { padding:10px 0; }
+ .sauz-login-refined .sauz-auth-title { font-size:25px; }
+ .sauz-login-refined .sauz-auth-subtitle { font-size:12px; }
+ .sauz-login-refined .sauz-auth-input-wrap input { font-size:16px; }
+}
+@media(prefers-reduced-motion:reduce) { .sauz-login-refined *, .sauz-login-refined *::before { transition:none !important; animation:none !important; } }

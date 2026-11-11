@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { addressService } from '../services/addressService';
+import { LockKeyhole, CreditCard, Smartphone, Banknote, ArrowRight, Check, ShoppingBag } from 'lucide-react';
+import { ProductImage } from './ProductImage';
+import { notifyAlert } from '../lib/alerts';
+import './checkout-premium.css';
 
 export const CheckoutModal = () => {
   const {
@@ -84,6 +88,22 @@ export const CheckoutModal = () => {
 
   const [transferRef, setTransferRef] = useState('');
 
+  const dialogRef = useRef(null);
+  useEffect(() => {
+    if (!isCheckoutOpen) return;
+    const node = dialogRef.current;
+    const previous = document.activeElement;
+    const overflow = document.body.style.overflow;
+    node.showModal();
+    document.body.style.overflow = 'hidden';
+    node.querySelector('.modal-close-btn')?.focus();
+    return () => {
+      node.close();
+      document.body.style.overflow = overflow;
+      previous?.focus?.();
+    };
+  }, [isCheckoutOpen]);
+
   if (!isCheckoutOpen) return null;
 
   const handleInputChange = (e) => {
@@ -109,7 +129,11 @@ export const CheckoutModal = () => {
     e.preventDefault();
 
     if (!formData.name || !formData.email || !formData.phone || !formData.address || !formData.city) {
-      alert('⚠️ Por favor completa todos los campos obligatorios de entrega (*)');
+      await notifyAlert({
+        title: 'Datos incompletos',
+        text: 'Por favor completa todos los campos obligatorios de entrega.',
+        icon: 'warning',
+      });
       return;
     }
 
@@ -121,7 +145,11 @@ export const CheckoutModal = () => {
     if (paymentMethod === 'card') {
       const rawNumber = cardData.number.replace(/\s/g, '');
       if (rawNumber.length < 15 || !cardData.holder || cardData.exp.length < 5 || cardData.cvv.length < 3) {
-        alert('⚠️ Por favor completa todos los datos de tu tarjeta de crédito o débito');
+        await notifyAlert({
+          title: 'Datos de tarjeta',
+          text: 'Por favor completa todos los datos de tu tarjeta de crédito o débito.',
+          icon: 'warning',
+        });
         return;
       }
       paymentPayload.details = {
@@ -170,7 +198,7 @@ export const CheckoutModal = () => {
   };
 
   return (
-    <div className="modal-backdrop open" role="dialog" aria-modal="true">
+    <dialog ref={dialogRef} className="sauz-checkout-dialog" aria-labelledby="sauz-checkout-title" onCancel={event => { event.preventDefault(); if (!loading) setIsCheckoutOpen(false); }}>
       <div className="modal-card">
         <div className="modal-header">
           <div className="modal-title">
@@ -181,14 +209,15 @@ export const CheckoutModal = () => {
               </svg>
             </span>
             <div>
-              <h3>Pasarela de Pago Segura</h3>
-              <p>Sauz Store Checkout Oficial</p>
+              <p className="checkout-kicker">SAUZ STORE / BLACK EDITION</p>
+              <h3 id="sauz-checkout-title">FINALIZA TU COMPRA<span>.</span></h3>
             </div>
           </div>
           <button
             type="button"
             className="icon-btn modal-close-btn"
             onClick={() => setIsCheckoutOpen(false)}
+            disabled={loading}
             aria-label="Cerrar ventana de pago"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -198,13 +227,15 @@ export const CheckoutModal = () => {
         </div>
 
         <form className="modal-body" onSubmit={handleSubmit}>
+          <div className="checkout-form-main">
+          <div className="checkout-intro"><span>ENTREGA</span><span aria-hidden="true">/</span><span>PAGO</span><span aria-hidden="true">/</span><span>TU PEDIDO</span></div>
           {/* Paso 1: Datos de Entrega */}
           <div className="checkout-step">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-              <h4 style={{ margin: 0 }}>📍 1. Datos de Entrega (US-23)</h4>
+            <div className="checkout-section-heading">
+              <h4><span className="checkout-step-number">01</span> DATOS DE ENTREGA</h4>
               {user && (
-                <span style={{ fontSize: '0.72rem', backgroundColor: '#e0f2fe', color: '#0369a1', padding: '3px 8px', borderRadius: '12px', fontWeight: '700' }}>
-                  ✓ Cuenta activa ({user.name.split(' ')[0]})
+                <span className="checkout-account-badge">
+                  <Check size={12} aria-hidden="true" /> {user.name?.split(' ')[0] || 'Mi cuenta'}
                 </span>
               )}
             </div>
@@ -225,14 +256,14 @@ export const CheckoutModal = () => {
                         padding: '6px 12px',
                         borderRadius: '6px',
                         fontSize: '0.78rem',
-                        background: selectedAddressId === addr.id ? '#e65a5d' : 'rgba(255,255,255,0.08)',
+                        background: selectedAddressId === addr.id ? '#ff1724' : 'rgba(255,255,255,0.08)',
                         color: '#fff',
                         border: 'none',
                         cursor: 'pointer',
                         fontWeight: selectedAddressId === addr.id ? '700' : '400',
                       }}
                     >
-                      📍 {addr.recipient} — {addr.address} ({addr.city})
+                      {addr.recipient} — {addr.address} ({addr.city})
                     </button>
                   ))}
                 </div>
@@ -245,6 +276,7 @@ export const CheckoutModal = () => {
                 <input
                   type="text"
                   id="name"
+                  autoComplete="name"
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="Ej. Juan Pérez"
@@ -256,6 +288,7 @@ export const CheckoutModal = () => {
                 <input
                   type="email"
                   id="email"
+                  autoComplete="email"
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="juan@ejemplo.com"
@@ -267,6 +300,7 @@ export const CheckoutModal = () => {
                 <input
                   type="tel"
                   id="phone"
+                  autoComplete="tel"
                   value={formData.phone}
                   onChange={handleInputChange}
                   placeholder="312 345 6789"
@@ -278,6 +312,7 @@ export const CheckoutModal = () => {
                 <input
                   type="text"
                   id="department"
+                  autoComplete="address-level1"
                   value={formData.department}
                   onChange={handleInputChange}
                   placeholder="Antioquia, Cundinamarca..."
@@ -289,6 +324,7 @@ export const CheckoutModal = () => {
                 <input
                   type="text"
                   id="city"
+                  autoComplete="address-level2"
                   value={formData.city}
                   onChange={handleInputChange}
                   placeholder="Medellín, Bogotá, Cali..."
@@ -310,6 +346,7 @@ export const CheckoutModal = () => {
                 <input
                   type="text"
                   id="address"
+                  autoComplete="address-line1"
                   value={formData.address}
                   onChange={handleInputChange}
                   placeholder="Calle 10 # 43E - 20"
@@ -321,6 +358,7 @@ export const CheckoutModal = () => {
                 <input
                   type="text"
                   id="complement"
+                  autoComplete="address-line2"
                   value={formData.complement}
                   onChange={handleInputChange}
                   placeholder="Apto 502, Torre B"
@@ -341,28 +379,31 @@ export const CheckoutModal = () => {
 
           {/* Paso 2: Método de Pago */}
           <div className="checkout-step">
-            <h4>💳 2. Elige tu Método de Pago</h4>
-            <div className="payment-tabs">
+            <h4><span className="checkout-step-number">02</span> MÉTODO DE PAGO</h4>
+            <div className="payment-tabs" role="group" aria-label="Método de pago">
               <button
                 type="button"
                 className={`pay-tab ${paymentMethod === 'card' ? 'active' : ''}`}
+                aria-pressed={paymentMethod === 'card'}
                 onClick={() => setPaymentMethod('card')}
               >
-                💳 Tarjeta Débito / Crédito
+                <CreditCard size={22} aria-hidden="true" /><span>Tarjeta<small>Débito / Crédito</small></span>
               </button>
               <button
                 type="button"
                 className={`pay-tab ${paymentMethod === 'transfer' ? 'active' : ''}`}
+                aria-pressed={paymentMethod === 'transfer'}
                 onClick={() => setPaymentMethod('transfer')}
               >
-                📱 Nequi / Transferencia
+                <Smartphone size={22} aria-hidden="true" /><span>Transferencia<small>Nequi / Banco</small></span>
               </button>
               <button
                 type="button"
                 className={`pay-tab ${paymentMethod === 'cash' ? 'active' : ''}`}
+                aria-pressed={paymentMethod === 'cash'}
                 onClick={() => setPaymentMethod('cash')}
               >
-                💵 Contra Entrega
+                <Banknote size={22} aria-hidden="true" /><span>Contra entrega<small>Efectivo</small></span>
               </button>
             </div>
 
@@ -370,9 +411,9 @@ export const CheckoutModal = () => {
             {paymentMethod === 'card' && (
               <div className="payment-panel active">
                 <div className="card-preview">
-                  <div className="card-chip" />
+                  <div className="checkout-card-top"><div className="card-chip" /><span>SAUZ / CHECKOUT</span><CreditCard size={24} aria-hidden="true" /></div>
                   <div className="card-number-display">
-                    {cardData.number || '•••• •••• •••• ••••'}
+                    {`•••• •••• •••• ${cardData.number.replace(/\s/g, '').slice(-4).padStart(4, '•')}`}
                   </div>
                   <div className="card-preview-bottom">
                     <div>
@@ -391,7 +432,8 @@ export const CheckoutModal = () => {
                     <label htmlFor="cardNumber">Número de Tarjeta</label>
                     <input
                       type="text"
-                      id="cardNumber"
+                      id="cardNumber" inputMode="numeric"
+                  autoComplete="cc-number"
                       value={cardData.number}
                       onChange={handleCardNumberChange}
                       maxLength="19"
@@ -403,6 +445,7 @@ export const CheckoutModal = () => {
                     <input
                       type="text"
                       id="cardHolder"
+                  autoComplete="cc-name"
                       value={cardData.holder}
                       onChange={(e) => setCardData((prev) => ({ ...prev, holder: e.target.value.toUpperCase() }))}
                       placeholder="Como aparece en el plástico"
@@ -412,7 +455,8 @@ export const CheckoutModal = () => {
                     <label htmlFor="cardExp">Fecha Expiración (MM/AA)</label>
                     <input
                       type="text"
-                      id="cardExp"
+                      id="cardExp" inputMode="numeric"
+                  autoComplete="cc-exp"
                       value={cardData.exp}
                       onChange={handleCardExpChange}
                       maxLength="5"
@@ -423,7 +467,8 @@ export const CheckoutModal = () => {
                     <label htmlFor="cardCvv">CVV / CVC</label>
                     <input
                       type="password"
-                      id="cardCvv"
+                      id="cardCvv" inputMode="numeric"
+                  autoComplete="cc-csc"
                       value={cardData.cvv}
                       onChange={(e) => setCardData((prev) => ({ ...prev, cvv: e.target.value.slice(0, 4) }))}
                       maxLength="4"
@@ -438,7 +483,7 @@ export const CheckoutModal = () => {
             {paymentMethod === 'transfer' && (
               <div className="payment-panel active">
                 <div className="transfer-box">
-                  <h5>📲 Datos para Transferir</h5>
+                  <h5>Datos para transferir</h5>
                   <p>Realiza tu pago fácil y rápido por cualquiera de las siguientes opciones:</p>
                   <ul className="transfer-list">
                     <li><strong>Nequi / Daviplata:</strong> <span>312 987 6543</span> (Sauz Store SAS)</li>
@@ -472,9 +517,19 @@ export const CheckoutModal = () => {
           </div>
 
           {/* Barra inferior con total y botón */}
-          <div className="checkout-summary-bar">
+          </div>
+          <aside className="checkout-summary-bar" aria-label="Resumen del pedido">
+            <p className="checkout-kicker">TU SELECCIÓN</p>
+            <h4><ShoppingBag size={20} aria-hidden="true" /> Resumen del pedido</h4>
+            <div className="checkout-order-items">
+              {cart.items.map(item => <div className="checkout-order-item" key={`${item.productId}-${item.variantId}`}>
+                <ProductImage src={item.image} alt={item.name} mode="thumb" />
+                <div><p>{item.name}</p><small>Talla {item.size} · Cantidad {item.quantity}</small><strong>{formatMoney(item.price * item.quantity)}</strong></div>
+              </div>)}
+            </div>
+            <dl className="checkout-breakdown"><div><dt>Subtotal</dt><dd>{formatMoney(cart.subtotal)}</dd></div><div><dt>Impuestos</dt><dd>{formatMoney(cart.tax)}</dd></div></dl>
             <div className="checkout-total-info">
-              <span>Total a Pagar:</span>
+              <span>Total <small>COP</small></span>
               <strong>{formatMoney(cart.total)}</strong>
             </div>
             <button
@@ -482,11 +537,12 @@ export const CheckoutModal = () => {
               className="btn btn-dark pay-btn"
               disabled={loading}
             >
-              {loading ? '⏳ Procesando pago seguro...' : 'Pagar Ahora 🔒'}
+              {loading ? 'Procesando…' : <><span>Confirmar pedido</span><ArrowRight size={18} aria-hidden="true" /></>}
             </button>
-          </div>
+            <p className="checkout-currency-note"><LockKeyhole size={13} aria-hidden="true" /> Todos los importes están en pesos colombianos.</p>
+          </aside>
         </form>
       </div>
-    </div>
+    </dialog>
   );
 };

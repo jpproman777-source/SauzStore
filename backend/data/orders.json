@@ -67,7 +67,16 @@
     "tax": 40000,
     "total": 290000,
     "count": 3,
-    "orderStatus": "Entregado"
+    "orderStatus": "Cancelado",
+    "trackingHistory": [
+      {
+        "status": "Cancelado",
+        "timestamp": "2026-11-11T16:05:22.982Z",
+        "dateFormatted": "11/11/2026, 11:05 a. m.",
+        "note": "Estado actualizado a \"Cancelado\" por logística SAUZ",
+        "location": ""
+      }
+    ]
   },
   {
     "orderId": "SAUZ-M4K7Z9",
@@ -98,7 +107,16 @@
     "tax": 22400,
     "total": 162400,
     "count": 1,
-    "orderStatus": "Enviado"
+    "orderStatus": "Cancelado",
+    "trackingHistory": [
+      {
+        "status": "Cancelado",
+        "timestamp": "2026-11-11T16:05:18.880Z",
+        "dateFormatted": "11/11/2026, 11:05 a. m.",
+        "note": "Estado actualizado a \"Cancelado\" por logística SAUZ",
+        "location": ""
+      }
+    ]
   },
   {
     "orderId": "SAUZ-P2Q5W8",

@@ -221,7 +221,7 @@ export const Footer = ({
                 <button
                   type="button"
                   className="footer-nav-link"
-                  onClick={handleMarcasScroll}
+                  onClick={() => handleNav("brands")}
                 >
                   Marcas
                 </button>
@@ -301,15 +301,6 @@ export const Footer = ({
                   onClick={() => handleNav("about")}
                 >
                   Sobre nosotros
-                </button>
-              </li>
-              <li className="footer-nav-item">
-                <button
-                  type="button"
-                  className="footer-nav-link"
-                  onClick={() => handleNav("about")}
-                >
-                  Nuestra historia
                 </button>
               </li>
               <li className="footer-nav-item">

@@ -3,6 +3,7 @@ import { Heart, Plus, Flag, Trophy, Sparkles, MapPin, Check, MessageSquare, Tag 
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { ProductImage } from '../components/ProductImage';
+import { confirmAction } from '../lib/alerts';
 
 export const SauzCommunity = ({ onProductSelect }) => {
   const { products, showToast } = useCart();
@@ -56,7 +57,14 @@ export const SauzCommunity = ({ onProductSelect }) => {
 
   // Reportar publicación para moderación
   const handleReport = async (postId) => {
-    if (!confirm('¿Deseas reportar esta publicación para revisión de moderación?')) return;
+    const confirmed = await confirmAction({
+      title: 'Reportar publicación',
+      text: '¿Deseas enviar esta publicación para revisión de moderación?',
+      confirmText: 'Reportar',
+      cancelText: 'Cancelar',
+      danger: true,
+    });
+    if (!confirmed) return;
     try {
       const res = await fetch(`/api/community/posts/${postId}/report`, { method: 'POST' });
       if (res.ok) {
@@ -123,9 +131,9 @@ export const SauzCommunity = ({ onProductSelect }) => {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '36px' }}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(230,90,93,0.12)', border: '1px solid rgba(230,90,93,0.3)', marginBottom: '10px' }}>
-            <Sparkles size={14} color="#e65a5d" />
-            <span style={{ fontSize: '0.74rem', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#e65a5d' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(255, 23, 36,0.12)', border: '1px solid rgba(255, 23, 36,0.3)', marginBottom: '10px' }}>
+            <Sparkles size={14} color="#ff1724" />
+            <span style={{ fontSize: '0.74rem', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#ff1724' }}>
               SAUZ COMMUNITY · STREET STYLE & CULTURA URBANA
             </span>
           </div>
@@ -148,7 +156,7 @@ export const SauzCommunity = ({ onProductSelect }) => {
           }}
           style={{
             padding: '12px 20px',
-            background: '#e65a5d',
+            background: '#ff1724',
             color: '#fff',
             border: 'none',
             borderRadius: '8px',
@@ -172,7 +180,7 @@ export const SauzCommunity = ({ onProductSelect }) => {
         <div
           style={{
             background: 'linear-gradient(135deg, #181822 0%, #0d0d10 100%)',
-            border: '1.5px solid rgba(230,90,93,0.4)',
+            border: '1.5px solid rgba(255, 23, 36,0.4)',
             borderRadius: '16px',
             padding: '28px',
             marginBottom: '40px',
@@ -180,7 +188,7 @@ export const SauzCommunity = ({ onProductSelect }) => {
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: '28px',
             alignItems: 'center',
-            boxShadow: '0 20px 50px rgba(0,0,0,0.85), 0 0 24px rgba(230,90,93,0.12)',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.85), 0 0 24px rgba(255, 23, 36,0.12)',
           }}
         >
           <div style={{ width: '100%', height: '320px', background: '#000', borderRadius: '12px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -188,9 +196,9 @@ export const SauzCommunity = ({ onProductSelect }) => {
           </div>
 
           <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(230,90,93,0.2)', border: '1px solid #e65a5d', padding: '4px 10px', borderRadius: '20px', marginBottom: '12px' }}>
-              <Trophy size={14} color="#e65a5d" />
-              <span style={{ fontSize: '0.72rem', fontWeight: '800', color: '#e65a5d', textTransform: 'uppercase' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255, 23, 36,0.2)', border: '1px solid #ff1724', padding: '4px 10px', borderRadius: '20px', marginBottom: '12px' }}>
+              <Trophy size={14} color="#ff1724" />
+              <span style={{ fontSize: '0.72rem', fontWeight: '800', color: '#ff1724', textTransform: 'uppercase' }}>
                 FIT OF THE WEEK · SELECCIÓN EDITORIAL
               </span>
             </div>
@@ -237,7 +245,7 @@ export const SauzCommunity = ({ onProductSelect }) => {
                           gap: '6px',
                         }}
                       >
-                        <Tag size={12} color="#e65a5d" />
+                        <Tag size={12} color="#ff1724" />
                         <span>{prod.name} ↗</span>
                       </button>
                     );
@@ -252,10 +260,10 @@ export const SauzCommunity = ({ onProductSelect }) => {
                 onClick={() => handleVote(fitOfTheWeek.id)}
                 style={{
                   padding: '10px 18px',
-                  background: 'rgba(230,90,93,0.15)',
-                  border: '1px solid #e65a5d',
+                  background: 'rgba(255, 23, 36,0.15)',
+                  border: '1px solid #ff1724',
                   borderRadius: '8px',
-                  color: '#e65a5d',
+                  color: '#ff1724',
                   fontSize: '0.85rem',
                   fontWeight: '800',
                   cursor: 'pointer',
@@ -264,7 +272,7 @@ export const SauzCommunity = ({ onProductSelect }) => {
                   gap: '8px',
                 }}
               >
-                <Heart size={16} fill="#e65a5d" />
+                <Heart size={16} fill="#ff1724" />
                 <span>{fitOfTheWeek.votes} Votos</span>
               </button>
             </div>
@@ -331,7 +339,7 @@ export const SauzCommunity = ({ onProductSelect }) => {
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#e65a5d',
+                  color: '#ff1724',
                   fontSize: '0.82rem',
                   fontWeight: '700',
                   cursor: 'pointer',
@@ -341,7 +349,7 @@ export const SauzCommunity = ({ onProductSelect }) => {
                   padding: 0,
                 }}
               >
-                <Heart size={15} fill="#e65a5d" />
+                <Heart size={15} fill="#ff1724" />
                 <span>{post.votes} votos</span>
               </button>
 
@@ -465,7 +473,7 @@ export const SauzCommunity = ({ onProductSelect }) => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  style={{ padding: '8px 18px', background: '#e65a5d', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: '800', fontSize: '0.82rem', cursor: submitting ? 'wait' : 'pointer' }}
+                  style={{ padding: '8px 18px', background: '#ff1724', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: '800', fontSize: '0.82rem', cursor: submitting ? 'wait' : 'pointer' }}
                 >
                   {submitting ? 'Publicando...' : 'Publicar en Comunidad'}
                 </button>

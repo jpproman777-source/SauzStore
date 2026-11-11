@@ -1,38 +1,24 @@
-import { useEffect, useState } from "react";
-const key = "sauz_favorites";
-const eventName = "sauz:favorites-changed";
-const read = () => {
-  try {
-    const ids = JSON.parse(localStorage.getItem(key) || "[]");
-    return Array.isArray(ids) ? ids.filter((id) => typeof id === "string") : [];
-  } catch {
-    return [];
-  }
-};
+import { useEffect, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { favoritesKey, readFavorites } from '../lib/favorites';
+const eventName = 'sauz:favorites-changed';
 export const useFavorites = () => {
-  const [ids, setIds] = useState(read);
+  const { user } = useAuth();
+  const key = favoritesKey(user);
+  const read = () => { try { return readFavorites(localStorage, key); } catch { return []; } };
+  const [state, setState] = useState(() => ({ key, ids: read() }));
   useEffect(() => {
-    const sync = () => setIds(read());
+    const sync = () => setState({ key, ids: read() });
+    sync();
     window.addEventListener(eventName, sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener(eventName, sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
-  const toggle = (id) => {
-    const value = String(id),
-      previous = read();
-    const next = previous.includes(value)
-      ? previous.filter((item) => item !== value)
-      : [...previous, value];
-    try {
-      localStorage.setItem(key, JSON.stringify(next));
-    } catch {
-      setIds(next);
-      return;
-    }
-    window.dispatchEvent(new Event(eventName));
+    window.addEventListener('storage', sync);
+    return () => { window.removeEventListener(eventName, sync); window.removeEventListener('storage', sync); };
+  }, [key]);
+  const toggle = id => {
+    const value = String(id), previous = read();
+    const ids = previous.includes(value) ? previous.filter(item => item !== value) : [...previous, value];
+    setState({ key, ids });
+    try { localStorage.setItem(key, JSON.stringify(ids)); window.dispatchEvent(new Event(eventName)); } catch { /* Keep the selection for this session when storage is unavailable. */ }
   };
-  return { ids, toggle };
+  return { ids: state.key === key ? state.ids : read(), toggle };
 };

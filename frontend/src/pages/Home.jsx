@@ -1,35 +1,24 @@
-import React, { useMemo, useRef } from "react";
+import React, { useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { ProductCard } from "../components/ProductCard";
-import { BrandLogo } from "../components/BrandLogo";
+import { BrandsDirectoryGrid } from "../components/BrandsDirectoryGrid";
 import {
   HomeCarousel,
 } from "../components/HomeCarousel";
 import { EditorialCollections } from "../components/EditorialCollections";
 import { useScrollReveal } from "../hooks/useScrollReveal";
+import "./home-catalog-button.css";
 
 export const Home = ({
   setActivePage,
-  onCategorySelect,
   onCollectionSelect,
   onProductSelect,
+  onCatalogFilter,
 }) => {
   const { products, loadingProducts } = useCart();
   const main = useRef(null);
   useScrollReveal(main, [products.length, loadingProducts], '.bf-home > .bf-section [data-reveal], .bf-home > .bf-statement[data-reveal]');
-
-  const categories = useMemo(() => {
-    return [...new Set(products.map((p) => p.category).filter(Boolean))];
-  }, [products]);
-
-  const categoryCounts = useMemo(() => {
-    const counts = {};
-    products.forEach((p) => {
-      if (p.category) counts[p.category] = (counts[p.category] || 0) + 1;
-    });
-    return counts;
-  }, [products]);
 
   return (
     <main className="bf-home" ref={main}>
@@ -42,34 +31,13 @@ export const Home = ({
             <h2>Tu próximo esencial.</h2>
           </div>
           <button
-            className="bf-text-button"
+            type="button"
+            className="sauz-catalog-button"
             onClick={() => setActivePage("catalog")}
           >
-            VER TODO EL CATÁLOGO ↗
+            <span className="sauz-catalog-button-label">Ver todo el catálogo</span>
+            <span className="sauz-catalog-button-icon" aria-hidden="true"><ArrowUpRight size={20} /></span>
           </button>
-        </div>
-        <div className="bf-category-row" role="region" aria-label="Explorar por categoría" data-reveal>
-          {categories.map((c, i) => {
-            const count = categoryCounts[c] || 0;
-            return (
-              <button
-                key={c}
-                type="button"
-                className="bf-category-card"
-                onClick={() => onCategorySelect(c)}
-                aria-label={`Ver colección de ${c}, ${count} referencias`}
-              >
-                <div className="bf-cat-top">
-                  <span className="bf-cat-index">0{i + 1}</span>
-                  <ArrowUpRight size={15} className="bf-cat-arrow" aria-hidden="true" />
-                </div>
-                <div className="bf-cat-content">
-                  <span className="bf-cat-name">{c}</span>
-                  <span className="bf-cat-count">{count > 0 ? `${count} piezas` : "Ver piezas"}</span>
-                </div>
-              </button>
-            );
-          })}
         </div>
         <div className="bf-grid">
           {loadingProducts ? (
@@ -105,14 +73,15 @@ export const Home = ({
           Siluetas urbanas. Expresión propia. Explora nuestra selección y
           construye tu estilo desde cero.
         </p>
-        <div className="bf-brands">
-          {["NIKE", "JORDAN", "ADIDAS"].map((b) => (
-            <BrandLogo key={b} brand={b} />
-          ))}
+        <div className="brands-dir-home-wrap">
+          <BrandsDirectoryGrid
+            onCatalogFilter={onCatalogFilter}
+            headingTag="h3"
+          />
         </div>
-        <small>
-          Universo de inspiración. Consulta las marcas disponibles en el
-          catálogo.
+        <small className="brands-dir-home-note">
+          Universo de inspiración. Selecciona una marca para explorar sus
+          referencias en el catálogo.
         </small>
       </section>
     </main>

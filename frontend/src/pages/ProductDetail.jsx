@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
-  ArrowRight,
   Check,
   Heart,
   Minus,
@@ -9,17 +8,16 @@ import {
   RotateCcw,
   ShieldCheck,
   Truck,
-  ZoomIn,
-  ZoomOut,
   ShoppingBag,
   Zap,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../hooks/useFavorites";
-import { ProductImage } from "../components/ProductImage";
+import { ProductGallery } from "../components/ProductGallery";
 import { ProductCard } from "../components/ProductCard";
 import { brandOf, canBuy, productVariants } from "../lib/products";
 import { useScrollReveal } from "../hooks/useScrollReveal";
+import "./product-detail-polish.css";
 
 // Mapa de colores comerciales a muestras hexadecimales
 const COLOR_MAP = {
@@ -59,8 +57,6 @@ export const ProductDetail = ({
   } = useCart();
   const { ids, toggle } = useFavorites();
 
-  const [imageIndex, setImageIndex] = useState(0);
-  const [zoomed, setZoomed] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -157,8 +153,6 @@ export const ProductDetail = ({
 
   // Reset en cambio de producto
   useEffect(() => {
-    setImageIndex(0);
-    setZoomed(false);
     setSelectedSize("");
     setSelectedColor(availableColors[0] || "");
     setQuantity(1);
@@ -264,8 +258,9 @@ export const ProductDetail = ({
     <main className="premium-detail" ref={mainRef}>
       {/* Breadcrumb de navegación comercial */}
       <nav className="premium-breadcrumb" aria-label="Ruta del producto">
-        <button type="button" onClick={() => setActivePage("catalog")}>
-          Catálogo
+        <button className="sauz-back-catalog" type="button" onClick={() => setActivePage("catalog")}>
+          <ArrowLeft size={17} aria-hidden="true" />
+          Volver al catálogo
         </button>
         <span aria-hidden="true">/</span>
         <button
@@ -283,87 +278,7 @@ export const ProductDetail = ({
       {/* Contenedor principal equilibrado en 2 columnas */}
       <div className="premium-detail-layout">
         {/* COLUMNA IZQUIERDA: GALERÍA FOTOGRÁFICA (50–52%) */}
-        <section
-          className="premium-gallery"
-          aria-label="Galería fotográfica del producto"
-          data-reveal
-        >
-          <div className={`premium-gallery-main ${zoomed ? "is-zoomed" : ""}`}>
-            <ProductImage
-              src={images[imageIndex] || product.image}
-              alt={`${product.name} — Fotografía ${imageIndex + 1} de ${images.length}`}
-              category={product.category}
-              mode="full"
-              loading="eager"
-            />
-            <button
-              className="premium-gallery-zoom"
-              type="button"
-              onClick={() => setZoomed(!zoomed)}
-              aria-label={zoomed ? "Reducir zoom" : "Ampliar fotografía"}
-            >
-              {zoomed ? <ZoomOut size={18} /> : <ZoomIn size={18} />}
-            </button>
-            {images.length > 1 && (
-              <div className="premium-gallery-nav">
-                <button
-                  type="button"
-                  aria-label="Fotografía anterior"
-                  onClick={() =>
-                    setImageIndex(
-                      (imageIndex - 1 + images.length) % images.length,
-                    )
-                  }
-                >
-                  <ArrowLeft size={18} />
-                </button>
-                <span className="premium-gallery-counter">
-                  {imageIndex + 1} / {images.length}
-                </span>
-                <button
-                  type="button"
-                  aria-label="Siguiente fotografía"
-                  onClick={() =>
-                    setImageIndex((imageIndex + 1) % images.length)
-                  }
-                >
-                  <ArrowRight size={18} />
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Miniaturas seleccionables únicamente si hay 2 o más fotos reales */}
-          {images.length > 1 && (
-            <div
-              className="premium-gallery-thumbs"
-              role="tablist"
-              aria-label="Vistas disponibles del producto"
-            >
-              {images.map((src, index) => (
-                <button
-                  type="button"
-                  key={src}
-                  role="tab"
-                  aria-selected={imageIndex === index}
-                  aria-label={`Ver imagen ${index + 1}`}
-                  className={`premium-thumb-btn ${imageIndex === index ? "active" : ""}`}
-                  onClick={() => {
-                    setImageIndex(index);
-                    setZoomed(false);
-                  }}
-                >
-                  <ProductImage
-                    src={src}
-                    alt=""
-                    category={product.category}
-                    mode="thumb"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
-        </section>
+        <ProductGallery key={product.id} images={images} name={product.name} category={product.category} />
 
         {/* COLUMNA DERECHA: INFORMACIÓN COMERCIAL (48–50%) */}
         <section
@@ -391,7 +306,7 @@ export const ProductDetail = ({
             {priced ? (
               <div className="premium-price-row">
                 <span className="premium-detail-price">
-                  {formatMoney(product.price)}
+                  {formatMoney(product.price)} <small className="sauz-detail-currency">COP</small>
                 </span>
                 {previousPrice && (
                   <>
@@ -413,9 +328,9 @@ export const ProductDetail = ({
           </div>
 
           {/* Descripción corta de caída y corte */}
-          <p className="premium-detail-lead">
+          {(product.shortDescription || product.description) !== product.name && <p className="premium-detail-lead">
             {product.shortDescription || product.description}
-          </p>
+          </p>}
 
           <div className="premium-detail-rule" />
 

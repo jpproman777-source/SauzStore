@@ -24,9 +24,8 @@ const collections = [
     title: 'Nuestros sneakers.',
     description: 'Diseños icónicos para cualquier ocasión.',
     category: 'Sneakers',
-    image: '/tenis.avif',
+    image: '/tenis.jpeg',
     position: 'center',
-    wide: true,
   },
 ];
 
@@ -54,13 +53,12 @@ export const EditorialCollections = ({ onCollectionSelect }) => {
       <div className="collection-editorial-grid">
         {collections.map((collection, index) => (
           <a
-            className={`collection-editorial-card${collection.wide ? ' is-wide' : ''}`}
+            className="collection-editorial-card"
             data-reveal
             href={collectionUrl(collection.category)}
             key={collection.title}
             onClick={event => openCollection(event, collection.category)}
             aria-label={`${collection.title} ${collection.description}`}
-            style={collection.wide ? { '--editorial-image': `url("${collection.image}")` } : undefined}
           >
             <img
               src={collection.image}

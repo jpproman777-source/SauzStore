@@ -13,6 +13,7 @@ import './shopping-experience.css';
 import './catalog-premium.css';
 import './editorial-collections.css';
 import './motion-system.css';
+import './sauz-alerts.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

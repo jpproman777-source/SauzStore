@@ -47,7 +47,7 @@ const CountdownTimer = ({ targetDate }) => {
             minWidth: '42px',
           }}
         >
-          <div style={{ fontSize: '1rem', fontWeight: '800', color: '#e65a5d', fontFamily: 'var(--font-mono)' }}>
+          <div style={{ fontSize: '1rem', fontWeight: '800', color: '#ff1724', fontFamily: 'var(--font-mono)' }}>
             {String(u.val).padStart(2, '0')}
           </div>
           <div style={{ fontSize: '0.6rem', color: '#8e8e99', fontWeight: '700' }}>
@@ -123,9 +123,9 @@ export const SauzDrops = () => {
     >
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(230,90,93,0.12)', border: '1px solid rgba(230,90,93,0.3)', marginBottom: '12px' }}>
-          <Clock size={14} color="#e65a5d" />
-          <span style={{ fontSize: '0.74rem', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#e65a5d' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(255, 23, 36,0.12)', border: '1px solid rgba(255, 23, 36,0.3)', marginBottom: '12px' }}>
+          <Clock size={14} color="#ff1724" />
+          <span style={{ fontSize: '0.74rem', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#ff1724' }}>
             SAUZ DROPS · CALENDARIO DE LANZAMIENTOS OFICIALES
           </span>
         </div>
@@ -172,7 +172,7 @@ export const SauzDrops = () => {
                   {/* Foto del Drop */}
                   <div style={{ position: 'relative', width: '100%', height: '220px', background: '#09090b', borderRadius: '12px', overflow: 'hidden', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <ProductImage mode="catalog" src={drop.image} alt={drop.name} style={{ width: '85%', height: '85%', objectFit: 'contain' }} />
-                    <span style={{ position: 'absolute', top: '12px', left: '12px', background: '#e65a5d', color: '#fff', fontSize: '0.68rem', fontWeight: '800', padding: '3px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                    <span style={{ position: 'absolute', top: '12px', left: '12px', background: '#ff1724', color: '#fff', fontSize: '0.68rem', fontWeight: '800', padding: '3px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
                       {drop.brand}
                     </span>
                   </div>
@@ -196,7 +196,7 @@ export const SauzDrops = () => {
                 <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px' }}>
                   <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: '0.72rem', color: '#8e8e99' }}>Cuenta regresiva:</span>
-                    <span style={{ fontSize: '0.72rem', color: '#e65a5d', fontWeight: '700' }}>
+                    <span style={{ fontSize: '0.72rem', color: '#ff1724', fontWeight: '700' }}>
                       🔥 {drop.waitlistCount} en lista de espera
                     </span>
                   </div>
@@ -288,7 +288,7 @@ export const SauzDrops = () => {
                 disabled={submittingWaitlist}
                 style={{
                   padding: '12px',
-                  background: '#e65a5d',
+                  background: '#ff1724',
                   color: '#fff',
                   border: 'none',
                   borderRadius: '8px',

@@ -1,0 +1,121 @@
+.sauz-catalog-toolbar { display:flex; align-items:center; justify-content:space-between; gap:24px; padding-bottom:24px; border-bottom:1px solid #292929; position:relative; z-index:5; }
+.sauz-catalog-search { display:flex; align-items:center; min-width:0; width:min(460px,45%); }
+.sauz-catalog-search input { width:100%; min-width:0; background:#141414; color:#eee; border:1px solid #353535; border-radius:30px; height:46px; font:inherit; font-size:13px; padding:0 20px 0 44px; }
+.sauz-catalog-actions { display:flex; align-items:center; gap:22px; }
+.sauz-catalog-actions > button { display:flex; align-items:center; justify-content:center; gap:10px; border:0; background:transparent; color:#eee; font:inherit; font-size:13px; cursor:pointer; min-height:44px; padding:6px 0; }
+.sauz-catalog-actions b { background:var(--sauz-red); border-radius:20px; padding:1px 6px; font-size:10px; }
+.sauz-catalog-actions .sauz-mobile-filter { display:none; }
+.sauz-catalog-sort { position:relative; font-size:13px; }
+.sauz-catalog-sort summary { display:flex; align-items:center; gap:12px; min-height:44px; cursor:pointer; list-style:none; color:#bbb; }
+.sauz-catalog-sort summary::-webkit-details-marker,.sauz-filter-group summary::-webkit-details-marker { display:none; }
+.sauz-catalog-sort summary strong { color:white; font-weight:600; }
+.sauz-catalog-sort summary svg,.sauz-filter-group summary svg { flex-shrink:0; transition:transform 180ms ease; }
+.sauz-catalog-sort[open] summary svg,.sauz-filter-group[open] summary svg { transform:rotate(180deg); }
+.sauz-catalog-sort fieldset { position:absolute; top:calc(100% + 8px); right:0; width:245px; padding:6px; margin:0; border:1px solid #383838; border-radius:12px; background:#171717; box-shadow:0 16px 40px #0008; animation:sauz-filter-enter 180ms ease; }
+.sauz-catalog-sort label { position:relative; display:flex; align-items:center; gap:12px; min-height:44px; padding:10px 12px; cursor:pointer; border-radius:7px; color:#bdbdbd; }
+.sauz-catalog-sort label span { flex:1; }
+.sauz-catalog-sort input { position:absolute; opacity:0; width:1px; height:1px; }
+.sauz-catalog-sort label:has(input:checked) { color:white; background:color-mix(in srgb, var(--sauz-red) 10%, #171717); }
+.sauz-catalog-sort label:has(input:focus-visible) { outline:2px solid var(--sauz-red); outline-offset:-2px; }
+.sauz-catalog-sort label:hover { background:#292929; color:white; }
+.sauz-catalog-sort label svg { color:var(--sauz-red); }
+.sauz-catalog-layout { display:grid; grid-template-columns:225px minmax(0,1fr); gap:32px; align-items:start; }
+.sauz-catalog-layout.is-expanded { grid-template-columns:minmax(0,1fr); }
+.sauz-catalog-products { min-width:0; }
+.sauz-catalog-products .premium-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:38px 18px; }
+.sauz-catalog-sidebar { position:sticky; top:calc(var(--edition-header-h,82px) + 18px); max-height:calc(100dvh - var(--edition-header-h,82px) - 36px); overflow:auto; padding-right:20px; scrollbar-width:thin; scrollbar-color:#444 transparent; border-right:1px solid #242424; }
+.sauz-sidebar-heading { display:flex; align-items:center; justify-content:space-between; font-size:15px; font-weight:650; padding:0 0 22px; }
+.sauz-sidebar-heading button { background:none; border:0; color:#aaa; font-size:11px; text-decoration:underline; cursor:pointer; padding:8px 0; }
+.sauz-filter-group { border-top:1px solid #2a2a2a; padding:0 0 20px; }
+.sauz-filter-group summary { display:flex; align-items:center; justify-content:space-between; list-style:none; padding:20px 0 14px; font-size:14px; font-weight:650; cursor:pointer; }
+.sauz-filter-group fieldset { border:0; padding:0; margin:0; min-width:0; }
+.sauz-filter-choice { display:flex; align-items:center; gap:10px; min-height:38px; cursor:pointer; font-size:13px; color:#aaa; }
+.sauz-filter-choice input { appearance:none; margin:0; width:17px; height:17px; border:1px solid #555; border-radius:4px; flex-shrink:0; background:#111; cursor:pointer; }
+.sauz-filter-choice input:checked { background:var(--sauz-red); border-color:var(--sauz-red); box-shadow:inset 0 0 0 3px #111; }
+.sauz-filter-choice:has(input:checked),.sauz-filter-choice:hover { color:white; }
+.sauz-filter-choice small { margin-left:auto; color:#777; font-size:11px; }
+.sauz-filter-dialog { position:fixed; inset:0 0 0 auto; margin:0; width:min(420px,100%); max-width:100%; height:100dvh; max-height:100dvh; padding:0; border:0; background:#111; color:#eee; }
+.sauz-filter-dialog[open] { display:flex; flex-direction:column; animation:sauz-filter-enter 200ms ease; }
+.sauz-filter-dialog::backdrop { background:#000a; backdrop-filter:blur(3px); }
+.sauz-filter-dialog header { display:flex; justify-content:space-between; align-items:center; padding:24px; border-bottom:1px solid #303030; }
+.sauz-filter-dialog h2 { font-family:"SAUZ Archivo Black",Arial,sans-serif; font-size:28px; margin:7px 0 0; }
+.sauz-filter-dialog header button { display:grid; place-items:center; width:44px; height:44px; border:1px solid #444; border-radius:50%; background:transparent; color:#fff; cursor:pointer; }
+.sauz-mobile-filter-content { flex:1; min-height:0; overflow:auto; padding:0 24px; }
+.sauz-mobile-filter-content .sauz-filter-group:first-child { border-top:0; }
+.sauz-filter-dialog footer { display:flex; align-items:center; gap:20px; padding:20px 24px max(20px,env(safe-area-inset-bottom)); border-top:1px solid #333; }
+.sauz-filter-dialog footer button { border:0; background:transparent; color:#bbb; cursor:pointer; min-height:46px; font:inherit; font-size:13px; }
+.sauz-filter-dialog footer button:last-child { flex:1; border-radius:30px; background:#f3f3f0; color:#111; font-weight:700; padding:12px; }
+.sauz-filter-dialog :focus-visible { outline:2px solid var(--sauz-red); outline-offset:3px; }
+@keyframes sauz-filter-enter { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+@media(max-width:1200px) { .sauz-catalog-layout { grid-template-columns:200px minmax(0,1fr); gap:24px; } }
+@media(max-width:1000px) {
+  .sauz-catalog-layout { grid-template-columns:minmax(0,1fr); }
+  .sauz-catalog-sidebar,.sauz-catalog-actions .sauz-sidebar-toggle { display:none; }
+  .sauz-catalog-actions .sauz-mobile-filter { display:flex; }
+  .sauz-catalog-products .premium-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:620px) {
+  .sauz-catalog-toolbar { flex-direction:column; align-items:stretch; gap:14px; padding-bottom:14px; }
+  .sauz-catalog-search { width:100%; }
+  .sauz-catalog-actions { justify-content:space-between; gap:12px; }
+  .sauz-catalog-sort { font-size:12px; }
+  .sauz-catalog-sort fieldset { max-width:calc(100vw - 32px); }
+  .sauz-catalog-products .premium-grid { gap:28px 12px; }
+}
+@media(max-width:360px) { .sauz-catalog-products .premium-grid { grid-template-columns:minmax(0,1fr); } }
+@media(prefers-reduced-motion:reduce) { .sauz-catalog-sort fieldset,.sauz-filter-dialog[open] { animation:none; } .sauz-catalog-sort summary svg,.sauz-filter-group summary svg { transition:none; } }
+
+/* Athletic display typography shared with SAUZ's editorial headings. */
+.sauz-catalog-actions { gap:12px; }
+.sauz-catalog-actions > button {
+  padding:12px 20px;
+  min-height:56px;
+  border:1px solid #f4f4f0;
+  border-radius:999px;
+  background:#f4f4f0;
+  color:#111;
+  transition:background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+.sauz-catalog-actions > button > span {
+  font-family:"SAUZ Archivo Black",Arial,sans-serif;
+  font-size:11px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:-.025em;
+}
+.sauz-catalog-actions b { display:grid; place-items:center; min-width:22px; height:22px; padding:0 5px; background:var(--sauz-red); color:#fff; font-family:var(--font-nike); font-weight:700; font-size:11px; }
+.sauz-catalog-sort summary {
+  padding:10px 17px 10px 20px;
+  min-height:56px;
+  gap:24px;
+  border:1px solid #383838;
+  border-radius:14px;
+  background:#161616;
+  transition:border-color 180ms ease, background-color 180ms ease;
+}
+.sauz-sort-heading { display:flex; flex-direction:column; gap:4px; }
+.sauz-sort-caption { font-family:var(--font-nike); font-size:9px; font-weight:600; line-height:1; letter-spacing:.12em; text-transform:uppercase; color:#999; }
+.sauz-catalog-sort summary strong { font-family:"SAUZ Archivo Black",Arial,sans-serif; font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:-.025em; line-height:1.3; }
+.sauz-catalog-sort[open] summary { background:#202020; border-color:var(--sauz-red); }
+.sauz-catalog-sort fieldset { padding:8px; border-radius:14px; }
+.sauz-catalog-sort label { min-height:48px; font-family:var(--font-nike); font-size:13px; font-weight:600; }
+.premium-catalog .premium-results { min-height:76px; gap:16px; }
+.premium-catalog .premium-results > span { font-family:var(--font-nike); font-size:13px; font-weight:600; color:#aaa; }
+.premium-catalog .premium-results .sauz-clear-filters { display:inline-flex; align-items:center; gap:7px; min-height:40px; padding:8px 12px; border:1px solid #303030; border-radius:999px; background:transparent; color:#bbb; text-decoration:none; font-family:var(--font-nike); font-size:11px; font-weight:600; transition:color 180ms ease, border-color 180ms ease, background-color 180ms ease; }
+@media(hover:hover) {
+  .sauz-catalog-actions > button:hover { background:#deded9; border-color:#deded9; transform:translateY(-1px); }
+  .sauz-catalog-sort summary:hover { border-color:#777; background:#202020; }
+  .premium-catalog .premium-results .sauz-clear-filters:hover { color:#fff; border-color:var(--sauz-red); background:color-mix(in srgb, var(--sauz-red) 10%, #171717); }
+}
+@media(max-width:620px) {
+  .sauz-catalog-actions { gap:10px; align-items:stretch; }
+  .sauz-catalog-actions > button { padding:10px 16px; min-height:52px; gap:8px; }
+  .sauz-catalog-sort { min-width:0; }
+  .sauz-catalog-sort summary { min-height:52px; padding:9px 12px; gap:12px; border-radius:12px; }
+  .sauz-catalog-sort summary strong { font-size:10px; }
+  .sauz-sort-caption { font-size:8px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .sauz-catalog-actions > button,.sauz-catalog-sort summary,.premium-catalog .premium-results .sauz-clear-filters { transition:none; }
+  .sauz-catalog-actions > button:hover { transform:none; }
+}

@@ -1,0 +1,140 @@
+/* SAUZ Black theme overrides for SweetAlert2 dialogs. */
+.sauz-swal-container {
+  z-index: 10150 !important;
+  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.72) !important;
+  padding: 20px !important;
+}
+
+.sauz-swal-popup {
+  width: min(100%, 440px) !important;
+  background: #141414 !important;
+  color: #f4f4f2 !important;
+  border: 1px solid #2e2e2e !important;
+  border-radius: 18px !important;
+  padding: 28px 26px 24px !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65) !important;
+  font-family: "Helvetica Neue", Arial, sans-serif !important;
+  text-align: left !important;
+}
+
+.sauz-swal-popup .swal2-icon {
+  margin: 0 0 16px 0 !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-width: 2px !important;
+}
+
+.sauz-swal-popup .swal2-icon.swal2-warning {
+  border-color: rgba(251, 191, 36, 0.45) !important;
+  color: #fbbf24 !important;
+}
+
+.sauz-swal-popup .swal2-icon.swal2-error {
+  border-color: rgba(255, 23, 36, 0.45) !important;
+  color: #ff4d57 !important;
+}
+
+.sauz-swal-popup .swal2-icon.swal2-success {
+  border-color: rgba(74, 222, 128, 0.45) !important;
+  color: #4ade80 !important;
+}
+
+.sauz-swal-popup .swal2-icon .swal2-icon-content {
+  font-size: 22px !important;
+}
+
+.sauz-swal-title {
+  padding: 0 !important;
+  margin: 0 0 10px 0 !important;
+  font-family: "SAUZ Archivo Black", Arial, sans-serif !important;
+  font-size: 20px !important;
+  font-weight: 400 !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.03em !important;
+  color: #f4f4f2 !important;
+  text-transform: uppercase !important;
+  text-align: left !important;
+}
+
+.sauz-swal-text {
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+  color: #a6a6a6 !important;
+  text-align: left !important;
+}
+
+.sauz-swal-actions {
+  width: 100% !important;
+  margin: 24px 0 0 0 !important;
+  padding-top: 18px !important;
+  border-top: 1px solid #262626 !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  flex-wrap: wrap-reverse !important;
+}
+
+.sauz-swal-confirm,
+.sauz-swal-confirm-danger,
+.sauz-swal-cancel {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 42px !important;
+  padding: 10px 20px !important;
+  border-radius: 999px !important;
+  font-family: "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease !important;
+}
+
+.sauz-swal-confirm {
+  background: #f2f2ef !important;
+  color: #111111 !important;
+  border: 0 !important;
+}
+
+.sauz-swal-confirm:hover {
+  background: var(--sauz-red, #ff1724) !important;
+  color: #ffffff !important;
+}
+
+.sauz-swal-confirm-danger {
+  background: #ff1724 !important;
+  color: #ffffff !important;
+  border: 0 !important;
+}
+
+.sauz-swal-confirm-danger:hover {
+  background: #e0121e !important;
+}
+
+.sauz-swal-cancel {
+  background: #1b1b1b !important;
+  color: #f4f4f2 !important;
+  border: 1px solid #3a3a3a !important;
+}
+
+.sauz-swal-cancel:hover {
+  background: #252525 !important;
+  border-color: #666666 !important;
+}
+
+.sauz-swal-popup button:focus-visible {
+  outline: 2px solid var(--sauz-red, #ff1724) !important;
+  outline-offset: 3px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sauz-swal-popup,
+  .sauz-swal-confirm,
+  .sauz-swal-confirm-danger,
+  .sauz-swal-cancel {
+    animation: none !important;
+    transition: none !important;
+  }
+}

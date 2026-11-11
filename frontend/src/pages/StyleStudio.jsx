@@ -12,7 +12,7 @@ const AUTHORIZED_MODELS = [
     height: '1.83 m',
     build: 'Silueta atlética relajada',
     vibe: 'Streetwear monocromático & tech-fleece',
-    accentColor: '#e65a5d',
+    accentColor: '#ff1724',
     avatar: '/Productos/sauz-015.png'
   },
   {
@@ -193,9 +193,9 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
     >
       {/* Header Editorial de Style Studio */}
       <div style={{ marginBottom: '32px' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(230,90,93,0.12)', border: '1px solid rgba(230,90,93,0.3)', marginBottom: '12px' }}>
-          <Sparkles size={14} color="#e65a5d" />
-          <span style={{ fontSize: '0.74rem', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#e65a5d' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(255, 23, 36,0.12)', border: '1px solid rgba(255, 23, 36,0.3)', marginBottom: '12px' }}>
+          <Sparkles size={14} color="#ff1724" />
+          <span style={{ fontSize: '0.74rem', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#ff1724' }}>
             SAUZ STYLE STUDIO — CREATE YOUR LOOK
           </span>
         </div>
@@ -235,12 +235,12 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
                       padding: '14px',
                       borderRadius: '10px',
                       background: isSelected ? 'linear-gradient(180deg, #1f1f26 0%, #121216 100%)' : '#16161b',
-                      border: isSelected ? '1.5px solid #e65a5d' : '1px solid rgba(255,255,255,0.06)',
+                      border: isSelected ? '1.5px solid #ff1724' : '1px solid rgba(255,255,255,0.06)',
                       color: '#ffffff',
                       textAlign: 'left',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
-                      boxShadow: isSelected ? '0 8px 24px rgba(230,90,93,0.18)' : 'none'
+                      boxShadow: isSelected ? '0 8px 24px rgba(255, 23, 36,0.18)' : 'none'
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -249,7 +249,7 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
                         {model.gender}
                       </span>
                     </div>
-                    <span style={{ fontSize: '0.75rem', color: '#e65a5d', fontWeight: '600', display: 'block', marginTop: '2px' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#ff1724', fontWeight: '600', display: 'block', marginTop: '2px' }}>
                       {model.title}
                     </span>
                     <span style={{ fontSize: '0.72rem', color: '#8e8e99', display: 'block', marginTop: '4px' }}>
@@ -280,7 +280,7 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
             {/* Overlay Superior de Modelo y Estado */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', zIndex: 2 }}>
               <div>
-                <span style={{ fontSize: '0.72rem', color: '#e65a5d', fontWeight: '800', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '0.72rem', color: '#ff1724', fontWeight: '800', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                   LOOKBOOK CAMPAIGN · {selectedModel.name.toUpperCase()}
                 </span>
                 <h3 style={{ margin: '2px 0 0', fontSize: '1.25rem', fontWeight: '800' }}>
@@ -332,7 +332,7 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
                     <span style={{ fontSize: '0.72rem', fontWeight: '700', marginTop: '6px', color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '80px' }}>
                       {prod ? prod.name : 'Sin seleccionar'}
                     </span>
-                    <span style={{ fontSize: '0.68rem', color: '#e65a5d', fontWeight: '600' }}>
+                    <span style={{ fontSize: '0.68rem', color: '#ff1724', fontWeight: '600' }}>
                       {slot.price > 0 ? formatMoney(slot.price) : 'Consultar'}
                     </span>
                   </div>
@@ -344,14 +344,14 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
             <div style={{ zIndex: 2, background: 'rgba(14,14,18,0.92)', backdropFilter: 'blur(12px)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Sparkles size={16} color="#e65a5d" />
+                  <Sparkles size={16} color="#ff1724" />
                   <span style={{ fontSize: '0.82rem', fontWeight: '700' }}>Motor Fotográfico Neuronal</span>
                 </div>
                 <span style={{ fontSize: '0.7rem', color: '#8e8e99' }}>IA Generativa / Lookbook</span>
               </div>
 
               {generationResult && (
-                <div style={{ marginBottom: '12px', padding: '10px 12px', borderRadius: '8px', background: 'rgba(255,255,255,0.04)', fontSize: '0.78rem', color: '#d1d1d6', borderLeft: '3px solid #e65a5d' }}>
+                <div style={{ marginBottom: '12px', padding: '10px 12px', borderRadius: '8px', background: 'rgba(255,255,255,0.04)', fontSize: '0.78rem', color: '#d1d1d6', borderLeft: '3px solid #ff1724' }}>
                   <strong>{generationResult.provider}:</strong> {generationResult.message || generationResult.generatedNotes || 'Proyección de alta resolución renderizada con éxito.'}
                   {generationResult.missingKey && (
                     <div style={{ marginTop: '4px', fontSize: '0.72rem', color: '#fbbf24' }}>
@@ -369,7 +369,7 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
                   width: '100%',
                   padding: '13px',
                   borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #e65a5d 0%, #b91c1c 100%)',
+                  background: 'linear-gradient(135deg, #ff1724 0%, #ff1724 100%)',
                   color: '#ffffff',
                   border: 'none',
                   fontSize: '0.88rem',
@@ -381,7 +381,7 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  boxShadow: '0 8px 20px rgba(230,90,93,0.3)'
+                  boxShadow: '0 8px 20px rgba(255, 23, 36,0.3)'
                 }}
               >
                 {generating ? <RefreshCw size={16} className="spin" /> : <Sparkles size={16} />}
@@ -414,7 +414,7 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
                     style={{
                       padding: '10px 6px',
                       borderRadius: '8px',
-                      background: isActive ? '#e65a5d' : 'rgba(255,255,255,0.05)',
+                      background: isActive ? '#ff1724' : 'rgba(255,255,255,0.05)',
                       color: '#ffffff',
                       border: 'none',
                       fontSize: '0.78rem',
@@ -456,8 +456,8 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
                       style={{
                         padding: '8px',
                         borderRadius: '8px',
-                        background: isCurrentInSlot ? 'rgba(230,90,93,0.18)' : '#16161a',
-                        border: isCurrentInSlot ? '1.5px solid #e65a5d' : '1px solid rgba(255,255,255,0.06)',
+                        background: isCurrentInSlot ? 'rgba(255, 23, 36,0.18)' : '#16161a',
+                        border: isCurrentInSlot ? '1.5px solid #ff1724' : '1px solid rgba(255,255,255,0.06)',
                         color: '#fff',
                         textAlign: 'left',
                         cursor: 'pointer',
@@ -472,7 +472,7 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
                       <span style={{ fontSize: '0.74rem', fontWeight: '700', lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {prod.name}
                       </span>
-                      <span style={{ fontSize: '0.72rem', color: '#e65a5d', fontWeight: '700' }}>
+                      <span style={{ fontSize: '0.72rem', color: '#ff1724', fontWeight: '700' }}>
                         {prod.price > 0 ? formatMoney(prod.price) : 'Precio pendiente'}
                       </span>
                     </button>
@@ -489,7 +489,7 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
                 <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: '800' }}>Resumen Comercial del Outfit</h4>
                 <span style={{ fontSize: '0.74rem', color: '#8e8e99' }}>Prendas seleccionadas para despacho en Colombia</span>
               </div>
-              <span style={{ fontSize: '0.72rem', background: '#e65a5d', color: '#fff', padding: '3px 8px', borderRadius: '4px', fontWeight: '700' }}>
+              <span style={{ fontSize: '0.72rem', background: '#ff1724', color: '#fff', padding: '3px 8px', borderRadius: '4px', fontWeight: '700' }}>
                 4 PIEZAS
               </span>
             </div>
@@ -528,9 +528,9 @@ export const StyleStudio = ({ onProductSelect, setActivePage }) => {
                           style={{ background: 'none', border: 'none', color: '#fff', padding: 0, textAlign: 'left', fontWeight: '700', fontSize: '0.84rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                         >
                           <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '180px' }}>{prod.name}</span>
-                          <ArrowUpRight size={12} color="#e65a5d" />
+                          <ArrowUpRight size={12} color="#ff1724" />
                         </button>
-                        <span style={{ fontSize: '0.74rem', color: '#e65a5d', fontWeight: '700', display: 'block', marginTop: '2px' }}>
+                        <span style={{ fontSize: '0.74rem', color: '#ff1724', fontWeight: '700', display: 'block', marginTop: '2px' }}>
                           {slot.price > 0 ? formatMoney(slot.price) : 'Precio pendiente'}
                         </span>
                       </div>

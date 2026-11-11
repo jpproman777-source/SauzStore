@@ -32,6 +32,11 @@ export const Header = ({
   const { cart, products, setCartConfirmation } = useCart();
   const { user, isAdmin, setIsProfileOpen, logout } = useAuth();
 
+  const categoryCount = (categoryName, fallback) =>
+    products.length
+      ? products.filter((p) => p.category === categoryName).length
+      : fallback;
+
   const [navigationLocation, setNavigationLocation] = useState(
     () => window.location.pathname + window.location.search + window.location.hash,
   );
@@ -198,7 +203,14 @@ export const Header = ({
   // Determinación de enlace activo en navegación
   const getIsActive = (key) => {
     if (key === "home") return route.pathname === "/" && !route.hash;
-    if (key === "marcas") return route.hash === "#marcas" || Boolean(brandRoute);
+    if (key === "marcas") {
+      return (
+        route.pathname === "/marcas" ||
+        route.pathname === "/brands" ||
+        route.hash === "#marcas" ||
+        Boolean(brandRoute)
+      );
+    }
     if (key === "ropa") return ["Camisetas", "Sudaderas", "Conjuntos", "Chaquetas", "Pantalones", "Ropa"].includes(collectionRoute);
     if (key === "sneakers") return collectionRoute === "Zapatillas" || collectionRoute === "Sneakers";
     if (key === "accesorios") return collectionRoute === "Gorras" || collectionRoute === "Accesorios";
@@ -238,7 +250,7 @@ export const Header = ({
 
           {/* 2. Marcas */}
           <button
-            onClick={(e) => handleNavClick(e, "marcas")}
+            onClick={() => navigate("brands")}
             onMouseEnter={() => handleMouseEnter("marcas")}
             aria-expanded={activeDropdown === "marcas"}
             aria-current={getIsActive("marcas") ? "page" : undefined}
@@ -315,9 +327,9 @@ export const Header = ({
           </button>
 
           <button
-            aria-label={user ? "Mi perfil" : "Iniciar sesión"}
+            aria-label={user ? (isAdmin ? "Panel de administración" : "Mi cuenta") : "Iniciar sesión"}
             onClick={() =>
-              user ? setIsProfileOpen(true) : navigate("adminLogin")
+              user ? (isAdmin ? navigate("admin") : setIsProfileOpen(true)) : navigate("adminLogin")
             }
           >
             <User size={20} />
@@ -517,25 +529,25 @@ export const Header = ({
               </div>
             )}
 
-            {/* 2. ROPA: 4 Columnas Equilibradas */}
+            {/* 2. ROPA: 2 Columnas Limpias */}
             {activeDropdown === "ropa" && (
-              <div className="mega-menu-content mega-grid-4">
+              <div className="mega-menu-content mega-grid-2">
                 <div className="mega-col">
                   <h4 className="mega-col-title">Prendas Superiores</h4>
                   <ul className="mega-links-list">
                     <li>
                       <button onClick={() => handleFilter({ category: "Camisetas" })}>
-                        Camisetas & Boxy Tees <span className="mega-count">13</span>
+                        Camisetas & Boxy Tees <span className="mega-count">{categoryCount("Camisetas", 7)}</span>
                       </button>
                     </li>
                     <li>
                       <button onClick={() => handleFilter({ category: "Sudaderas" })}>
-                        Sudaderas & Hoodies <span className="mega-count">19</span>
+                        Sudaderas & Hoodies <span className="mega-count">{categoryCount("Sudaderas", 13)}</span>
                       </button>
                     </li>
                     <li>
                       <button onClick={() => handleFilter({ category: "Chaquetas" })}>
-                        Chaquetas & Outerwear <span className="mega-count">3</span>
+                        Chaquetas & Outerwear <span className="mega-count">{categoryCount("Chaquetas", 3)}</span>
                       </button>
                     </li>
                   </ul>
@@ -546,59 +558,17 @@ export const Header = ({
                   <ul className="mega-links-list">
                     <li>
                       <button onClick={() => handleFilter({ category: "Pantalones" })}>
-                        Pantalones & Cargos <span className="mega-count">2</span>
+                        Pantalones & Cargos <span className="mega-count">{categoryCount("Pantalones", 2)}</span>
                       </button>
                     </li>
                     <li>
                       <button onClick={() => handleFilter({ category: "Conjuntos" })}>
-                        Conjuntos Streetwear <span className="mega-count">4</span>
+                        Conjuntos Streetwear <span className="mega-count">{categoryCount("Conjuntos", 4)}</span>
                       </button>
                     </li>
                     <li>
                       <button onClick={() => handleFilter({ category: "Todas" })}>
                         Ver Toda la Indumentaria
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="mega-col">
-                  <h4 className="mega-col-title">Siluetas Urbanas</h4>
-                  <ul className="mega-links-list">
-                    <li>
-                      <button onClick={() => handleFilter({ category: "Camisetas" })}>
-                        Corte Boxy Streetwear
-                      </button>
-                    </li>
-                    <li>
-                      <button onClick={() => handleFilter({ category: "Sudaderas" })}>
-                        Drop-Shoulder Heavyweight
-                      </button>
-                    </li>
-                    <li>
-                      <button onClick={() => handleFilter({ query: "negro" })}>
-                        Monocromo Black Edition
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="mega-col">
-                  <h4 className="mega-col-title">Explorar Catálogo</h4>
-                  <ul className="mega-links-list">
-                    <li>
-                      <button onClick={() => handleFilter({ sort: "recientes" })}>
-                        Novedades de Temporada
-                      </button>
-                    </li>
-                    <li>
-                      <button onClick={() => handleFilter({ sort: "destacados" })}>
-                        Las Prendas Más Populares
-                      </button>
-                    </li>
-                    <li>
-                      <button onClick={() => handleFilter({ category: "Todas" })}>
-                        Ver Todo el Catálogo →
                       </button>
                     </li>
                   </ul>
@@ -614,7 +584,7 @@ export const Header = ({
                   <ul className="mega-links-list">
                     <li>
                       <button onClick={() => handleFilter({ category: "Zapatillas" })}>
-                        <strong>Ver Todos los Sneakers</strong> <span className="mega-count">12</span>
+                        <strong>Ver Todos los Sneakers</strong> <span className="mega-count">{categoryCount("Zapatillas", 14)}</span>
                       </button>
                     </li>
                     <li>
@@ -687,7 +657,7 @@ export const Header = ({
                   <ul className="mega-links-list">
                     <li>
                       <button onClick={() => handleFilter({ category: "Gorras" })}>
-                        <strong>Ver Todas las Gorras</strong> <span className="mega-count">21</span>
+                        <strong>Ver Todas las Gorras</strong> <span className="mega-count">{categoryCount("Gorras", 21)}</span>
                       </button>
                     </li>
                     <li>
@@ -918,7 +888,7 @@ export const Header = ({
                     <button onClick={() => handleFilter({ brand: "SAUZ" })}>
                       SAUZ Black Edition (18)
                     </button>
-                    <button onClick={() => section("marcas")}>
+                    <button onClick={() => navigate("brands")}>
                       Ver todas las marcas ↗
                     </button>
                   </div>
@@ -942,19 +912,19 @@ export const Header = ({
                 {mobileAccordions.ropa && (
                   <div className="bf-acc-drawer">
                     <button onClick={() => handleFilter({ category: "Camisetas" })}>
-                      Camisetas (13)
+                      Camisetas ({categoryCount("Camisetas", 7)})
                     </button>
                     <button onClick={() => handleFilter({ category: "Sudaderas" })}>
-                      Sudaderas & Hoodies (19)
+                      Sudaderas & Hoodies ({categoryCount("Sudaderas", 13)})
                     </button>
                     <button onClick={() => handleFilter({ category: "Chaquetas" })}>
-                      Chaquetas (3)
+                      Chaquetas ({categoryCount("Chaquetas", 3)})
                     </button>
                     <button onClick={() => handleFilter({ category: "Pantalones" })}>
-                      Pantalones & Joggers (2)
+                      Pantalones & Joggers ({categoryCount("Pantalones", 2)})
                     </button>
                     <button onClick={() => handleFilter({ category: "Conjuntos" })}>
-                      Conjuntos (4)
+                      Conjuntos ({categoryCount("Conjuntos", 4)})
                     </button>
                     <button onClick={() => handleFilter({ category: "Todas" })}>
                       Ver Toda la Ropa
@@ -1066,10 +1036,11 @@ export const Header = ({
                   <button
                     onClick={() => {
                       setMenu(false);
-                      setIsProfileOpen(true);
+                      if (isAdmin) navigate("admin");
+                      else setIsProfileOpen(true);
                     }}
                   >
-                    Mi perfil y pedidos
+                    {isAdmin ? "Panel de administración" : "Mi cuenta y pedidos"}
                   </button>
                   <button
                     onClick={() => {

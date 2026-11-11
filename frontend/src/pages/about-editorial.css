@@ -1,0 +1,89 @@
+.sauz-about { background:#090909; color:#f5f5f3; padding-top:0; font-family:var(--font-nike, "Helvetica Neue", Helvetica, Arial, sans-serif); --about-muted:#aaa9a6; }
+.sauz-about *, .sauz-about *::before, .sauz-about *::after { box-sizing:border-box; }
+.sauz-about figure,.sauz-about h1,.sauz-about h2,.sauz-about h3,.sauz-about p { margin:0; }
+.sauz-about a { text-decoration:none; color:inherit; }
+.sauz-about img { display:block; width:100%; height:auto; }
+.sauz-about-container { width:90%; max-width:1320px; margin-inline:auto; }
+.sauz-about-hero { display:grid; grid-template-columns:1fr 1fr; max-width:1600px; margin:auto; border-bottom:1px solid #292929; }
+.sauz-about-hero-copy { padding:clamp(32px,5vw,80px) clamp(24px,5vw,80px); display:flex; flex-direction:column; align-items:flex-start; justify-content:center; }
+.sauz-about .sauz-about-eyebrow { display:flex; align-items:center; gap:10px; font-size:11px; font-weight:600; letter-spacing:.17em; line-height:1.6; color:#bbb; margin-bottom:28px; }
+.sauz-about-eyebrow > span { width:6px; height:6px; background:var(--sauz-red); }
+.sauz-about h1 { font-size:clamp(36px,4.6vw,74px); font-weight:900; line-height:1.02; letter-spacing:-.055em; }
+.sauz-about h1 span { color:var(--sauz-red); }
+.sauz-about .sauz-about-subtitle { font-size:clamp(18px,1.75vw,26px); line-height:1.4; margin-top:26px; letter-spacing:-.025em; }
+.sauz-about .sauz-about-intro { max-width:370px; font-size:15px; line-height:1.8; color:var(--about-muted); margin-top:18px; }
+.sauz-about .sauz-about-link { display:inline-flex; align-items:center; justify-content:space-between; gap:20px; padding:13px 0; border-bottom:1px solid var(--sauz-red); font-size:13px; font-weight:600; transition:color 160ms ease; }
+.sauz-about-link svg { flex-shrink:0; }
+.sauz-about-link:hover { color:var(--sauz-red); }
+.sauz-about-hero-copy > .sauz-about-link { margin-top:25px; }
+.sauz-about .sauz-about-scroll { display:inline-flex; align-items:center; gap:10px; color:#999; margin-top:45px; font-size:11px; }
+.sauz-about a:focus-visible { outline:2px solid var(--sauz-red); outline-offset:6px; }
+.sauz-about-hero-photo { position:relative; min-width:0; }
+.sauz-about-hero-photo img { height:100%; max-height:780px; min-height:580px; object-fit:cover; object-position:50% 47%; }
+.sauz-about-hero-photo figcaption { position:absolute; bottom:0; left:0; right:0; padding:40px 24px 20px; background:linear-gradient(transparent,#000b); display:flex; justify-content:space-between; gap:16px; font-size:9px; letter-spacing:.12em; }
+.sauz-about-story { padding-block:90px; display:grid; grid-template-columns:.85fr 1fr; gap:clamp(36px,7vw,110px); align-items:center; scroll-margin-top:110px; }
+.sauz-about-story figure { max-width:520px; }
+.sauz-about-story img { aspect-ratio:4/5; object-fit:cover; object-position:50% 35%; }
+.sauz-about-story figcaption { font-size:11px; color:#999; margin-top:12px; }
+.sauz-about h2 { font-size:clamp(32px,4vw,60px); line-height:1.06; font-weight:850; letter-spacing:-.045em; }
+.sauz-about-story h2 span { color:#969693; }
+.sauz-about-story-copy > p:not(.sauz-about-eyebrow) { max-width:490px; font-size:15px; line-height:1.9; margin-top:24px; color:#aaa9a6; }
+.sauz-about-story-signature { display:flex; flex-direction:column; gap:7px; margin-top:32px; padding-left:16px; border-left:2px solid var(--sauz-red); font-size:10px; letter-spacing:.1em; }
+.sauz-about-selection { padding-block:0 80px; }
+.sauz-about-section-heading { border-top:1px solid #303030; padding-top:40px; display:flex; justify-content:space-between; align-items:flex-end; gap:28px; margin-bottom:32px; }
+.sauz-about-section-heading > p { font-size:14px; line-height:1.8; color:var(--about-muted); }
+.sauz-about-selection-photo { position:relative; }
+.sauz-about-selection-photo img { height:clamp(280px,35vw,480px); object-fit:cover; object-position:center 59%; }
+.sauz-about-selection-photo figcaption { color:#999; font-size:10px; line-height:1.6; padding-top:10px; }
+
+
+
+
+.sauz-about h3 { font-size:22px; font-weight:650; letter-spacing:-.025em; }
+
+
+
+
+.sauz-about-philosophy { border-top:1px solid #2a2a2a; background:#111; padding-block:65px 30px; }
+.sauz-about-philosophy h2 { font-size:clamp(52px,8.5vw,124px); line-height:.97; }
+.sauz-about-philosophy h2 span { color:#8e8e8b; }
+.sauz-about-values { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:45px; margin-top:50px; }
+.sauz-about-values > div { border-top:1px solid #363636; padding-top:22px; }
+.sauz-about-values p { color:var(--about-muted); font-size:14px; line-height:1.8; margin-top:12px; max-width:340px; }
+.sauz-about-closing { display:flex; justify-content:space-between; align-items:center; gap:25px; border-top:1px solid #333; margin-top:55px; padding-top:26px; }
+.sauz-about-closing > p { font-size:25px; font-weight:650; }
+@media(min-width:1600px) { .sauz-about-hero { border-inline:1px solid #252525; } }
+@media(max-width:900px) { .sauz-about-hero-copy { padding:35px 24px; } .sauz-about h1 { font-size:clamp(34px,4.7vw,44px); } .sauz-about-hero-photo img { min-height:560px; } .sauz-about-story { gap:35px; padding-block:60px; }  .sauz-about h3 { font-size:19px; } .sauz-about-values { gap:24px; } }
+@media(max-width:620px) {
+  .sauz-about-hero { grid-template-columns:1fr; }
+  .sauz-about-hero-copy { padding:35px 5% 30px; }
+  .sauz-about h1 { font-size:clamp(36px,10vw,60px); }
+  .sauz-about .sauz-about-eyebrow { margin-bottom:20px; font-size:10px; }
+  .sauz-about .sauz-about-subtitle { margin-top:20px; }
+  .sauz-about .sauz-about-intro { font-size:14px; max-width:100%; }
+  .sauz-about .sauz-about-scroll { margin-top:24px; }
+  .sauz-about-hero-photo img { min-height:0; height:auto; max-height:none; aspect-ratio:4/5; object-fit:cover; }
+  .sauz-about-hero-photo figcaption { font-size:8px; padding-inline:5%; }
+  .sauz-about-story { grid-template-columns:1fr; gap:30px; padding-block:45px; }
+  .sauz-about-story figure { max-width:none; }
+  .sauz-about-story img { aspect-ratio:1; object-position:center 30%; }
+  .sauz-about h2 { font-size:clamp(30px,8.5vw,44px); }
+  .sauz-about-story-copy > p:not(.sauz-about-eyebrow) { font-size:14px; margin-top:20px; }
+  .sauz-about-section-heading { align-items:flex-start; flex-direction:column; gap:18px; padding-top:28px; }
+  .sauz-about-selection-photo img { height:auto; aspect-ratio:1; object-fit:contain; }
+  
+  
+  .sauz-about h3 { font-size:23px; }
+  .sauz-about-selection { padding-bottom:45px; }
+  .sauz-about-philosophy { padding-top:40px; }
+  .sauz-about-philosophy h2 { font-size:clamp(43px,12vw,72px); }
+  .sauz-about-values { grid-template-columns:1fr; gap:25px; margin-top:35px; }
+  .sauz-about-values p { max-width:none; }
+  .sauz-about-closing { margin-top:35px; }
+  .sauz-about-closing > p { font-size:21px; }
+}
+@media(prefers-reduced-motion:reduce) { .sauz-about a { transition:none; } }
+
+/* Reuse the local display face already used by the home editorial. */
+.sauz-about h1, .sauz-about h2 { font-family:"SAUZ Archivo Black", Arial, Helvetica, sans-serif; font-weight:900; }
+.sauz-about h3 { font-family:var(--font-nike, "Helvetica Neue", Helvetica, Arial, sans-serif); }

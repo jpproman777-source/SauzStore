@@ -196,9 +196,9 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
       {/* Header & Sub-Navigation */}
       <div style={{ marginBottom: '28px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(230,90,93,0.12)', border: '1px solid rgba(230,90,93,0.3)', marginBottom: '10px' }}>
-            <Sparkles size={14} color="#e65a5d" />
-            <span style={{ fontSize: '0.74rem', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#e65a5d' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(255, 23, 36,0.12)', border: '1px solid rgba(255, 23, 36,0.3)', marginBottom: '10px' }}>
+            <Sparkles size={14} color="#ff1724" />
+            <span style={{ fontSize: '0.74rem', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#ff1724' }}>
               SAUZ FIT BUILDER · INTERACTIVE LOOK CONSTRUCTOR
             </span>
           </div>
@@ -219,7 +219,7 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
               padding: '8px 16px',
               borderRadius: '8px',
               border: 'none',
-              background: mode === 'custom' ? '#e65a5d' : 'transparent',
+              background: mode === 'custom' ? '#ff1724' : 'transparent',
               color: '#fff',
               fontSize: '0.82rem',
               fontWeight: '700',
@@ -238,7 +238,7 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
               padding: '8px 16px',
               borderRadius: '8px',
               border: 'none',
-              background: mode === 'budget' ? '#e65a5d' : 'transparent',
+              background: mode === 'budget' ? '#ff1724' : 'transparent',
               color: '#fff',
               fontSize: '0.82rem',
               fontWeight: '700',
@@ -256,7 +256,7 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
 
       {/* Barra de Presupuesto en caso de modo 'budget' */}
       {mode === 'budget' && (
-        <div style={{ background: '#121216', border: '1px solid rgba(230,90,93,0.3)', borderRadius: '12px', padding: '18px 24px', marginBottom: '28px' }}>
+        <div style={{ background: '#121216', border: '1px solid rgba(255, 23, 36,0.3)', borderRadius: '12px', padding: '18px 24px', marginBottom: '28px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px', marginBottom: '14px' }}>
             <div>
               <strong style={{ fontSize: '0.95rem', color: '#fff' }}>Presupuesto Objetivo en Pesos Colombianos</strong>
@@ -274,7 +274,7 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
                     padding: '6px 12px',
                     borderRadius: '6px',
                     fontSize: '0.78rem',
-                    background: budgetCOP === val ? '#e65a5d' : 'rgba(255,255,255,0.06)',
+                    background: budgetCOP === val ? '#ff1724' : 'rgba(255,255,255,0.06)',
                     color: '#fff',
                     border: '1px solid rgba(255,255,255,0.1)',
                     cursor: 'pointer',
@@ -289,12 +289,12 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
 
           {/* Barra indicadora */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.84rem', marginBottom: '6px' }}>
-            <span>Invertido: <strong style={{ color: totalOutfitPrice > budgetCOP ? '#ef4444' : '#e65a5d' }}>{formatMoney(totalOutfitPrice)}</strong></span>
+            <span>Invertido: <strong style={{ color: totalOutfitPrice > budgetCOP ? '#ff1724' : '#ff1724' }}>{formatMoney(totalOutfitPrice)}</strong></span>
             <span>
               {budgetRemaining >= 0 ? (
                 <span style={{ color: '#4ade80' }}>Disponible: +{formatMoney(budgetRemaining)}</span>
               ) : (
-                <span style={{ color: '#ef4444' }}>Excedido por: {formatMoney(Math.abs(budgetRemaining))}</span>
+                <span style={{ color: '#ff1724' }}>Excedido por: {formatMoney(Math.abs(budgetRemaining))}</span>
               )}
             </span>
           </div>
@@ -304,7 +304,7 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
               style={{
                 width: `${Math.min(100, Math.round((totalOutfitPrice / (budgetCOP || 1)) * 100))}%`,
                 height: '100%',
-                background: totalOutfitPrice > budgetCOP ? '#ef4444' : '#e65a5d',
+                background: totalOutfitPrice > budgetCOP ? '#ff1724' : '#ff1724',
                 transition: 'width 0.3s ease',
               }}
             />
@@ -327,7 +327,7 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '14px', marginBottom: '20px' }}>
               <div>
-                <span style={{ fontSize: '0.72rem', color: '#e65a5d', fontWeight: '800', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '0.72rem', color: '#ff1724', fontWeight: '800', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                   COMPOSICIÓN DE LOOK
                 </span>
                 <h3 style={{ margin: '2px 0 0', fontSize: '1.2rem', fontWeight: '800' }}>
@@ -340,8 +340,8 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
                 style={{
                   padding: '4px 10px',
                   borderRadius: '6px',
-                  background: slots.cap?.productId ? 'rgba(230,90,93,0.15)' : 'rgba(255,255,255,0.05)',
-                  color: slots.cap?.productId ? '#e65a5d' : '#8e8e99',
+                  background: slots.cap?.productId ? 'rgba(255, 23, 36,0.15)' : 'rgba(255,255,255,0.05)',
+                  color: slots.cap?.productId ? '#ff1724' : '#8e8e99',
                   border: '1px solid rgba(255,255,255,0.1)',
                   fontSize: '0.72rem',
                   fontWeight: '700',
@@ -370,7 +370,7 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
                       padding: '12px 14px',
                       borderRadius: '10px',
                       background: isSelectedSlot ? '#1c1c24' : '#121215',
-                      border: isSelectedSlot ? '1.5px solid #e65a5d' : '1px solid rgba(255,255,255,0.06)',
+                      border: isSelectedSlot ? '1.5px solid #ff1724' : '1px solid rgba(255,255,255,0.06)',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                     }}
@@ -385,7 +385,7 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
                       </div>
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span style={{ fontSize: '0.68rem', color: '#e65a5d', textTransform: 'uppercase', fontWeight: '700' }}>
+                          <span style={{ fontSize: '0.68rem', color: '#ff1724', textTransform: 'uppercase', fontWeight: '700' }}>
                             {item.label}
                           </span>
                           {prod?.brand && (
@@ -407,7 +407,7 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
                       <span style={{ fontSize: '0.95rem', fontWeight: '800', color: '#fff', display: 'block' }}>
                         {item.price > 0 ? formatMoney(item.price) : 'Precio pendiente'}
                       </span>
-                      <span style={{ fontSize: '0.7rem', color: '#e65a5d', fontWeight: '600' }}>
+                      <span style={{ fontSize: '0.7rem', color: '#ff1724', fontWeight: '600' }}>
                         {isSelectedSlot ? 'Editando...' : 'Cambiar prenda ↗'}
                       </span>
                     </div>
@@ -444,7 +444,7 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
                       gap: '6px',
                     }}
                   >
-                    <Heart size={14} color="#e65a5d" />
+                    <Heart size={14} color="#ff1724" />
                     <span>Guardar en My Closet</span>
                   </button>
                 </div>
@@ -504,7 +504,7 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
                     padding: '8px 4px',
                     borderRadius: '6px',
                     border: 'none',
-                    background: activeSlot === s.key ? '#e65a5d' : 'rgba(255,255,255,0.06)',
+                    background: activeSlot === s.key ? '#ff1724' : 'rgba(255,255,255,0.06)',
                     color: '#fff',
                     fontSize: '0.78rem',
                     fontWeight: activeSlot === s.key ? '700' : '500',
@@ -527,8 +527,8 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
                     style={{
                       padding: '10px',
                       borderRadius: '8px',
-                      background: isSelected ? 'rgba(230,90,93,0.18)' : '#16161b',
-                      border: isSelected ? '1.5px solid #e65a5d' : '1px solid rgba(255,255,255,0.06)',
+                      background: isSelected ? 'rgba(255, 23, 36,0.18)' : '#16161b',
+                      border: isSelected ? '1.5px solid #ff1724' : '1px solid rgba(255,255,255,0.06)',
                       cursor: 'pointer',
                       display: 'flex',
                       flexDirection: 'column',
@@ -538,7 +538,7 @@ export const SauzFitBuilder = ({ onProductSelect, initialBudget = null, setActiv
                     <div style={{ width: '100%', height: '90px', background: '#000', borderRadius: '6px', overflow: 'hidden' }}>
                       <ProductImage mode="thumb" src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                     </div>
-                    <span style={{ fontSize: '0.64rem', color: '#e65a5d', textTransform: 'uppercase', fontWeight: '700' }}>
+                    <span style={{ fontSize: '0.64rem', color: '#ff1724', textTransform: 'uppercase', fontWeight: '700' }}>
                       {p.brand || 'SAUZ'}
                     </span>
                     <span style={{ fontSize: '0.76rem', fontWeight: '700', lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

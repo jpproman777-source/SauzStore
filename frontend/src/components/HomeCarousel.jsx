@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BrandStrip } from "./BrandLogo";
 import { ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
+import "./home-carousel-layout.css";
 
 const root = "/SAUZ_CARRUSEL_3_IMAGENES/";
 export const campaignSlides = [
@@ -169,10 +170,7 @@ export const HomeCarousel = ({ onCollectionSelect }) => {
         touchStart.current = null;
       }}
     >
-      <div className="edition-hero-label">
-        <span>SAUZ STORE</span>
-        <span>FULL BLACK / EDITION 001</span>
-      </div>
+      <div className="edition-hero-edition">FULL BLACK / EDITION 001</div>
       {campaignSlides.map((slide, position) => (
         <article
           key={slide.key}

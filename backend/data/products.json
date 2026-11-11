@@ -150,16 +150,45 @@
     "brand": "Nike",
     "category": "Sudaderas",
     "subcategory": "Sudadera",
-    "description": "Sudadera Nike de bloques gris y negro. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Sudadera Nike de bloques gris y negro. Selección multimarca SAUZ STORE.",
     "shortDescription": "Sudadera Nike de bloques gris y negro",
     "image": "/Productos/sauz-001.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": 10,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Sudadera Nike de bloques gris y negro. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 155000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Sudadera Nike de bloques gris y negro. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-001-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-001-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-001-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-001-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 14,
@@ -168,16 +197,45 @@
     "brand": "Nike",
     "category": "Sudaderas",
     "subcategory": "Sudadera",
-    "description": "Sudadera Nike negra con logotipo frontal. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Sudadera Nike negra con logotipo frontal. Selección multimarca SAUZ STORE.",
     "shortDescription": "Sudadera Nike negra con logotipo frontal",
     "image": "/Productos/sauz-002.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Sudadera Nike negra con logotipo frontal. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 165000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Sudadera Nike negra con logotipo frontal. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-002-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-002-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-002-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-002-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 15,
@@ -186,16 +244,45 @@
     "brand": "Adidas",
     "category": "Camisetas",
     "subcategory": "Camiseta",
-    "description": "Camiseta Adidas negra de tres rayas. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Camiseta Adidas negra de tres rayas. Selección multimarca SAUZ STORE.",
     "shortDescription": "Camiseta Adidas negra de tres rayas",
     "image": "/Productos/sauz-003.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Camiseta Adidas negra de tres rayas. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 65000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Camiseta Adidas negra de tres rayas. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-003-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-003-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-003-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-003-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 16,
@@ -204,16 +291,45 @@
     "brand": "Jordan",
     "category": "Sudaderas",
     "subcategory": "Sudadera",
-    "description": "Sudadera Jordan gris con emblema rojo. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Sudadera Jordan gris con emblema rojo. Selección multimarca SAUZ STORE.",
     "shortDescription": "Sudadera Jordan gris con emblema rojo",
     "image": "/Productos/sauz-004.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Sudadera Jordan gris con emblema rojo. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 155000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Sudadera Jordan gris con emblema rojo. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-004-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-004-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-004-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-004-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 17,
@@ -222,18 +338,47 @@
     "brand": "Por clasificar",
     "category": "Conjuntos",
     "subcategory": "Conjunto deportivo",
-    "description": "Conjunto deportivo negro con emblema por confirmar. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Conjunto deportivo negro con emblema por confirmar. Selección multimarca SAUZ STORE.",
     "shortDescription": "Conjunto deportivo negro con emblema por confirmar",
     "image": "/Productos/sauz-005.png",
     "alternateImages": [
       "/Productos/sauz-064.png"
     ],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Conjunto deportivo negro con emblema por confirmar. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 215000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Conjunto deportivo negro con emblema por confirmar. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-005-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-005-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-005-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-005-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 18,
@@ -242,16 +387,45 @@
     "brand": "Adidas",
     "category": "Conjuntos",
     "subcategory": "Conjunto deportivo",
-    "description": "Conjunto Adidas verde y crema. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Conjunto Adidas verde y crema. Selección multimarca SAUZ STORE.",
     "shortDescription": "Conjunto Adidas verde y crema",
     "image": "/Productos/sauz-006.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Conjunto Adidas verde y crema. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 195000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Conjunto Adidas verde y crema. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-006-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-006-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-006-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-006-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 19,
@@ -260,16 +434,45 @@
     "brand": "Adidas",
     "category": "Sudaderas",
     "subcategory": "Sudadera",
-    "description": "Sudadera Adidas crema y negra. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Sudadera Adidas crema y negra. Selección multimarca SAUZ STORE.",
     "shortDescription": "Sudadera Adidas crema y negra",
     "image": "/Productos/sauz-007.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Sudadera Adidas crema y negra. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 155000,
+    "stock": 26,
+    "configurationStatus": null,
+    "detailedDescription": "Sudadera Adidas crema y negra. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-007-S",
+        "size": "S",
+        "stock": 14
+      },
+      {
+        "id": "SAUZ-NEW-007-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-007-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-007-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 20,
@@ -278,16 +481,45 @@
     "brand": "Nike",
     "category": "Camisetas",
     "subcategory": "Camiseta",
-    "description": "Camiseta Nike negra con franjas rojas. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Camiseta Nike negra con franjas rojas. Selección multimarca SAUZ STORE.",
     "shortDescription": "Camiseta Nike negra con franjas rojas",
     "image": "/Productos/sauz-008.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Camiseta Nike negra con franjas rojas. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 85000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Camiseta Nike negra con franjas rojas. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-008-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-008-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-008-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-008-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 21,
@@ -296,16 +528,45 @@
     "brand": "Adidas",
     "category": "Sudaderas",
     "subcategory": "Sudadera",
-    "description": "Sudadera Adidas de paneles crema y negro. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Sudadera Adidas de paneles crema y negro. Selección multimarca SAUZ STORE.",
     "shortDescription": "Sudadera Adidas de paneles crema y negro",
     "image": "/Productos/sauz-009.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Sudadera Adidas de paneles crema y negro. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 145000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Sudadera Adidas de paneles crema y negro. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-009-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-009-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-009-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-009-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 22,
@@ -314,16 +575,45 @@
     "brand": "Nike",
     "category": "Camisetas",
     "subcategory": "Camiseta",
-    "description": "Camiseta Nike negra, blanca y roja. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Camiseta Nike negra, blanca y roja. Selección multimarca SAUZ STORE.",
     "shortDescription": "Camiseta Nike negra, blanca y roja",
     "image": "/Productos/sauz-010.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Camiseta Nike negra, blanca y roja. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 75000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Camiseta Nike negra, blanca y roja. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-010-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-010-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-010-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-010-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 23,
@@ -332,16 +622,45 @@
     "brand": "Nike",
     "category": "Conjuntos",
     "subcategory": "Conjunto deportivo",
-    "description": "Conjunto Nike gris y negro. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Conjunto Nike gris y negro. Selección multimarca SAUZ STORE.",
     "shortDescription": "Conjunto Nike gris y negro",
     "image": "/Productos/sauz-011.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Conjunto Nike gris y negro. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 215000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Conjunto Nike gris y negro. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-011-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-011-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-011-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-011-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 24,
@@ -350,16 +669,45 @@
     "brand": "Adidas",
     "category": "Camisetas",
     "subcategory": "Camiseta",
-    "description": "Camiseta Adidas negra con cuello. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Camiseta Adidas negra con cuello. Selección multimarca SAUZ STORE.",
     "shortDescription": "Camiseta Adidas negra con cuello",
     "image": "/Productos/sauz-012.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Camiseta Adidas negra con cuello. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 65000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Camiseta Adidas negra con cuello. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-012-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-012-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-012-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-012-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 25,
@@ -368,18 +716,57 @@
     "brand": "Nike",
     "category": "Zapatillas",
     "subcategory": "Calzado",
-    "description": "Zapatillas Nike blancas y azul marino. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Zapatillas Nike blancas y azul marino. Selección multimarca SAUZ STORE.",
     "shortDescription": "Zapatillas Nike blancas y azul marino",
     "image": "/Productos/sauz-013.png",
-    "alternateImages": [
-      "/Productos/sauz-018.png"
-    ],
+    "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Zapatillas Nike blancas y azul marino. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 275000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Nike blancas y azul marino. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-013-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-013-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-013-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-013-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-013-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-013-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
   },
   {
     "id": 26,
@@ -388,16 +775,45 @@
     "brand": "Nike",
     "category": "Sudaderas",
     "subcategory": "Sudadera",
-    "description": "Sudadera Nike negra con mangas de color. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Sudadera Nike negra con mangas de color. Selección multimarca SAUZ STORE.",
     "shortDescription": "Sudadera Nike negra con mangas de color",
     "image": "/Productos/sauz-014.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Sudadera Nike negra con mangas de color. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 165000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Sudadera Nike negra con mangas de color. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-014-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-014-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-014-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-014-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 27,
@@ -406,18 +822,59 @@
     "brand": "Jordan",
     "category": "Zapatillas",
     "subcategory": "Calzado",
-    "description": "Zapatillas Jordan negras y rojas. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Zapatillas Jordan negras y rojas. Selección multimarca SAUZ STORE.",
     "shortDescription": "Zapatillas Jordan negras y rojas",
     "image": "/Productos/sauz-015.png",
     "alternateImages": [
       "/Productos/sauz-020.png"
     ],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Zapatillas Jordan negras y rojas. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 295000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Jordan negras y rojas. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-015-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-015-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-015-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-015-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-015-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-015-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
   },
   {
     "id": 28,
@@ -426,16 +883,45 @@
     "brand": "Nike",
     "category": "Sudaderas",
     "subcategory": "Sudadera",
-    "description": "Sudadera Nike gris y negra. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Sudadera Nike gris y negra. Selección multimarca SAUZ STORE.",
     "shortDescription": "Sudadera Nike gris y negra",
     "image": "/Productos/sauz-016.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Sudadera Nike gris y negra. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 155000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Sudadera Nike gris y negra. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-016-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-016-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-016-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-016-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 29,
@@ -444,16 +930,45 @@
     "brand": "Nike",
     "category": "Camisetas",
     "subcategory": "Camiseta",
-    "description": "Camiseta Nike negra con franjas rojas. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Camiseta Nike negra con franjas rojas. Selección multimarca SAUZ STORE.",
     "shortDescription": "Camiseta Nike negra con franjas rojas",
     "image": "/Productos/sauz-017.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Camiseta Nike negra con franjas rojas. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 85000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Camiseta Nike negra con franjas rojas. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-017-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-017-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-017-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-017-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 30,
@@ -462,16 +977,45 @@
     "brand": "Adidas",
     "category": "Chaquetas",
     "subcategory": "Chaqueta",
-    "description": "Chaqueta Adidas negra de tres rayas. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Chaqueta Adidas negra de tres rayas. Selección multimarca SAUZ STORE.",
     "shortDescription": "Chaqueta Adidas negra de tres rayas",
     "image": "/Productos/sauz-019.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Chaqueta Adidas negra de tres rayas. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 185000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Chaqueta Adidas negra de tres rayas. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-019-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-019-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-019-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-019-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 31,
@@ -480,16 +1024,45 @@
     "brand": "Nike",
     "category": "Sudaderas",
     "subcategory": "Sudadera",
-    "description": "Sudadera Nike negra con paneles crema y lila. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Sudadera Nike negra con paneles crema y lila. Selección multimarca SAUZ STORE.",
     "shortDescription": "Sudadera Nike negra con paneles crema y lila",
     "image": "/Productos/sauz-021.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Sudadera Nike negra con paneles crema y lila. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 145000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Sudadera Nike negra con paneles crema y lila. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-021-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-021-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-021-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-021-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 32,
@@ -498,18 +1071,59 @@
     "brand": "Jordan",
     "category": "Zapatillas",
     "subcategory": "Calzado",
-    "description": "Zapatillas Jordan blancas y negras. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Zapatillas Jordan blancas y negras. Selección multimarca SAUZ STORE.",
     "shortDescription": "Zapatillas Jordan blancas y negras",
     "image": "/Productos/sauz-022.png",
     "alternateImages": [
       "/Productos/sauz-054.png"
     ],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Zapatillas Jordan blancas y negras. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 305000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Jordan blancas y negras. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-022-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-022-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-022-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-022-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-022-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-022-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
   },
   {
     "id": 33,
@@ -518,18 +1132,57 @@
     "brand": "Adidas",
     "category": "Zapatillas",
     "subcategory": "Calzado",
-    "description": "Zapatillas Adidas crema y verde. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Zapatillas Adidas crema y verde. Selección multimarca SAUZ STORE.",
     "shortDescription": "Zapatillas Adidas crema y verde",
     "image": "/Productos/sauz-023.png",
-    "alternateImages": [
-      "/Productos/sauz-032.png"
-    ],
+    "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Zapatillas Adidas crema y verde. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 285000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Adidas crema y verde. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-023-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-023-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-023-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-023-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-023-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-023-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
   },
   {
     "id": 34,
@@ -538,16 +1191,45 @@
     "brand": "Nike",
     "category": "Sudaderas",
     "subcategory": "Sudadera",
-    "description": "Sudadera Nike color crema. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Sudadera Nike color crema. Selección multimarca SAUZ STORE.",
     "shortDescription": "Sudadera Nike color crema",
     "image": "/Productos/sauz-024.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Sudadera Nike color crema. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 145000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Sudadera Nike color crema. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-024-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-024-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-024-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-024-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 35,
@@ -556,16 +1238,57 @@
     "brand": "Adidas",
     "category": "Zapatillas",
     "subcategory": "Calzado",
-    "description": "Zapatillas Adidas negras con rayas blancas. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Zapatillas Adidas negras con rayas blancas. Selección multimarca SAUZ STORE.",
     "shortDescription": "Zapatillas Adidas negras con rayas blancas",
     "image": "/Productos/sauz-025.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Zapatillas Adidas negras con rayas blancas. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 275000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Adidas negras con rayas blancas. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-025-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-025-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-025-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-025-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-025-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-025-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
   },
   {
     "id": 36,
@@ -574,16 +1297,45 @@
     "brand": "Nike",
     "category": "Sudaderas",
     "subcategory": "Sudadera",
-    "description": "Sudadera Nike negra y crema. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Sudadera Nike negra y crema. Selección multimarca SAUZ STORE.",
     "shortDescription": "Sudadera Nike negra y crema",
     "image": "/Productos/sauz-026.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Sudadera Nike negra y crema. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 165000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Sudadera Nike negra y crema. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-026-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-026-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-026-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-026-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 37,
@@ -592,16 +1344,57 @@
     "brand": "Nike",
     "category": "Zapatillas",
     "subcategory": "Calzado",
-    "description": "Zapatillas Nike blancas, negras y rojas. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Zapatillas Nike blancas, negras y rojas. Selección multimarca SAUZ STORE.",
     "shortDescription": "Zapatillas Nike blancas, negras y rojas",
     "image": "/Productos/sauz-027.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Zapatillas Nike blancas, negras y rojas. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 265000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Nike blancas, negras y rojas. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-027-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-027-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-027-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-027-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-027-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-027-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
   },
   {
     "id": 38,
@@ -610,16 +1403,45 @@
     "brand": "Nike",
     "category": "Sudaderas",
     "subcategory": "Sudadera",
-    "description": "Sudadera Nike negra con mangas blancas. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Sudadera Nike negra con mangas blancas. Selección multimarca SAUZ STORE.",
     "shortDescription": "Sudadera Nike negra con mangas blancas",
     "image": "/Productos/sauz-028.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Sudadera Nike negra con mangas blancas. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 155000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Sudadera Nike negra con mangas blancas. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-028-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-028-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-028-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-028-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 39,
@@ -628,16 +1450,27 @@
     "brand": "SAUZ",
     "category": "Gorras",
     "subcategory": "Gorra",
-    "description": "Gorra SAUZ negra de visera plana. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra SAUZ negra de visera plana. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra SAUZ negra de visera plana",
     "image": "/Productos/sauz-029.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra SAUZ negra de visera plana. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 85000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra SAUZ negra de visera plana. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-029-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 40,
@@ -646,16 +1479,27 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era Los Angeles Dodgers azul. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era Los Angeles Dodgers azul. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era Los Angeles Dodgers azul",
     "image": "/Productos/sauz-030.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era Los Angeles Dodgers azul. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 65000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era Los Angeles Dodgers azul. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-030-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 41,
@@ -664,16 +1508,27 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era Oakland Athletics verde. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era Oakland Athletics verde. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era Oakland Athletics verde",
     "image": "/Productos/sauz-031.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era Oakland Athletics verde. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 75000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era Oakland Athletics verde. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-031-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 42,
@@ -682,16 +1537,27 @@
     "brand": "SAUZ",
     "category": "Gorras",
     "subcategory": "Gorra",
-    "description": "Gorra SAUZ negra de perfil bajo. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra SAUZ negra de perfil bajo. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra SAUZ negra de perfil bajo",
     "image": "/Productos/sauz-033.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra SAUZ negra de perfil bajo. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 65000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra SAUZ negra de perfil bajo. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-033-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 43,
@@ -700,16 +1566,27 @@
     "brand": "SAUZ",
     "category": "Gorras",
     "subcategory": "Gorra",
-    "description": "Gorra SAUZ negra con bordado tonal. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra SAUZ negra con bordado tonal. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra SAUZ negra con bordado tonal",
     "image": "/Productos/sauz-034.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra SAUZ negra con bordado tonal. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 75000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra SAUZ negra con bordado tonal. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-034-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 44,
@@ -718,18 +1595,29 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era Chicago White Sox negra. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era Chicago White Sox negra. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era Chicago White Sox negra",
     "image": "/Productos/sauz-035.png",
     "alternateImages": [
       "/Productos/sauz-048.png"
     ],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era Chicago White Sox negra. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 85000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era Chicago White Sox negra. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-035-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 45,
@@ -738,16 +1626,27 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era Oakland Athletics verde y amarilla. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era Oakland Athletics verde y amarilla. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era Oakland Athletics verde y amarilla",
     "image": "/Productos/sauz-036.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era Oakland Athletics verde y amarilla. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 65000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era Oakland Athletics verde y amarilla. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-036-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 46,
@@ -756,16 +1655,27 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era Boston Red Sox azul y roja. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era Boston Red Sox azul y roja. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era Boston Red Sox azul y roja",
     "image": "/Productos/sauz-037.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era Boston Red Sox azul y roja. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 75000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era Boston Red Sox azul y roja. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-037-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 47,
@@ -774,16 +1684,27 @@
     "brand": "SAUZ",
     "category": "Gorras",
     "subcategory": "Gorra",
-    "description": "Gorra SAUZ negra de malla. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra SAUZ negra de malla. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra SAUZ negra de malla",
     "image": "/Productos/sauz-038.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra SAUZ negra de malla. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 85000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra SAUZ negra de malla. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-038-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 48,
@@ -792,18 +1713,29 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era New York Yankees azul. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era New York Yankees azul. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era New York Yankees azul",
     "image": "/Productos/sauz-039.png",
     "alternateImages": [
       "/Productos/sauz-041.png"
     ],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era New York Yankees azul. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 65000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era New York Yankees azul. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-039-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 49,
@@ -812,16 +1744,27 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era Boston Red Sox azul. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era Boston Red Sox azul. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era Boston Red Sox azul",
     "image": "/Productos/sauz-040.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era Boston Red Sox azul. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 75000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era Boston Red Sox azul. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-040-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 50,
@@ -830,16 +1773,27 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era San Francisco Giants negra. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era San Francisco Giants negra. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era San Francisco Giants negra",
     "image": "/Productos/sauz-042.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era San Francisco Giants negra. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 65000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era San Francisco Giants negra. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-042-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 51,
@@ -848,16 +1802,27 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era San Diego Padres marrón. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era San Diego Padres marrón. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era San Diego Padres marrón",
     "image": "/Productos/sauz-043.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era San Diego Padres marrón. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 75000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era San Diego Padres marrón. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-043-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 52,
@@ -866,16 +1831,27 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era Atlanta Braves azul y roja. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era Atlanta Braves azul y roja. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era Atlanta Braves azul y roja",
     "image": "/Productos/sauz-044.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era Atlanta Braves azul y roja. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 85000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era Atlanta Braves azul y roja. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-044-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 53,
@@ -884,16 +1860,27 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era Detroit Tigers azul. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era Detroit Tigers azul. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era Detroit Tigers azul",
     "image": "/Productos/sauz-045.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era Detroit Tigers azul. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 65000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era Detroit Tigers azul. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-045-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 54,
@@ -902,16 +1889,27 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era Atlanta Braves verde con forro. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era Atlanta Braves verde con forro. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era Atlanta Braves verde con forro",
     "image": "/Productos/sauz-046.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era Atlanta Braves verde con forro. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 75000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era Atlanta Braves verde con forro. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-046-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 55,
@@ -920,16 +1918,27 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era San Diego Padres marrón y crema. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era San Diego Padres marrón y crema. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era San Diego Padres marrón y crema",
     "image": "/Productos/sauz-047.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era San Diego Padres marrón y crema. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 85000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era San Diego Padres marrón y crema. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-047-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 56,
@@ -938,16 +1947,27 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era Atlanta Braves crema y roja. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era Atlanta Braves crema y roja. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era Atlanta Braves crema y roja",
     "image": "/Productos/sauz-049.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era Atlanta Braves crema y roja. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 75000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era Atlanta Braves crema y roja. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-049-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 57,
@@ -956,16 +1976,27 @@
     "brand": "New Era",
     "category": "Gorras",
     "subcategory": "Gorra MLB",
-    "description": "Gorra New Era San Diego Padres marrón y crema. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra New Era San Diego Padres marrón y crema. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra New Era San Diego Padres marrón y crema",
     "image": "/Productos/sauz-050.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra New Era San Diego Padres marrón y crema. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 85000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra New Era San Diego Padres marrón y crema. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-050-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 58,
@@ -974,16 +2005,57 @@
     "brand": "Jordan",
     "category": "Zapatillas",
     "subcategory": "Calzado",
-    "description": "Zapatillas Jordan blancas con detalles rojos. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Zapatillas Jordan blancas con detalles rojos. Selección multimarca SAUZ STORE.",
     "shortDescription": "Zapatillas Jordan blancas con detalles rojos",
     "image": "/Productos/sauz-051.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Zapatillas Jordan blancas con detalles rojos. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 295000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Jordan blancas con detalles rojos. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-051-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-051-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-051-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-051-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-051-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-051-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
   },
   {
     "id": 59,
@@ -992,18 +2064,59 @@
     "brand": "Jordan",
     "category": "Zapatillas",
     "subcategory": "Calzado",
-    "description": "Zapatillas Jordan blancas, grises y rojas. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Zapatillas Jordan blancas, grises y rojas. Selección multimarca SAUZ STORE.",
     "shortDescription": "Zapatillas Jordan blancas, grises y rojas",
     "image": "/Productos/sauz-052.png",
     "alternateImages": [
       "/Productos/sauz-061.png"
     ],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Zapatillas Jordan blancas, grises y rojas. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 305000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Jordan blancas, grises y rojas. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-052-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-052-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-052-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-052-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-052-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-052-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
   },
   {
     "id": 60,
@@ -1012,16 +2125,57 @@
     "brand": "Jordan",
     "category": "Zapatillas",
     "subcategory": "Calzado",
-    "description": "Zapatillas Jordan blancas, negras y rojas. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Zapatillas Jordan blancas, negras y rojas. Selección multimarca SAUZ STORE.",
     "shortDescription": "Zapatillas Jordan blancas, negras y rojas",
     "image": "/Productos/sauz-053.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Zapatillas Jordan blancas, negras y rojas. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 315000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Jordan blancas, negras y rojas. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-053-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-053-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-053-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-053-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-053-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-053-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
   },
   {
     "id": 61,
@@ -1030,16 +2184,27 @@
     "brand": "SAUZ",
     "category": "Gorras",
     "subcategory": "Gorra",
-    "description": "Gorra SAUZ negra con bordado blanco. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra SAUZ negra con bordado blanco. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra SAUZ negra con bordado blanco",
     "image": "/Productos/sauz-055.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra SAUZ negra con bordado blanco. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 75000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra SAUZ negra con bordado blanco. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-055-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
   },
   {
     "id": 62,
@@ -1048,16 +2213,45 @@
     "brand": "SAUZ",
     "category": "Camisetas",
     "subcategory": "Camiseta",
-    "description": "Camiseta SAUZ negra con logotipo. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Camiseta SAUZ negra con logotipo. Selección multimarca SAUZ STORE.",
     "shortDescription": "Camiseta SAUZ negra con logotipo",
     "image": "/Productos/sauz-056.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Camiseta SAUZ negra con logotipo. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 85000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Camiseta SAUZ negra con logotipo. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-056-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-056-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-056-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-056-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 63,
@@ -1066,16 +2260,57 @@
     "brand": "Jordan",
     "category": "Zapatillas",
     "subcategory": "Calzado",
-    "description": "Zapatillas Jordan negras y rojas. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Zapatillas Jordan negras y rojas. Selección multimarca SAUZ STORE.",
     "shortDescription": "Zapatillas Jordan negras y rojas",
     "image": "/Productos/sauz-057.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Zapatillas Jordan negras y rojas. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 295000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Jordan negras y rojas. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-057-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-057-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-057-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-057-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-057-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-057-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
   },
   {
     "id": 64,
@@ -1084,16 +2319,45 @@
     "brand": "Nike",
     "category": "Pantalones",
     "subcategory": "Pantalón",
-    "description": "Pantalón cargo Nike negro. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Pantalón cargo Nike negro. Selección multimarca SAUZ STORE.",
     "shortDescription": "Pantalón cargo Nike negro",
     "image": "/Productos/sauz-058.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Pantalón cargo Nike negro. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 125000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Pantalón cargo Nike negro. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-058-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-058-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-058-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-058-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 65,
@@ -1102,16 +2366,57 @@
     "brand": "Jordan",
     "category": "Zapatillas",
     "subcategory": "Calzado",
-    "description": "Zapatillas Jordan negras con detalles multicolor. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Zapatillas Jordan negras con detalles multicolor. Selección multimarca SAUZ STORE.",
     "shortDescription": "Zapatillas Jordan negras con detalles multicolor",
     "image": "/Productos/sauz-059.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Zapatillas Jordan negras con detalles multicolor. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 315000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Jordan negras con detalles multicolor. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-059-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-059-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-059-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-059-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-059-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-059-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
   },
   {
     "id": 66,
@@ -1120,16 +2425,45 @@
     "brand": "Por clasificar",
     "category": "Pantalones",
     "subcategory": "Pantalón",
-    "description": "Pantalón cargo negro de marca por confirmar. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Pantalón cargo negro de marca por confirmar. Selección multimarca SAUZ STORE.",
     "shortDescription": "Pantalón cargo negro de marca por confirmar",
     "image": "/Productos/sauz-060.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Pantalón cargo negro de marca por confirmar. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 115000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Pantalón cargo negro de marca por confirmar. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-060-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-060-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-060-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-060-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 67,
@@ -1138,16 +2472,45 @@
     "brand": "Por clasificar",
     "category": "Sudaderas",
     "subcategory": "Sudadera",
-    "description": "Sudadera negra de marca por confirmar. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Sudadera negra de marca por confirmar. Selección multimarca SAUZ STORE.",
     "shortDescription": "Sudadera negra de marca por confirmar",
     "image": "/Productos/sauz-062.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Sudadera negra de marca por confirmar. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 165000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Sudadera negra de marca por confirmar. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-062-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-062-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-062-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-062-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 68,
@@ -1156,16 +2519,45 @@
     "brand": "Por clasificar",
     "category": "Chaquetas",
     "subcategory": "Chaqueta",
-    "description": "Chaqueta bomber negra de marca por confirmar. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Chaqueta bomber negra de marca por confirmar. Selección multimarca SAUZ STORE.",
     "shortDescription": "Chaqueta bomber negra de marca por confirmar",
     "image": "/Productos/sauz-063.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Chaqueta bomber negra de marca por confirmar. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 175000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Chaqueta bomber negra de marca por confirmar. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-063-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-063-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-063-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-063-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 69,
@@ -1174,16 +2566,57 @@
     "brand": "Jordan",
     "category": "Zapatillas",
     "subcategory": "Calzado",
-    "description": "Zapatillas Jordan blancas y rojas de caña alta. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Zapatillas Jordan blancas y rojas de caña alta. Selección multimarca SAUZ STORE.",
     "shortDescription": "Zapatillas Jordan blancas y rojas de caña alta",
     "image": "/Productos/sauz-065.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Zapatillas Jordan blancas y rojas de caña alta. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 315000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Jordan blancas y rojas de caña alta. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-065-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-065-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-065-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-065-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-065-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-065-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
   },
   {
     "id": 70,
@@ -1192,16 +2625,45 @@
     "brand": "Nike",
     "category": "Camisetas",
     "subcategory": "Camiseta",
-    "description": "Camiseta Nike negra de corte amplio. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Camiseta Nike negra de corte amplio. Selección multimarca SAUZ STORE.",
     "shortDescription": "Camiseta Nike negra de corte amplio",
     "image": "/Productos/sauz-066.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Camiseta Nike negra de corte amplio. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 65000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Camiseta Nike negra de corte amplio. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-066-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-066-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-066-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-066-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 71,
@@ -1210,16 +2672,45 @@
     "brand": "Adidas",
     "category": "Chaquetas",
     "subcategory": "Chaqueta",
-    "description": "Chaqueta Adidas negra de tres rayas. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Chaqueta Adidas negra de tres rayas. Selección multimarca SAUZ STORE.",
     "shortDescription": "Chaqueta Adidas negra de tres rayas",
     "image": "/Productos/sauz-067.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Chaqueta Adidas negra de tres rayas. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 185000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Chaqueta Adidas negra de tres rayas. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-067-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-067-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-067-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-067-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 72,
@@ -1228,16 +2719,45 @@
     "brand": "Por clasificar",
     "category": "Conjuntos",
     "subcategory": "Conjunto deportivo",
-    "description": "Conjunto deportivo negro de marca por confirmar. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Conjunto deportivo negro de marca por confirmar. Selección multimarca SAUZ STORE.",
     "shortDescription": "Conjunto deportivo negro de marca por confirmar",
     "image": "/Productos/sauz-068.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Conjunto deportivo negro de marca por confirmar. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 215000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Conjunto deportivo negro de marca por confirmar. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-068-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-068-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-068-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-068-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 73,
@@ -1246,16 +2766,45 @@
     "brand": "Jordan",
     "category": "Sudaderas",
     "subcategory": "Sudadera",
-    "description": "Sudadera Jordan negra con emblema pequeño. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Sudadera Jordan negra con emblema pequeño. Selección multimarca SAUZ STORE.",
     "shortDescription": "Sudadera Jordan negra con emblema pequeño",
     "image": "/Productos/sauz-069.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Sudadera Jordan negra con emblema pequeño. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 145000,
+    "stock": 16,
+    "configurationStatus": null,
+    "detailedDescription": "Sudadera Jordan negra con emblema pequeño. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-069-S",
+        "size": "S",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-069-M",
+        "size": "M",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-069-L",
+        "size": "L",
+        "stock": 4
+      },
+      {
+        "id": "SAUZ-NEW-069-XL",
+        "size": "XL",
+        "stock": 4
+      }
+    ]
   },
   {
     "id": 74,
@@ -1264,15 +2813,144 @@
     "brand": "Adidas",
     "category": "Gorras",
     "subcategory": "Gorra",
-    "description": "Gorra Adidas negra con logotipo blanco. Precio, tallas y disponibilidad pendientes de confirmación.",
+    "description": "Gorra Adidas negra con logotipo blanco. Selección multimarca SAUZ STORE.",
     "shortDescription": "Gorra Adidas negra con logotipo blanco",
     "image": "/Productos/sauz-070.png",
     "alternateImages": [],
     "active": true,
-    "commercial": false,
-    "price": null,
-    "stock": null,
-    "configurationStatus": "Pendiente de precio, tallas e inventario",
-    "detailedDescription": "Gorra Adidas negra con logotipo blanco. La identificación se basa en la imagen original suministrada. Composición, medidas, precio y existencias están pendientes de confirmación del proveedor."
+    "commercial": true,
+    "price": 75000,
+    "stock": 8,
+    "configurationStatus": null,
+    "detailedDescription": "Gorra Adidas negra con logotipo blanco. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "Única"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-070-Única",
+        "size": "Única",
+        "stock": 8
+      }
+    ]
+  },
+  {
+    "id": 75,
+    "sku": "SAUZ-NEW-018",
+    "name": "Zapatillas Nike blancas y azul marino con cordones oscuros",
+    "brand": "Nike",
+    "category": "Zapatillas",
+    "subcategory": "Calzado",
+    "description": "Zapatillas Nike blancas y azul marino con cordones oscuros. Selección multimarca SAUZ STORE.",
+    "shortDescription": "Zapatillas Nike blancas y azul marino con cordones oscuros",
+    "image": "/Productos/sauz-018.png",
+    "alternateImages": [],
+    "active": true,
+    "commercial": true,
+    "price": 265000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Nike blancas y azul marino con cordones oscuros. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-018-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-018-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-018-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-018-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-018-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-018-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
+  },
+  {
+    "id": 76,
+    "sku": "SAUZ-NEW-032",
+    "name": "Zapatillas Adidas crema y verde con cierre de tiras",
+    "brand": "Adidas",
+    "category": "Zapatillas",
+    "subcategory": "Calzado",
+    "description": "Zapatillas Adidas crema y verde con cierre de tiras. Selección multimarca SAUZ STORE.",
+    "shortDescription": "Zapatillas Adidas crema y verde con cierre de tiras",
+    "image": "/Productos/sauz-032.png",
+    "alternateImages": [],
+    "active": true,
+    "commercial": true,
+    "price": 285000,
+    "stock": 18,
+    "configurationStatus": null,
+    "detailedDescription": "Zapatillas Adidas crema y verde con cierre de tiras. Consulta las tallas disponibles antes de realizar tu compra. Composición y medidas pendientes de confirmación.",
+    "currency": "COP",
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "variants": [
+      {
+        "id": "SAUZ-NEW-032-38",
+        "size": "38",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-032-39",
+        "size": "39",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-032-40",
+        "size": "40",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-032-41",
+        "size": "41",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-032-42",
+        "size": "42",
+        "stock": 3
+      },
+      {
+        "id": "SAUZ-NEW-032-43",
+        "size": "43",
+        "stock": 3
+      }
+    ]
   }
 ]

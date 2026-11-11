@@ -5,6 +5,8 @@
 
 /* ---------- 1. VARIABLES DE DISEÑO (BLACK & GOLD PALETTE) ---------- */
 :root {
+    --sauz-red: #ff1724;
+    --sauz-red-rgb: 255, 23, 36; 
     /* ─── DORADO EXCLUSIVO (LUXURY GOLD) ─── */
     --gold:          #666666;       /* Oro clásico metálico */
     --gold-light:    #999999;       /* Oro champán luminoso */

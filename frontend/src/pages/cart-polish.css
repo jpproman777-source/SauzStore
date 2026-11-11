@@ -1,0 +1,62 @@
+.bag-page { font-family:var(--font-nike,"Helvetica Neue",Arial,sans-serif); }
+.bag-page .bag-breadcrumb { padding-bottom:28px; color:#777; font-size:11px; }
+.bag-page .bag-breadcrumb button { color:#aaa; cursor:pointer; }
+.bag-page .bag-page-heading { align-items:center; margin-bottom:32px; }
+.bag-page .bag-page-heading .edition-eyebrow { display:flex; align-items:center; gap:9px; font-size:9px; letter-spacing:.16em; }
+.bag-page .bag-page-heading .edition-eyebrow::before { content:""; width:5px; height:5px; background:var(--sauz-red); }
+.bag-page .bag-page-heading h1 { font-family:"SAUZ Archivo Black",Arial,sans-serif; font-size:clamp(32px,4.2vw,60px); font-weight:900; text-transform:uppercase; letter-spacing:-.055em; margin:14px 0 0; gap:18px; flex-wrap:wrap; }
+.bag-page .bag-page-heading h1 > span { min-width:32px; height:32px; background:color-mix(in srgb, var(--sauz-red) 10%, #171717); color:var(--sauz-red); border-color:color-mix(in srgb, var(--sauz-red) 35%, #171717); font-family:var(--font-nike); font-size:12px; font-weight:700; }
+.bag-page .bag-page-heading > .bag-explore { min-height:44px; padding:12px 18px; border:1px solid #383838; border-radius:999px; font-family:var(--font-nike); color:#ddd; font-size:10px; font-weight:650; letter-spacing:.03em; text-decoration:none; gap:16px; transition:border-color 180ms ease,background-color 180ms ease; }
+.bag-page .bag-layout { gap:clamp(28px,4vw,60px); }
+.bag-page .bag-list-heading { padding-bottom:16px; font-size:12px; color:#aaa; border-color:#2a2a2a; }
+.bag-page .bag-list-heading > button { display:flex; align-items:center; gap:7px; min-height:40px; padding:8px 10px; border:1px solid transparent; border-radius:8px; text-decoration:none; font-size:11px; color:#999; cursor:pointer; }
+.bag-page .bag-item { padding-block:28px; border-color:#242424; gap:24px; }
+.bag-page .bag-item-brand { color:var(--sauz-red); font-size:9px; font-weight:700; letter-spacing:.14em; }
+.bag-page .bag-item h2 { font-family:var(--font-nike); font-size:18px; font-weight:650; line-height:1.45; letter-spacing:-.025em; margin-top:8px; }
+.bag-page .bag-line-total { font-family:var(--font-nike); font-size:16px; font-weight:700; color:#f0f0eb; }
+.bag-page .bag-item-variant { display:table; align-self:flex-start; margin-top:10px; padding:3px 10px; border:1px solid #2a2a2a; border-radius:5px; color:#bdbdbd; font-size:11px; background:#101010; }
+.bag-page .bag-item-unit { font-size:11px; color:#888; }
+.bag-page .bag-item-actions { gap:12px; padding-top:20px; }
+.bag-page .bag-quantity { background:#111; border-color:#3a3a3a; border-radius:999px; overflow:hidden; }
+.bag-page .bag-quantity button { width:38px; height:42px; cursor:pointer; }
+.bag-page .bag-quantity input { width:38px; height:42px; font-weight:650; }
+.bag-page .bag-icon-button { width:42px; height:42px; border:1px solid #303030; border-radius:50%; color:#aaa; cursor:pointer; }
+.bag-page .bag-icon-button[aria-pressed="true"] { color:var(--sauz-red); border-color:color-mix(in srgb, var(--sauz-red) 35%, #171717); }
+.bag-page .bag-remove { min-height:42px; padding:8px; color:#888; cursor:pointer; }
+.bag-page button:disabled { cursor:not-allowed; }
+.bag-page .bag-summary { background:#111; border:1px solid #333; border-radius:16px; padding:28px; }
+.bag-page .bag-summary > .edition-eyebrow { color:#999; font-size:8px; letter-spacing:.13em; }
+.bag-page .bag-summary h2 { display:flex; align-items:center; gap:12px; font-family:"SAUZ Archivo Black",Arial,sans-serif; font-size:24px; font-weight:900; letter-spacing:-.04em; text-transform:uppercase; margin:15px 0 28px; }
+.bag-summary h2 svg { color:#ddd; flex-shrink:0; }
+.bag-page .bag-summary dl > div { font-size:12px; margin-top:17px; }
+.bag-page .bag-summary dt { color:#999; }
+.bag-page .bag-summary dd { color:#e1e1dd; font-weight:600; }
+.bag-page .bag-summary dl > .bag-summary-total { margin-top:25px; padding-top:22px; border-color:#333; align-items:baseline; }
+.bag-page .bag-summary-total dt { color:#eee; font-size:15px; font-weight:600; }
+.bag-currency { font-size:9px; color:#888; font-weight:500; margin-left:5px; }
+.bag-page .bag-summary-total dd { font-family:"SAUZ Archivo Black",Arial,sans-serif; font-size:clamp(22px,2.2vw,30px); font-weight:900; letter-spacing:-.05em; color:#f4f4ef; }
+.bag-page .bag-summary-note { font-size:10px; color:#888; margin-top:14px; }
+.bag-page .bag-checkout { width:100%; min-height:54px; border-radius:999px; padding:15px 20px; background:#f4f4ef; color:#111; font-family:var(--font-nike); font-size:13px; font-weight:700; letter-spacing:0; text-transform:none; transition:background-color 180ms ease,transform 180ms ease; }
+.bag-checkout svg { transition:transform 180ms ease; }
+.bag-page .bag-summary-footnote { padding-top:4px; font-size:10px; line-height:1.7; color:#888; }
+@media(hover:hover) {
+  .bag-page .bag-page-heading > .bag-explore:hover { background:#191919; border-color:#777; }
+  .bag-page .bag-list-heading > button:hover,.bag-page .bag-remove:hover { color:var(--sauz-red); }
+  .bag-page .bag-icon-button:hover { border-color:#888; color:white; }
+  .bag-page .bag-checkout:hover { background:#deded8; transform:translateY(-1px); }
+  .bag-checkout:hover svg { transform:translateX(3px); }
+}
+@media(max-width:620px) {
+  .bag-page .bag-page-heading { align-items:flex-start; flex-direction:column; gap:20px; margin-bottom:26px; }
+  .bag-page .bag-page-heading h1 { font-size:clamp(32px,9vw,44px); gap:12px; }
+  .bag-page .bag-page-heading > .bag-explore { font-size:9px; padding:10px 15px; min-height:42px; }
+  .bag-page .bag-item { gap:16px; padding-block:22px; }
+  .bag-page .bag-item h2 { font-size:14px; }
+  .bag-page .bag-line-total { font-size:14px; }
+  .bag-page .bag-item-actions { gap:8px; }
+  .bag-page .bag-quantity button { width:32px; }
+  .bag-page .bag-quantity input { width:32px; }
+  .bag-page .bag-summary { padding:24px 20px; border-radius:12px; }
+  .bag-page .bag-summary h2 { font-size:23px; }
+}
+@media(prefers-reduced-motion:reduce) { .bag-page .bag-page-heading > .bag-explore,.bag-page .bag-checkout,.bag-checkout svg { transition:none; } .bag-page .bag-checkout:hover,.bag-checkout:hover svg { transform:none; } }

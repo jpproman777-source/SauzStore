@@ -1,6 +1,7 @@
 import { ProductImage } from './ProductImage';
 import React, { useEffect } from 'react';
 import { useCart } from '../context/CartContext';
+import { confirmAction } from '../lib/alerts';
 
 export const CartDrawer = ({ setActivePage }) => {
   const {
@@ -31,8 +32,15 @@ export const CartDrawer = ({ setActivePage }) => {
     setIsCheckoutOpen(true);
   };
 
-  const handleClear = () => {
-    if (window.confirm('¿Deseas vaciar todas las prendas de tu bolsa de compras?')) {
+  const handleClear = async () => {
+    const confirmed = await confirmAction({
+      title: 'Vaciar bolsa',
+      text: '¿Deseas vaciar todas las prendas de tu bolsa de compras?',
+      confirmText: 'Vaciar bolsa',
+      cancelText: 'Cancelar',
+      danger: true,
+    });
+    if (confirmed) {
       clearCart();
     }
   };
@@ -132,8 +140,8 @@ export const CartDrawer = ({ setActivePage }) => {
               ) : (
                 cart.items.map((item) => (
                   <div key={`${item.productId}:${item.variantId}`} style={{ display: 'flex', gap: '20px', marginBottom: '25px', paddingBottom: '25px', borderBottom: '1px solid var(--border-color)' }}>
-                    <div style={{ width: '80px', height: '100px', backgroundColor: 'var(--panel-bg)', borderRadius: '0px', overflow: 'hidden' }}>
-                      <ProductImage mode="thumb" src={item.image} alt={item.name} style={{ width: '100%', height: '100%', opacity: 0.9 }} />
+                    <div style={{ width: '90px', height: '90px', flexShrink: 0, backgroundColor: '#000', borderRadius: '0px', overflow: 'hidden' }}>
+                      <ProductImage mode="thumb" src={item.image} alt={item.name} style={{ width: '100%', height: '100%', opacity: 1, objectFit: 'contain', padding: 0, filter: 'none' }} />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingTop: '5px' }}>
                       <div>

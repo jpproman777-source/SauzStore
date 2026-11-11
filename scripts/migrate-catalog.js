@@ -26,6 +26,7 @@ const rows = `
 015|Jordan|Zapatillas|Calzado|Zapatillas Jordan negras y rojas
 016|Nike|Sudaderas|Sudadera|Sudadera Nike gris y negra
 017|Nike|Camisetas|Camiseta|Camiseta Nike negra con franjas rojas
+018|Nike|Zapatillas|Calzado|Zapatillas Nike blancas y azul marino con cordones oscuros
 019|Adidas|Chaquetas|Chaqueta|Chaqueta Adidas negra de tres rayas
 021|Nike|Sudaderas|Sudadera|Sudadera Nike negra con paneles crema y lila
 022|Jordan|Zapatillas|Calzado|Zapatillas Jordan blancas y negras
@@ -38,6 +39,7 @@ const rows = `
 029|SAUZ STORE|Gorras|Gorra|Gorra SAUZ negra de visera plana
 030|New Era|Gorras|Gorra MLB|Gorra New Era Los Angeles Dodgers azul
 031|New Era|Gorras|Gorra MLB|Gorra New Era Oakland Athletics verde
+032|Adidas|Zapatillas|Calzado|Zapatillas Adidas crema y verde con cierre de tiras
 033|SAUZ STORE|Gorras|Gorra|Gorra SAUZ negra de perfil bajo
 034|SAUZ STORE|Gorras|Gorra|Gorra SAUZ negra con bordado tonal
 035|New Era|Gorras|Gorra MLB|Gorra New Era Chicago White Sox negra
@@ -74,8 +76,8 @@ const rows = `
 `.trim().split('\n').map(line => line.split('|'));
 
 const alternateImages = {
-  '013': ['018'], '015': ['020'], '022': ['054'],
-  '023': ['032'], '035': ['048'], '039': ['041'], '052': ['061'],
+  '015': ['020'], '022': ['054'],
+  '035': ['048'], '039': ['041'], '052': ['061'],
 };
 const old = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
 if (old.some(p => p.sku?.startsWith('SAUZ-NEW-'))) {
@@ -83,7 +85,7 @@ if (old.some(p => p.sku?.startsWith('SAUZ-NEW-'))) {
 }
 if (fs.existsSync(backup)) throw new Error('Ya existe el respaldo; revisarlo antes de continuar.');
 const files = fs.readdirSync(source).filter(f => /^SAUZ_\d{3}\.png$/.test(f));
-if (files.length !== 70 || rows.length !== 62) throw new Error('El número de imágenes o fichas cambió; revisar manualmente.');
+if (files.length !== 70 || rows.length !== 64) throw new Error('El número de imágenes o fichas cambió; revisar manualmente.');
 fs.mkdirSync(assets, { recursive: true });
 const newProducts = rows.map(([number, brand, category, subcategory, name], index) => {
   const filename = `sauz-${number}.png`;

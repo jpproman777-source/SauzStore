@@ -1,3 +1,7 @@
+import { approvedBrandAssets } from '../assets/brandAssets';
+import './admin-workspace.css';
+import { filterOrdersByPeriod, overviewSeries, summarizeCategories, summarizeInventory } from '../lib/adminOverview';
+import { OrderShippingEditor } from './OrderShippingEditor';
 import { ProductImage } from './ProductImage';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useCart } from '../context/CartContext';
@@ -59,7 +63,8 @@ import {
   FileSpreadsheet,
   Activity,
   Sparkles,
-  Layers
+  Layers,
+  Upload
 } from 'lucide-react';
 
 // Dot activo animado con onda expansiva tipo radar de alta gama
@@ -147,8 +152,10 @@ export const AdminPanel = ({ setActivePage }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openNavGroups, setOpenNavGroups] = useState({ catalog: true, ordersGroup: false });
 
   // Filtros globales y por sección
+  const [overviewCalendar, setOverviewCalendar] = useState(null);
   const [periodFilter, setPeriodFilter] = useState('30days'); // 'today' | '7days' | '30days' | 'month'
   const [chartViewMode, setChartViewMode] = useState('revenue_accum'); // 'revenue_accum' | 'revenue_daily' | 'orders'
   const [chartType, setChartType] = useState('area'); // 'area' | 'bar'
@@ -168,61 +175,57 @@ export const AdminPanel = ({ setActivePage }) => {
   const [productCategoryFilter, setProductCategoryFilter] = useState('Todas');
   const [productStockFilter, setProductStockFilter] = useState('Todos');
   const [productViewMode, setProductViewMode] = useState('table'); // 'table' | 'cards'
+  const [productsPage, setProductsPage] = useState(1);
+  const productsPerPage = 10;
   const [isCreateProductModalOpen, setIsCreateProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [deleteConfirmProduct, setDeleteConfirmProduct] = useState(null);
 
   // Formularios de producto
+  const DEFAULT_VARIANTS = [
+    { id: 'size-s', size: 'S', stock: 0 },
+    { id: 'size-m', size: 'M', stock: 0 },
+    { id: 'size-l', size: 'L', stock: 0 },
+    { id: 'size-xl', size: 'XL', stock: 0 }
+  ];
   const [productForm, setProductForm] = useState({
     name: '',
+    brand: '',
+    subcategory: '',
     category: 'Camisetas',
     price: '',
-    stock: '',
-    variantsText: '',
+    previousPrice: '',
+    colors: '',
+    commercial: true,
+    variantsList: DEFAULT_VARIANTS,
     description: '',
     image: '/Productos/jordan_Blanca.png'
   });
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Estado para Módulo de Clientes
   const [customers, setCustomers] = useState([]);
   const [loadingCustomers, setLoadingCustomers] = useState(false);
   const [customerSearch, setCustomerSearch] = useState('');
+  const [customersPage, setCustomersPage] = useState(1);
+  const customersPerPage = 10;
 
-  // Reabastecimiento personalizado
+  // Reabastecimiento y control de bodega
   const [customRestockInputs, setCustomRestockInputs] = useState({});
   const [restockVariants, setRestockVariants] = useState({});
+  const [inventorySearch, setInventorySearch] = useState('');
+  const [inventoryFilter, setInventoryFilter] = useState('all'); // 'all' | 'attention' | 'out' | 'ok'
+  const [inventoryPage, setInventoryPage] = useState(1);
+  const inventoryPerPage = 10;
 
   // Tooltip en gráfica
   const [hoveredChartPoint, setHoveredChartPoint] = useState(null);
 
-  // US-25: Alerta de stock bajo en panel administrativo
+  // Umbral configurable de alerta de stock bajo
   const [lowStockThreshold, setLowStockThreshold] = useState(5);
-  const [lowStockAlerts, setLowStockAlerts] = useState([]);
-  const [loadingLowStock, setLoadingLowStock] = useState(false);
 
-  // US-24: Nota para historial de seguimiento del pedido
+  // Nota para historial de seguimiento del pedido
   const [orderTrackingNote, setOrderTrackingNote] = useState('');
-
-  const fetchLowStockAlerts = async (thresh = lowStockThreshold) => {
-    setLoadingLowStock(true);
-    try {
-      const res = await fetch(`/api/admin/low-stock?threshold=${thresh}`);
-      const data = await res.json();
-      if (data.items) {
-        setLowStockAlerts(data.items);
-      }
-    } catch (e) {
-      console.error('Error al consultar stock bajo:', e);
-    } finally {
-      setLoadingLowStock(false);
-    }
-  };
-
-  useEffect(() => {
-    if (activeTab === 'inventory') {
-      fetchLowStockAlerts(lowStockThreshold);
-    }
-  }, [activeTab, lowStockThreshold, products]);
 
   // Carga inicial y refresco de pedidos y clientes
   useEffect(() => {
@@ -250,61 +253,58 @@ export const AdminPanel = ({ setActivePage }) => {
   // ==============================================================
   const now = new Date();
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-  const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
 
   // Filtrado de pedidos según el período seleccionado
-  const periodOrders = useMemo(() => {
-    return orders.filter(o => {
-      const time = o.timestamp || Date.now();
-      if (periodFilter === 'today') return time >= startOfToday;
-      if (periodFilter === '7days') return time >= sevenDaysAgo;
-      if (periodFilter === '30days') return time >= thirtyDaysAgo;
-      if (periodFilter === 'month') return time >= startOfMonth;
-      return true;
-    });
-  }, [orders, periodFilter, startOfToday, sevenDaysAgo, thirtyDaysAgo, startOfMonth]);
+  const periodOrders = useMemo(() => filterOrdersByPeriod(orders, periodFilter), [orders, periodFilter]);
+  const periodValidOrders = useMemo(() => periodOrders.filter(o => o.orderStatus !== 'Cancelado'), [periodOrders]);
+  const periodCancelledOrders = useMemo(() => periodOrders.filter(o => o.orderStatus === 'Cancelado'), [periodOrders]);
 
   // Distinción estricta de ingresos: no sumar pedidos cancelados a ventas válidas
   const validOrders = useMemo(() => orders.filter(o => o.orderStatus !== 'Cancelado'), [orders]);
   const cancelledOrders = useMemo(() => orders.filter(o => o.orderStatus === 'Cancelado'), [orders]);
-  const pendingOrders = useMemo(() => orders.filter(o => o.orderStatus === 'En proceso' || o.orderStatus === 'Pendiente'), [orders]);
+  const pendingOrders = useMemo(() => orders.filter(o => ['En proceso', 'Pendiente', 'Aceptado'].includes(o.orderStatus)), [orders]);
   const deliveredOrders = useMemo(() => orders.filter(o => o.orderStatus === 'Entregado'), [orders]);
 
-  // Métricas financieras
-  const totalGrossRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+  // Métricas financieras globales y por período
   const totalNetRevenue = validOrders.reduce((sum, o) => sum + (o.total || 0), 0);
-  const cancelledRevenue = cancelledOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+  const periodGrossRevenue = periodOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+  const periodNetRevenue = periodValidOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+  const periodCancelledRevenue = periodCancelledOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+  const periodAverageOrderValue = periodValidOrders.length > 0 ? Math.round(periodNetRevenue / periodValidOrders.length) : 0;
 
-  const todayRevenue = validOrders
-    .filter(o => (o.timestamp || 0) >= startOfToday)
-    .reduce((sum, o) => sum + (o.total || 0), 0);
-
-  const monthRevenue = validOrders
-    .filter(o => (o.timestamp || 0) >= startOfMonth)
-    .reduce((sum, o) => sum + (o.total || 0), 0);
-
-  const totalUnitsSold = validOrders.reduce((sum, o) => sum + (o.count || 0), 0);
-  const averageOrderValue = validOrders.length > 0 ? Math.round(totalNetRevenue / validOrders.length) : 0;
-
-  // Métricas de inventario
-  const totalStockUnits = products.reduce((sum, p) => sum + (p.stock || 0), 0);
-  const lowStockProducts = products.filter(p => p.stock > 0 && p.stock <= 5);
-  const outOfStockProducts = products.filter(p => p.stock === 0);
-
-  // Ventas agrupadas por categoría
-  const categorySales = useMemo(() => {
-    const map = {};
-    validOrders.forEach(o => {
-      (o.items || []).forEach(item => {
-        const prod = products.find(p => p.id === item.productId);
-        const cat = prod?.category || 'Camisetas';
-        map[cat] = (map[cat] || 0) + (item.price * item.quantity);
-      });
+  // Métricas de inventario agrupadas por prenda y talla
+  const inventorySummary = useMemo(
+    () => summarizeInventory(products, lowStockThreshold),
+    [products, lowStockThreshold]
+  );
+  const filteredInventoryRows = useMemo(() => {
+    const q = inventorySearch.toLowerCase().trim();
+    return inventorySummary.rows.filter(({ product, status }) => {
+      const matchesSearch = !q ||
+        (product.name || '').toLowerCase().includes(q) ||
+        (product.brand || '').toLowerCase().includes(q) ||
+        (product.category || '').toLowerCase().includes(q) ||
+        (product.sku || `SAUZ-${product.id}`).toLowerCase().includes(q);
+      if (!matchesSearch) return false;
+      if (inventoryFilter === 'attention') return status === 'out' || status === 'low';
+      if (inventoryFilter === 'out') return status === 'out';
+      if (inventoryFilter === 'ok') return status === 'ok';
+      return true;
     });
-    return map;
-  }, [validOrders, products]);
+  }, [inventorySummary, inventorySearch, inventoryFilter]);
+  const totalInventoryPages = Math.ceil(filteredInventoryRows.length / inventoryPerPage) || 1;
+  const paginatedInventoryRows = filteredInventoryRows.slice(
+    (inventoryPage - 1) * inventoryPerPage,
+    inventoryPage * inventoryPerPage
+  );
+
+  // Categorías dinámicas y resumen de rendimiento por categoría
+  const productCategories = useMemo(
+    () => ['Todas', ...new Set(products.map(p => p.category).filter(Boolean))],
+    [products]
+  );
+  const categorySummary = useMemo(() => summarizeCategories(products, validOrders), [products, validOrders]);
 
   // Ranking de prendas más vendidas
   const topProducts = useMemo(() => {
@@ -327,119 +327,14 @@ export const AdminPanel = ({ setActivePage }) => {
     return Object.values(map).sort((a, b) => b.quantity - a.quantity).slice(0, 5);
   }, [validOrders]);
 
-  // Datos reactivos y dinámicos para la gráfica Recharts interactiva
-  const chartData = useMemo(() => {
-    if (periodFilter === 'today') {
-      const slots = [
-        { label: '08:00', fullDate: 'Hoy 08:00 AM', hStart: 0, hEnd: 10 },
-        { label: '11:00', fullDate: 'Hoy 11:00 AM', hStart: 10, hEnd: 13 },
-        { label: '14:00', fullDate: 'Hoy 02:00 PM', hStart: 13, hEnd: 16 },
-        { label: '17:00', fullDate: 'Hoy 05:00 PM', hStart: 16, hEnd: 19 },
-        { label: '20:00', fullDate: 'Hoy 08:00 PM', hStart: 19, hEnd: 22 },
-        { label: 'Cierre', fullDate: 'Hoy Cierre', hStart: 22, hEnd: 24 }
-      ];
-
-      let running = 0;
-      return slots.map(slot => {
-        const slotOrders = validOrders.filter(o => {
-          const d = new Date(o.timestamp || Date.now());
-          const isToday = d.getTime() >= startOfToday;
-          const h = d.getHours();
-          return isToday && h >= slot.hStart && h < slot.hEnd;
-        });
-
-        const rev = slotOrders.reduce((sum, o) => sum + (o.total || 0), 0);
-        running += rev;
-        const count = slotOrders.length;
-        const units = slotOrders.reduce((sum, o) => sum + (o.count || (o.items || []).length || 0), 0);
-
-        return {
-          label: slot.label,
-          fullDate: slot.fullDate,
-          revenue: rev,
-          revenue_accum: running,
-          orders: count,
-          units: units
-        };
-      });
-    }
-
-    if (periodFilter === '7days') {
-      const points = [];
-      let running = 0;
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-        const dayEnd = dayStart + (24 * 60 * 60 * 1000);
-        const dayName = i === 0 ? 'Hoy' : d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' });
-        const fullDateName = d.toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'long' });
-
-        const dayOrders = validOrders.filter(o => {
-          const t = o.timestamp || Date.now();
-          return t >= dayStart && t < dayEnd;
-        });
-
-        const rev = dayOrders.reduce((sum, o) => sum + (o.total || 0), 0);
-        running += rev;
-        const count = dayOrders.length;
-        const units = dayOrders.reduce((sum, o) => sum + (o.count || (o.items || []).length || 0), 0);
-
-        points.push({
-          label: dayName,
-          fullDate: fullDateName,
-          revenue: rev,
-          revenue_accum: running,
-          orders: count,
-          units: units
-        });
-      }
-      return points;
-    }
-
-    // Default: '30days' o 'month'
-    const checkpoints = [
-      { daysAgo: 24, label: '01 Oct', fullDate: '01 de Octubre' },
-      { daysAgo: 18, label: '06 Oct', fullDate: '06 de Octubre' },
-      { daysAgo: 12, label: '12 Oct', fullDate: '12 de Octubre' },
-      { daysAgo: 7,  label: '17 Oct', fullDate: '17 de Octubre' },
-      { daysAgo: 4,  label: '20 Oct', fullDate: '20 de Octubre' },
-      { daysAgo: 2,  label: '22 Oct', fullDate: '22 de Octubre' },
-      { daysAgo: 1,  label: '23 Oct', fullDate: '23 de Octubre' },
-      { daysAgo: 0,  label: 'Hoy',    fullDate: 'Hoy (24 de Octubre)' }
-    ];
-
-    let runningAccum = 0;
-    return checkpoints.map(cp => {
-      let cpOrders = [];
-      if (cp.daysAgo === 0) {
-        cpOrders = validOrders.filter(o => (o.timestamp || 0) >= startOfToday);
-      } else {
-        const targetDate = new Date();
-        targetDate.setDate(targetDate.getDate() - cp.daysAgo);
-        const dStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime();
-        const dEnd = dStart + (24 * 60 * 60 * 1000);
-        cpOrders = validOrders.filter(o => {
-          const t = o.timestamp || 0;
-          return t >= dStart && t < dEnd;
-        });
-      }
-
-      const rev = cpOrders.reduce((sum, o) => sum + (o.total || 0), 0);
-      runningAccum += rev;
-      const count = cpOrders.length;
-      const units = cpOrders.reduce((sum, o) => sum + (o.count || (o.items || []).length || 0), 0);
-
-      return {
-        label: cp.label,
-        fullDate: cp.fullDate,
-        revenue: rev,
-        revenue_accum: runningAccum,
-        orders: count,
-        units: units
-      };
-    });
-  }, [validOrders, periodFilter, startOfToday]);
+  const chartData = useMemo(() => overviewSeries(orders, periodFilter, new Date(), overviewCalendar), [orders, periodFilter, overviewCalendar]);
+  const overviewRevenue = chartData.reduce((sum, point) => sum + point.revenue, 0);
+  const overviewCount = chartData.reduce((sum, point) => sum + point.orders, 0);
+  const overviewUnits = chartData.reduce((sum, point) => sum + point.units, 0);
+  const overviewAverage = overviewCount ? Math.round(overviewRevenue / overviewCount) : 0;
+  const quickPeriodLabel = {today:'Hoy', '7days':'Últimos 7 días', '30days':'Últimos 30 días', month:'Este mes'}[periodFilter];
+  const overviewPeriod = overviewCalendar ? `${overviewCalendar.month === 'all' ? 'Todo el año' : new Date(Number(overviewCalendar.year),Number(overviewCalendar.month),1).toLocaleDateString('es-CO',{month:'long'})} ${overviewCalendar.year}` : quickPeriodLabel;
+  const overviewYears = [...new Set([new Date().getFullYear(), ...orders.map(order => new Date(Number(order.timestamp)).getFullYear()).filter(Number.isFinite)])].sort((a,b)=>b-a);
 
   // ==============================================================
   // ACCIONES DE PRODUCTO (CREAR / EDITAR / ELIMINAR / REABASTECER)
@@ -447,10 +342,14 @@ export const AdminPanel = ({ setActivePage }) => {
   const handleOpenCreateProduct = () => {
     setProductForm({
       name: '',
+      brand: '',
+      subcategory: '',
       category: 'Camisetas',
       price: '',
-      stock: '',
-      variantsText: '',
+      previousPrice: '',
+      colors: '',
+      commercial: true,
+      variantsList: DEFAULT_VARIANTS.map(v => ({ ...v })),
       description: '',
       image: '/Productos/jordan_Blanca.png'
     });
@@ -460,65 +359,130 @@ export const AdminPanel = ({ setActivePage }) => {
 
   const handleOpenEditProduct = (prod) => {
     setEditingProduct(prod);
+    const initialVariants = Array.isArray(prod.variants) && prod.variants.length > 0
+      ? prod.variants.map((variant, idx) => ({
+          id: variant.id || `size-${idx + 1}`,
+          size: variant.size || '',
+          stock: Number(variant.stock || 0)
+        }))
+      : [{ id: 'size-unica', size: 'Única', stock: Number(prod.stock || 0) }];
+
     setProductForm({
-      name: prod.name,
+      name: prod.name || '',
       brand: prod.brand || '',
       subcategory: prod.subcategory || '',
-      sizes: (prod.sizes || []).join(', '),
-      variantsText: (prod.variants || []).map(variant => `${variant.size},${variant.stock}`).join('\n'),
-      category: prod.category,
+      category: prod.category || 'Camisetas',
       price: prod.price ?? '',
-      stock: prod.stock ?? '',
+      previousPrice: prod.previousPrice ?? '',
+      colors: Array.isArray(prod.colors) ? prod.colors.join(', ') : '',
+      commercial: prod.commercial !== false,
+      variantsList: initialVariants,
       description: prod.description || '',
-      image: prod.image
+      image: prod.image || '/Productos/jordan_Blanca.png'
     });
     setIsCreateProductModalOpen(true);
+  };
+
+  const handleProductImageUpload = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!/^image\/(png|jpeg|jpg|webp|avif)$/i.test(file.type)) {
+      showToast('Selecciona una imagen PNG, JPG, WEBP o AVIF.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('La imagen supera el límite de 5 MB.');
+      return;
+    }
+
+    setUploadingImage(true);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const res = await fetch('/api/products/upload-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename: file.name,
+            dataUrl: reader.result
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.url) {
+          throw new Error(data.error || 'No se pudo subir la imagen');
+        }
+        setProductForm(prev => ({ ...prev, image: data.url }));
+        showToast('Imagen adjuntada correctamente');
+      } catch (err) {
+        showToast(err.message || 'Error al subir la imagen');
+      } finally {
+        setUploadingImage(false);
+        event.target.value = '';
+      }
+    };
+    reader.onerror = () => {
+      setUploadingImage(false);
+      showToast('No se pudo leer el archivo seleccionado');
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSaveProductSubmit = async (e) => {
     e.preventDefault();
     if (!productForm.name.trim()) {
-      showToast('El nombre es obligatorio');
+      showToast('El nombre de la prenda es obligatorio');
       return;
     }
 
-    const lines = (productForm.variantsText || '').split('\n').map(line => line.trim()).filter(Boolean);
-    const variants = lines.map((line) => {
-      const [size, rawStock] = line.split(',').map(part => part.trim());
-      const previous = editingProduct?.variants?.find(variant => variant.size.toLowerCase() === (size || '').toLowerCase());
-      return { id: previous?.id || `size-${(size || '').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, size, stock: Number(rawStock) };
+    const variants = (productForm.variantsList || []).map((row) => {
+      const size = String(row.size || '').trim();
+      const stock = Number(row.stock === '' ? 0 : row.stock);
+      const previous = editingProduct?.variants?.find(v => v.size.toLowerCase() === size.toLowerCase());
+      return {
+        id: previous?.id || row.id || `size-${size.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+        size,
+        stock
+      };
     });
-    if (variants.some(variant => !variant.size || !Number.isInteger(variant.stock) || variant.stock < 0) ||
-        new Set(variants.map(variant => variant.size.toLowerCase())).size !== variants.length) {
-      showToast('Cada variante debe tener talla única y stock entero. Usa una línea por talla: M,3');
+
+    if (
+      variants.length === 0 ||
+      variants.some(variant => !variant.size || !Number.isInteger(variant.stock) || variant.stock < 0) ||
+      new Set(variants.map(variant => variant.size.toLowerCase())).size !== variants.length
+    ) {
+      showToast('Agrega al menos una talla válida sin duplicados y con stock entero.');
       return;
     }
+
+    const parsedColors = String(productForm.colors || '')
+      .split(',')
+      .map(c => c.trim())
+      .filter(Boolean);
+    const totalStock = variants.reduce((sum, v) => sum + v.stock, 0);
+    const parsedPrice = productForm.price === '' || productForm.price == null ? null : parseFloat(productForm.price);
+    const parsedPrevPrice = productForm.previousPrice === '' || productForm.previousPrice == null ? null : parseFloat(productForm.previousPrice);
 
     try {
+      const payload = {
+        name: productForm.name.trim(),
+        brand: String(productForm.brand || '').trim(),
+        subcategory: String(productForm.subcategory || '').trim(),
+        sizes: variants.map(v => v.size),
+        variants,
+        category: productForm.category,
+        price: parsedPrice,
+        previousPrice: parsedPrevPrice,
+        colors: parsedColors,
+        commercial: Boolean(productForm.commercial),
+        stock: totalStock,
+        description: String(productForm.description || '').trim(),
+        image: productForm.image
+      };
+
       if (editingProduct) {
-        await updateProduct(editingProduct.id, {
-          name: productForm.name.trim(),
-          brand: productForm.brand || '',
-          subcategory: productForm.subcategory || '',
-          sizes: (productForm.sizes || '').split(',').map(size => size.trim()).filter(Boolean),
-          variants,
-          category: productForm.category,
-          price: productForm.price === '' || productForm.price == null ? null : parseFloat(productForm.price),
-          stock: productForm.stock === '' || productForm.stock == null ? null : parseInt(productForm.stock, 10),
-          description: productForm.description.trim(),
-          image: productForm.image
-        });
+        await updateProduct(editingProduct.id, payload);
       } else {
-        await createNewProduct({
-          name: productForm.name.trim(),
-          brand: productForm.brand || '',
-          subcategory: productForm.subcategory || '',
-          variants,
-          category: productForm.category,
-          price: productForm.price === '' ? null : parseFloat(productForm.price),
-          description: productForm.description.trim(),
-          image: productForm.image
-        });
+        await createNewProduct(payload);
       }
       setIsCreateProductModalOpen(false);
       setEditingProduct(null);
@@ -537,11 +501,11 @@ export const AdminPanel = ({ setActivePage }) => {
     }
   };
 
-  const handleQuickRestock = async (productId, amount) => {
+  const handleQuickRestock = async (productId, amount, variantId) => {
     const qty = parseInt(amount, 10);
     if (!qty || qty <= 0) return;
     const product = products.find(item => item.id === productId);
-    await restockProduct(productId, qty, restockVariants[productId] || product?.variants?.[0]?.id);
+    await restockProduct(productId, qty, variantId || restockVariants[productId] || product?.variants?.[0]?.id);
     setCustomRestockInputs(prev => ({ ...prev, [productId]: '' }));
   };
 
@@ -610,7 +574,7 @@ export const AdminPanel = ({ setActivePage }) => {
   };
 
   // ==============================================================
-  // FILTRADO Y PAGINACIÓN DE PEDIDOS
+  // FILTRADO Y PAGINACIÓN DE PEDIDOS, PRODUCTOS Y CLIENTES
   // ==============================================================
   const filteredOrders = useMemo(() => {
     return orders.filter(o => {
@@ -621,8 +585,12 @@ export const AdminPanel = ({ setActivePage }) => {
         (o.customer?.email || '').toLowerCase().includes(q) ||
         (o.customer?.city || '').toLowerCase().includes(q);
 
-      const matchesStatus = orderStatusFilter === 'Todos' ||
-        (o.orderStatus || 'En proceso').toLowerCase() === orderStatusFilter.toLowerCase();
+      const status = o.orderStatus || 'En proceso';
+      const matchesStatus = orderStatusFilter === 'Todos'
+        ? true
+        : orderStatusFilter === 'Por gestionar'
+          ? ['Pendiente', 'Aceptado', 'En proceso'].includes(status)
+          : status.toLowerCase() === orderStatusFilter.toLowerCase();
 
       return matchesSearch && matchesStatus;
     }).sort((a, b) => {
@@ -641,8 +609,9 @@ export const AdminPanel = ({ setActivePage }) => {
       const q = productSearch.toLowerCase().trim();
       const matchesSearch = !q ||
         (p.name || '').toLowerCase().includes(q) ||
+        (p.brand || '').toLowerCase().includes(q) ||
         (p.category || '').toLowerCase().includes(q) ||
-        `sku-${p.id}`.toLowerCase().includes(q);
+        (p.sku || `sku-${p.id}`).toLowerCase().includes(q);
 
       const matchesCategory = productCategoryFilter === 'Todas' || p.category === productCategoryFilter;
 
@@ -654,6 +623,9 @@ export const AdminPanel = ({ setActivePage }) => {
       return matchesSearch && matchesCategory && matchesStock;
     });
   }, [products, productSearch, productCategoryFilter, productStockFilter]);
+
+  const totalProductPages = Math.ceil(filteredProducts.length / productsPerPage) || 1;
+  const paginatedProducts = filteredProducts.slice((productsPage - 1) * productsPerPage, productsPage * productsPerPage);
 
   // Filtrado de Clientes
   const filteredCustomers = useMemo(() => {
@@ -667,6 +639,9 @@ export const AdminPanel = ({ setActivePage }) => {
       );
     });
   }, [customers, customerSearch]);
+
+  const totalCustomerPages = Math.ceil(filteredCustomers.length / customersPerPage) || 1;
+  const paginatedCustomers = filteredCustomers.slice((customersPage - 1) * customersPerPage, customersPage * customersPerPage);
 
   const handleLogout = () => {
     logout();
@@ -686,50 +661,29 @@ export const AdminPanel = ({ setActivePage }) => {
   // Helper para insignias de estado de pedido
   const renderOrderStatusBadge = (status) => {
     const st = status || 'En proceso';
-    let bg = 'var(--bf-surface)';
-    let text = 'var(--bf-muted)';
-    let border = 'var(--bf-border)';
+    let tone = 'is-neutral';
     let Icon = Clock;
 
     if (st === 'Entregado') {
-      bg = '#F0FDF4';
-      text = '#15803D';
-      border = '#BBF7D0';
+      tone = 'is-success';
       Icon = PackageCheck;
     } else if (st === 'Enviado') {
-      bg = '#EFF6FF';
-      text = '#1D4ED8';
-      border = '#BFDBFE';
+      tone = 'is-info';
       Icon = Truck;
+    } else if (st === 'Aceptado') {
+      tone = 'is-neutral';
+      Icon = CheckCircle2;
     } else if (st === 'En proceso') {
-      bg = '#FFFBEB';
-      text = '#B45309';
-      border = '#FDE68A';
+      tone = 'is-warning';
       Icon = Clock;
     } else if (st === 'Cancelado') {
-      bg = '#FEF2F2';
-      text = '#B91C1C';
-      border = '#FECACA';
+      tone = 'is-danger';
       Icon = XCircle;
     }
 
     return (
-      <span
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '5px',
-          padding: '4px 10px',
-          borderRadius: '4px',
-          fontSize: '0.72rem',
-          fontWeight: '600',
-          letterSpacing: '0.3px',
-          backgroundColor: bg,
-          color: text,
-          border: `1px solid ${border}`
-        }}
-      >
-        <Icon size={12} strokeWidth={2} />
+      <span className={`admin-status-pill ${tone}`}>
+        <Icon size={12} strokeWidth={2} aria-hidden="true" />
         <span>{st}</span>
       </span>
     );
@@ -739,69 +693,33 @@ export const AdminPanel = ({ setActivePage }) => {
   const renderStockBadge = (stock) => {
     if (stock === 0) {
       return (
-        <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px',
-            padding: '3px 8px',
-            borderRadius: '4px',
-            fontSize: '0.7rem',
-            fontWeight: '600',
-            backgroundColor: 'var(--bf-surface)',
-            color: '#B91C1C',
-            border: '1px solid #FECACA'
-          }}
-        >
-          <AlertCircle size={11} />
+        <span className="admin-status-pill is-danger">
+          <AlertCircle size={12} aria-hidden="true" />
           <span>Agotado (0)</span>
         </span>
       );
     }
     if (stock <= 5) {
       return (
-        <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px',
-            padding: '3px 8px',
-            borderRadius: '4px',
-            fontSize: '0.7rem',
-            fontWeight: '600',
-            backgroundColor: '#FFFBEB',
-            color: '#B45309',
-            border: '1px solid #FDE68A'
-          }}
-        >
-          <Clock size={11} />
+        <span className="admin-status-pill is-warning">
+          <Clock size={12} aria-hidden="true" />
           <span>Bajo ({stock})</span>
         </span>
       );
     }
     return (
-      <span
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '4px',
-          padding: '3px 8px',
-          borderRadius: '4px',
-          fontSize: '0.7rem',
-          fontWeight: '600',
-          backgroundColor: '#F0FDF4',
-          color: '#15803D',
-          border: '1px solid #BBF7D0'
-        }}
-      >
-        <CheckCircle2 size={11} />
-        <span>{stock} unidades</span>
+      <span className="admin-status-pill is-success">
+        <CheckCircle2 size={12} aria-hidden="true" />
+        <span>{stock} uds</span>
       </span>
     );
   };
 
+  const sidebarIsCollapsed = sidebarCollapsed && !mobileMenuOpen;
+
   return (
     <div
+      className="sauz-admin-workspace"
       style={{
         display: 'flex',
         minHeight: '100vh',
@@ -811,11 +729,18 @@ export const AdminPanel = ({ setActivePage }) => {
       }}
     >
       {/* ==============================================================
-          BARRA LATERAL / SIDEBAR CORPORATIVO MINIMALISTA
+          BARRA LATERAL / SIDEBAR LIMPIO SAUZ BLACK
           ============================================================== */}
+      {mobileMenuOpen && (
+        <div
+          className="admin-sidebar-backdrop"
+          aria-hidden="true"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
       <aside
         style={{
-          width: sidebarCollapsed ? '72px' : '260px',
+          width: sidebarIsCollapsed ? '78px' : '284px',
           backgroundColor: 'var(--bf-secondary)',
           borderRight: '1px solid var(--bf-border)',
           display: 'flex',
@@ -828,80 +753,117 @@ export const AdminPanel = ({ setActivePage }) => {
           zIndex: 100,
           flexShrink: 0
         }}
-        className={mobileMenuOpen ? 'admin-sidebar-mobile-open' : 'admin-sidebar-desktop'}
+        data-collapsed={sidebarIsCollapsed && !mobileMenuOpen}
+        className={`admin-sidebar ${mobileMenuOpen ? 'admin-sidebar-mobile-open' : 'admin-sidebar-desktop'}`}
       >
-        <div>
-          {/* Cabecera del Sidebar */}
-          <div
-            style={{
-              height: '68px',
-              padding: sidebarCollapsed ? '0 16px' : '0 22px',
-              borderBottom: '1px solid var(--bf-border)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: sidebarCollapsed ? 'center' : 'space-between'
-            }}
-          >
-            {!sidebarCollapsed && (
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ width: '8px', height: '8px', backgroundColor: 'var(--bf-secondary)', borderRadius: '50%' }} />
-                  <span style={{ fontSize: '0.86rem', fontWeight: '800', letterSpacing: '2.5px', textTransform: 'uppercase' }}>
-                    SAUZ
-                  </span>
-                </div>
-                <span style={{ fontSize: '0.66rem', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--bf-muted)', display: 'block', marginTop: '2px' }}>
-                  Administración
-                </span>
+        <div className="admin-sidebar-content">
+          <div className="admin-sidebar-brand">
+            {!sidebarIsCollapsed ? (
+              <div className="admin-sidebar-identity">
+                <img src={approvedBrandAssets.SAUZ.src} alt="SAUZ Store" width="64" height="37" />
+                <span>Administración</span>
               </div>
+            ) : (
+              <span className="admin-sidebar-monogram">S.</span>
             )}
-
-            {sidebarCollapsed && (
-              <span style={{ fontSize: '0.9rem', fontWeight: '900', letterSpacing: '1px' }}>S</span>
-            )}
-
-            <button
-              type="button"
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              aria-label={sidebarCollapsed ? 'Expandir barra lateral' : 'Contraer barra lateral'}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'var(--bf-muted)',
-                cursor: 'pointer',
-                padding: '6px',
-                borderRadius: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'background-color 0.15s, color 0.15s'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--bf-surface)';
-                e.currentTarget.style.color = 'var(--bf-bg)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = 'var(--bf-muted)';
-              }}
-            >
-              {sidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-            </button>
           </div>
 
           {/* Menú de Navegación */}
-          <nav style={{ padding: '16px 10px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <nav aria-label="Administración de la tienda" className="admin-sidebar-nav" style={{ display: 'flex', flexDirection: 'column' }}>
             {[
               { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-              { id: 'products', label: 'Productos', icon: ShoppingBag },
-              { id: 'inventory', label: 'Inventario', icon: Boxes, badge: lowStockProducts.length > 0 ? lowStockProducts.length : null },
-              { id: 'orders', label: 'Pedidos', icon: ClipboardList, badge: pendingOrders.length > 0 ? pendingOrders.length : null },
+              {
+                id: 'catalog',
+                label: 'Catálogo',
+                icon: ShoppingBag,
+                children: [
+                  { id: 'products', label: 'Productos', count: products.length },
+                  { id: 'inventory', label: 'Inventario', count: (inventorySummary.lowProductCount + inventorySummary.outProductCount) > 0 ? (inventorySummary.lowProductCount + inventorySummary.outProductCount) : null }
+                ]
+              },
+              {
+                id: 'ordersGroup',
+                label: 'Pedidos',
+                icon: ClipboardList,
+                children: [
+                  { id: 'orders', label: 'Todos los pedidos', filter: 'Todos' },
+                  { id: 'orders-pending', tab: 'orders', label: 'Pendientes', filter: 'Por gestionar', count: pendingOrders.length > 0 ? pendingOrders.length : null }
+                ]
+              },
               { id: 'customers', label: 'Clientes', icon: Users },
-              { id: 'sales', label: 'Ventas', icon: DollarSign },
+              { id: 'sales', label: 'Ventas', icon: TrendingUp },
               { id: 'reports', label: 'Reportes', icon: BarChart3 },
               { id: 'settings', label: 'Configuración', icon: Settings }
             ].map((item) => {
               const Icon = item.icon;
+              if (item.children) {
+                const isGroupActive = item.id === 'catalog'
+                  ? (activeTab === 'products' || activeTab === 'inventory')
+                  : activeTab === 'orders';
+                const isOpen = !sidebarIsCollapsed && Boolean(openNavGroups[item.id]);
+                return (
+                  <div key={item.id}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (sidebarIsCollapsed) {
+                          setSidebarCollapsed(false);
+                          setOpenNavGroups(prev => ({ ...prev, [item.id]: true }));
+                          setActiveTab(item.id === 'catalog' ? 'products' : 'orders');
+                        } else {
+                          setOpenNavGroups(prev => ({ ...prev, [item.id]: !prev[item.id] }));
+                        }
+                      }}
+                      title={sidebarIsCollapsed ? item.label : undefined}
+                      aria-expanded={isOpen}
+                      className={`admin-nav-item ${isGroupActive && !isOpen ? 'active' : ''}`}
+                    >
+                      <span className="admin-nav-main">
+                        <span className="admin-nav-icon"><Icon size={20} strokeWidth={1.8} /></span>
+                        {!sidebarIsCollapsed && <span className="admin-nav-label">{item.label}</span>}
+                      </span>
+                      {!sidebarIsCollapsed && (
+                        <ChevronDown size={17} className={`admin-nav-chevron ${isOpen ? 'is-open' : ''}`} aria-hidden="true" />
+                      )}
+                    </button>
+
+                    {isOpen && (
+                      <div className="admin-nav-submenu">
+                        {item.children.map((child) => {
+                          const targetTab = child.tab || child.id;
+                          const isChildActive = child.id === 'orders-pending'
+                            ? activeTab === 'orders' && orderStatusFilter === 'Por gestionar'
+                            : child.id === 'orders'
+                              ? activeTab === 'orders' && orderStatusFilter !== 'Por gestionar'
+                              : activeTab === targetTab;
+                          return (
+                            <button
+                              key={child.id}
+                              type="button"
+                              aria-current={isChildActive ? 'page' : undefined}
+                              className={`admin-nav-subitem ${isChildActive ? 'active' : ''}`}
+                              onClick={() => {
+                                if (child.filter) {
+                                  setOrderStatusFilter(child.filter);
+                                  setOrdersPage(1);
+                                }
+                                setActiveTab(targetTab);
+                                setMobileMenuOpen(false);
+                              }}
+                            >
+                              <span>{child.label}</span>
+                              {child.count !== null && child.count !== undefined && (
+                                <span className="admin-nav-count">{child.count}</span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
               const isActive = activeTab === item.id;
               return (
                 <button
@@ -911,176 +873,42 @@ export const AdminPanel = ({ setActivePage }) => {
                     setActiveTab(item.id);
                     setMobileMenuOpen(false);
                   }}
-                  title={sidebarCollapsed ? item.label : undefined}
+                  title={sidebarIsCollapsed ? item.label : undefined}
+                  aria-current={isActive ? 'page' : undefined}
                   className={`admin-nav-item ${isActive ? 'active' : ''}`}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: sidebarCollapsed ? 'center' : 'space-between',
-                    padding: sidebarCollapsed ? '10px 0' : '9px 12px',
-                    borderRadius: '6px',
-                    backgroundColor: isActive ? 'var(--bf-bg)' : 'transparent',
-                    color: isActive ? 'var(--bf-text)' : 'var(--bf-muted)',
-                    border: 'none',
-                    fontSize: '0.84rem',
-                    fontWeight: isActive ? '600' : '500',
-                    cursor: 'pointer',
-                    textAlign: 'left'
-                  }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
-                    {!sidebarCollapsed && <span>{item.label}</span>}
-                  </div>
-
-                  {!sidebarCollapsed && item.badge !== null && item.badge !== undefined && (
-                    <span
-                      style={{
-                        fontSize: '0.68rem',
-                        fontWeight: '700',
-                        padding: '2px 7px',
-                        borderRadius: '10px',
-                        backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : 'var(--bf-surface)',
-                        color: isActive ? 'var(--bf-text)' : 'var(--bf-muted)',
-                        border: isActive ? 'none' : '1px solid var(--bf-border)'
-                      }}
-                    >
-                      {item.badge}
-                    </span>
-                  )}
+                  <span className="admin-nav-main">
+                    <span className="admin-nav-icon"><Icon size={20} strokeWidth={1.8} /></span>
+                    {!sidebarIsCollapsed && <span className="admin-nav-label">{item.label}</span>}
+                  </span>
                 </button>
               );
             })}
           </nav>
         </div>
 
-        {/* Zona Inferior: Perfil y Cierre de Sesión */}
-        <div style={{ padding: '14px 10px', borderTop: '1px solid var(--bf-border)' }}>
-          {/* Botón Ir a Tienda */}
+        {/* Zona Inferior: Ver tienda y Cierre de Sesión */}
+        <div className="admin-sidebar-footer">
           <button
             type="button"
             onClick={handleGoToStore}
-            title={sidebarCollapsed ? 'Ver tienda pública' : undefined}
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: sidebarCollapsed ? 'center' : 'flex-start',
-              gap: '10px',
-              padding: '8px 12px',
-              borderRadius: '6px',
-              backgroundColor: 'transparent',
-              color: 'var(--bf-muted)',
-              border: 'none',
-              fontSize: '0.8rem',
-              fontWeight: '500',
-              cursor: 'pointer',
-              marginBottom: '6px',
-              transition: 'background-color 0.15s, color 0.15s'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--bf-surface)';
-              e.currentTarget.style.color = 'var(--bf-bg)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = 'var(--bf-muted)';
-            }}
+            className="admin-sidebar-action"
+            aria-label="Ir a la tienda"
+            title={sidebarIsCollapsed ? 'Ver tienda' : undefined}
           >
-            <ExternalLink size={16} />
-            {!sidebarCollapsed && <span>Ir a la tienda</span>}
+            <ExternalLink size={20} strokeWidth={1.8} aria-hidden="true" />
+            {!sidebarIsCollapsed && <span>Ver tienda</span>}
           </button>
-
-          {/* Tarjeta de Perfil / Logout */}
-          <div
-            style={{
-              padding: sidebarCollapsed ? '8px 0' : '10px 12px',
-              backgroundColor: 'var(--bf-surface)',
-              borderRadius: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: sidebarCollapsed ? 'center' : 'space-between',
-              gap: '8px'
-            }}
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="admin-sidebar-action is-logout"
+            aria-label="Cerrar sesión"
+            title={sidebarIsCollapsed ? 'Cerrar sesión' : undefined}
           >
-            {!sidebarCollapsed ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden' }}>
-                <div
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '4px',
-                    backgroundColor: 'var(--bf-secondary)',
-                    color: 'var(--bf-text)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.78rem',
-                    fontWeight: '700',
-                    flexShrink: 0
-                  }}
-                >
-                  {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
-                </div>
-                <div style={{ overflow: 'hidden' }}>
-                  <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--bf-text)', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                    {user?.name || 'Administrador'}
-                  </span>
-                  <span style={{ fontSize: '0.68rem', color: 'var(--bf-muted)', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                    {user?.email || 'admin@sauzstore.com'}
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '4px',
-                  backgroundColor: 'var(--bf-secondary)',
-                  color: 'var(--bf-text)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.78rem',
-                  fontWeight: '700'
-                }}
-              >
-                A
-              </div>
-            )}
-
-            {!sidebarCollapsed && (
-              <button
-                type="button"
-                onClick={handleLogout}
-                title="Cerrar sesión"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--bf-muted)',
-                  cursor: 'pointer',
-                  padding: '6px',
-                  borderRadius: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'color 0.15s, background-color 0.15s'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.color = '#DC2626';
-                  e.currentTarget.style.backgroundColor = 'var(--bf-text)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.color = 'var(--bf-muted)';
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-              >
-                <LogOut size={16} />
-              </button>
-            )}
-          </div>
+            <LogOut size={20} strokeWidth={1.8} aria-hidden="true" />
+            {!sidebarIsCollapsed && <span>Cerrar Sesión</span>}
+          </button>
         </div>
       </aside>
 
@@ -1089,7 +917,7 @@ export const AdminPanel = ({ setActivePage }) => {
           ============================================================== */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
         {/* Cabecera Superior Corporativa */}
-        <header
+        <header className="admin-topbar"
           style={{
             height: '68px',
             backgroundColor: 'var(--bf-secondary)',
@@ -1107,7 +935,9 @@ export const AdminPanel = ({ setActivePage }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <button
               type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => window.innerWidth <= 900 ? setMobileMenuOpen(!mobileMenuOpen) : setSidebarCollapsed(!sidebarCollapsed)}
+              aria-label="Abrir o cerrar menú de administración"
+              aria-expanded={window.innerWidth <= 900 ? mobileMenuOpen : !sidebarCollapsed}
               className="admin-mobile-toggle-btn"
               style={{
                 background: 'none',
@@ -1129,7 +959,7 @@ export const AdminPanel = ({ setActivePage }) => {
                 <span>Administración</span>
                 <span>/</span>
                 <span style={{ textTransform: 'capitalize', color: 'var(--bf-text)', fontWeight: '600' }}>
-                  {activeTab === 'dashboard' && 'Dashboard'}
+                  {activeTab === 'dashboard' && 'Resumen'}
                   {activeTab === 'products' && 'Productos'}
                   {activeTab === 'inventory' && 'Inventario'}
                   {activeTab === 'orders' && 'Pedidos'}
@@ -1140,7 +970,7 @@ export const AdminPanel = ({ setActivePage }) => {
                 </span>
               </div>
               <h2 style={{ fontSize: '1.15rem', fontWeight: '800', margin: '2px 0 0 0', letterSpacing: '-0.02em', color: 'var(--bf-text)' }}>
-                {activeTab === 'dashboard' && 'Resumen Ejecutivo'}
+                {activeTab === 'dashboard' && 'Tu tienda, de un vistazo'}
                 {activeTab === 'products' && 'Catálogo de Prendas'}
                 {activeTab === 'inventory' && 'Inventario y Existencias'}
                 {activeTab === 'orders' && 'Gestión de Pedidos'}
@@ -1153,19 +983,10 @@ export const AdminPanel = ({ setActivePage }) => {
           </div>
 
           {/* Derecha: Selector de período, Notificaciones y Acciones */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div className="admin-topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             {/* Controles de período para métricas financieras */}
-            {(activeTab === 'dashboard' || activeTab === 'sales' || activeTab === 'reports') && (
-              <div
-                style={{
-                  display: 'flex',
-                  backgroundColor: 'var(--bf-surface)',
-                  padding: '3px',
-                  borderRadius: '6px',
-                  border: '1px solid var(--bf-border)'
-                }}
-                className="admin-period-controls"
-              >
+            {(activeTab === 'sales' || activeTab === 'reports') && (
+              <div className="admin-period-controls" style={{ display: 'flex', backgroundColor: '#101010', border: '1px solid #303030' }}>
                 {[
                   { id: 'today', label: 'Hoy' },
                   { id: '7days', label: '7 días' },
@@ -1175,18 +996,15 @@ export const AdminPanel = ({ setActivePage }) => {
                   <button
                     key={p.id}
                     type="button"
+                    aria-pressed={periodFilter === p.id}
                     onClick={() => setPeriodFilter(p.id)}
                     style={{
-                      padding: '5px 11px',
-                      borderRadius: '4px',
+                      padding: '6px 13px',
                       border: 'none',
-                      backgroundColor: periodFilter === p.id ? 'var(--bf-text)' : 'transparent',
-                      color: periodFilter === p.id ? 'var(--bf-bg)' : 'var(--bf-muted)',
-                      fontSize: '0.74rem',
-                      fontWeight: periodFilter === p.id ? '700' : '500',
-                      cursor: 'pointer',
-                      boxShadow: periodFilter === p.id ? '0 1px 2px rgba(0,0,0,0.05)' : 'none',
-                      transition: 'all 0.15s'
+                      backgroundColor: 'transparent',
+                      color: '#a6a6a6',
+                      fontWeight: '600',
+                      cursor: 'pointer'
                     }}
                   >
                     {p.label}
@@ -1195,32 +1013,7 @@ export const AdminPanel = ({ setActivePage }) => {
               </div>
             )}
 
-            {/* Acción rápida según pestaña */}
-            {activeTab === 'products' && (
-              <button
-                type="button"
-                onClick={handleOpenCreateProduct}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '7px 14px',
-                  backgroundColor: 'var(--bf-secondary)',
-                  color: 'var(--bf-text)',
-                  borderRadius: '6px',
-                  border: 'none',
-                  fontSize: '0.78rem',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.15s'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--bf-raised)'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--bf-bg)'}
-              >
-                <Plus size={15} />
-                <span>Nueva Prenda</span>
-              </button>
-            )}
+            <div className="admin-topbar-user"><span><strong>{user?.name || 'Administrador'}</strong><small>Administración SAUZ</small></span><span className="admin-topbar-avatar">{user?.name?.charAt(0).toUpperCase() || 'A'}</span></div>
 
             {/* Menú de Notificaciones */}
             <div style={{ position: 'relative' }}>
@@ -1229,11 +1022,11 @@ export const AdminPanel = ({ setActivePage }) => {
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
                 aria-label="Notificaciones"
                 style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '6px',
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '10px',
                   border: '1px solid var(--bf-border)',
-                  backgroundColor: 'var(--bf-secondary)',
+                  backgroundColor: '#1b1b1b',
                   color: 'var(--bf-text)',
                   cursor: 'pointer',
                   display: 'flex',
@@ -1251,7 +1044,7 @@ export const AdminPanel = ({ setActivePage }) => {
                       right: '-3px',
                       width: '8px',
                       height: '8px',
-                      backgroundColor: '#DC2626',
+                      backgroundColor: '#ff1724',
                       borderRadius: '50%'
                     }}
                   />
@@ -1259,59 +1052,42 @@ export const AdminPanel = ({ setActivePage }) => {
               </button>
 
               {notificationsOpen && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '46px',
-                    right: 0,
-                    width: '320px',
-                    backgroundColor: 'var(--bf-secondary)',
-                    border: '1px solid var(--bf-border)',
-                    borderRadius: '8px',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.08)',
-                    padding: '16px',
-                    zIndex: 200
-                  }}
-                >
+                <div className="admin-notifications-popover">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '0.82rem', fontWeight: '700', color: 'var(--bf-text)' }}>Notificaciones Operativas</span>
+                    <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--bf-text)' }}>Notificaciones operativas</span>
                     <button
                       type="button"
+                      className="admin-modal-close"
+                      style={{ width: '28px', height: '28px' }}
+                      aria-label="Cerrar notificaciones"
                       onClick={() => setNotificationsOpen(false)}
-                      style={{ background: 'none', border: 'none', color: 'var(--bf-muted)', cursor: 'pointer', padding: 0 }}
                     >
                       <X size={14} />
                     </button>
                   </div>
 
                   {pendingOrders.length === 0 ? (
-                    <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--bf-muted)' }}>No hay pedidos pendientes de despacho.</p>
+                    <p style={{ margin: 0, fontSize: '12px', color: 'var(--bf-muted)' }}>No hay pedidos pendientes de despacho.</p>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <span style={{ fontSize: '0.72rem', color: '#B45309', fontWeight: '600' }}>
-                        {pendingOrders.length} pedido(s) requieren atención:
+                      <span style={{ fontSize: '11px', color: '#fbbf24', fontWeight: '600' }}>
+                        {pendingOrders.length} {pendingOrders.length === 1 ? 'pedido requiere' : 'pedidos requieren'} atención:
                       </span>
                       {pendingOrders.slice(0, 3).map(po => (
                         <div
                           key={po.orderId}
+                          className="admin-notification-item"
                           onClick={() => {
                             setSelectedOrderDetails(po);
                             setNotificationsOpen(false);
                             setActiveTab('orders');
                           }}
-                          style={{
-                            padding: '8px 10px',
-                            backgroundColor: 'var(--bf-surface)',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontSize: '0.75rem'
-                          }}
                         >
-                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px' }}>
                             <strong style={{ color: 'var(--bf-text)' }}>{po.orderId}</strong>
-                            <span style={{ color: 'var(--bf-muted)' }}>{formatMoney(po.total)}</span>
+                            <span className="admin-tabular" style={{ color: 'var(--bf-muted)' }}>{formatMoney(po.total)}</span>
                           </div>
-                          <span style={{ color: 'var(--bf-muted)', display: 'block', fontSize: '0.7rem' }}>{po.customer?.name}</span>
+                          <span style={{ color: 'var(--bf-muted)', display: 'block', fontSize: '11px', marginTop: '3px' }}>{po.customer?.name}</span>
                         </div>
                       ))}
                     </div>
@@ -1325,182 +1101,47 @@ export const AdminPanel = ({ setActivePage }) => {
         {/* ==============================================================
             CONTENEDOR DE PÁGINA (SEGÚN activeTab)
             ============================================================== */}
-        <main style={{ padding: 'clamp(20px, 3.5vw, 40px)', flex: 1 }}>
+        <main className="admin-main" style={{ padding: 'clamp(20px, 3.5vw, 40px)', flex: 1 }}>
           {/* ==============================================================
               VISTA 1: DASHBOARD (RESUMEN EJECUTIVO & INDICADORES FINANCIEROS)
               ============================================================== */}
           {activeTab === 'dashboard' && (
-            <div className="admin-view-animated" style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-              {/* Grid de 6 Indicadores Financieros con Micro-interacciones */}
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-                  gap: '16px'
-                }}
-              >
-                {/* 1. Ingresos Netos Confirmados */}
-                <div className="admin-kpi-card">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
-                      Ingresos Netos (COP)
-                    </span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '0.72rem', fontWeight: '700', color: '#15803D', backgroundColor: '#F0FDF4', padding: '2px 6px', borderRadius: '4px' }}>
-                      <ArrowUpRight size={12} /> +12.4%
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
-                    {formatMoney(totalNetRevenue)}
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
-                      Excluye pedidos cancelados ({cancelledOrders.length})
-                    </span>
-                    <svg width="48" height="18" viewBox="0 0 48 18">
-                      <path d="M 2 15 Q 14 12, 22 9 T 36 6 T 46 2" fill="none" stroke="#15803D" strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                  </div>
+            <div className="admin-view-animated admin-overview" style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+              <section className="admin-welcome admin-report-heading" aria-labelledby="admin-welcome-title">
+                <div><span className="admin-eyebrow">SAUZ / CENTRO DE CONTROL</span><h1 id="admin-welcome-title">RESUMEN DE TU TIENDA.</h1><p>Ventas, pedidos e inventario en un solo lugar.</p></div>
+                <button type="button" className="admin-primary-action" onClick={handleOpenCreateProduct}><Plus size={17} /> Nuevo producto</button>
+              </section>
+              <section className="admin-date-panel" aria-labelledby="admin-date-title">
+                <div className="admin-date-heading"><span className="admin-task-icon"><Calendar size={20} aria-hidden="true" /></span><div><h2 id="admin-date-title">Selecciona el período</h2><p>Las cifras y la gráfica se actualizan con tu selección.</p></div><span className="admin-date-current" role="status">{overviewPeriod}</span></div>
+                <div className="admin-date-fields">
+                  <label>Año<select aria-label="Año de consulta" value={overviewCalendar?.year || ''} onChange={e=>setOverviewCalendar(e.target.value ? {year:e.target.value,month:overviewCalendar?.month || 'all'} : null)}><option value="">Rango rápido</option>{overviewYears.map(year=><option key={year} value={year}>{year}</option>)}</select></label>
+                  <label>Mes<select aria-label="Mes de consulta" value={overviewCalendar?.month || 'all'} disabled={!overviewCalendar} onChange={e=>setOverviewCalendar({...overviewCalendar,month:e.target.value})}><option value="all">Todos los meses</option>{Array.from({length:12},(_,month)=><option key={month} value={month}>{new Date(2026,month,1).toLocaleDateString('es-CO',{month:'long'})}</option>)}</select></label>
+                  <div className="admin-date-quick"><span>Acceso rápido</span><div className="admin-period-controls">{[{id:'today',label:'Hoy'},{id:'7days',label:'7 días'},{id:'30days',label:'30 días'},{id:'month',label:'Este mes'}].map(period=><button key={period.id} type="button" aria-pressed={!overviewCalendar && periodFilter===period.id} onClick={()=>{setOverviewCalendar(null);setPeriodFilter(period.id);}}>{period.label}</button>)}</div></div>
+                  <button className="admin-date-reset" type="button" onClick={()=>{setOverviewCalendar(null);setPeriodFilter('30days');}}><RefreshCw size={15} aria-hidden="true" /> Restablecer</button>
                 </div>
-
-                {/* 2. Ventas del Mes */}
-                <div className="admin-kpi-card">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
-                      Ventas Este Mes
-                    </span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '0.72rem', fontWeight: '700', color: '#15803D', backgroundColor: '#F0FDF4', padding: '2px 6px', borderRadius: '4px' }}>
-                      <ArrowUpRight size={12} /> +8.0%
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
-                    {formatMoney(monthRevenue)}
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
-                      Octubre 2026 en curso
-                    </span>
-                    <svg width="48" height="18" viewBox="0 0 48 18">
-                      <path d="M 2 14 Q 16 13, 26 8 T 38 7 T 46 3" fill="none" stroke="var(--bf-text)" strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                  </div>
+              </section>
+              <section aria-labelledby="admin-metrics-title">
+                <div className="admin-section-label"><h2 id="admin-metrics-title">Ventas del período</h2><span>{overviewPeriod} · Valores en COP</span></div>
+                <div className="admin-metrics-grid">
+                  {[
+                    {label:'Valor de los pedidos',value:formatMoney(overviewRevenue),description:'No incluye pedidos cancelados.',icon:DollarSign},
+                    {label:'Pedidos recibidos',value:overviewCount,description:'Pedidos no cancelados del período.',icon:ClipboardList},
+                    {label:'Promedio por pedido',value:formatMoney(overviewAverage),description:'Valor total dividido entre los pedidos.',icon:TrendingUp},
+                    {label:'Unidades vendidas',value:overviewUnits,description:'Suma de las unidades en los pedidos.',icon:ShoppingBag}
+                  ].map(({label,value,description,icon:Icon}) => <article className="admin-metric" key={label}><div><span>{label}</span><Icon size={18} aria-hidden="true" /></div><strong>{value}</strong><p>{description}</p></article>)}
                 </div>
+              </section>
 
-                {/* 3. Valor Promedio por Pedido (AOV) */}
-                <div className="admin-kpi-card">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
-                      Ticket Promedio (AOV)
-                    </span>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', fontWeight: '600' }}>
-                      Por orden
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
-                    {formatMoney(averageOrderValue)}
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', display: 'block', marginTop: '6px' }}>
-                    Promedio de compra por cliente
-                  </span>
+              <section className="admin-tasks" aria-labelledby="admin-tasks-title">
+                <div className="admin-section-label"><h2 id="admin-tasks-title">¿Qué necesitas hacer?</h2><span>Pendientes de toda la tienda</span></div>
+                <div className="admin-task-grid">
+                  <button type="button" onClick={() => setActiveTab('orders')}><span className="admin-task-icon"><ClipboardList size={21} /></span><span><strong>{pendingOrders.length} {pendingOrders.length === 1 ? 'pedido por gestionar' : 'pedidos por gestionar'}</strong><small>Revisa, acepta y prepara las compras.</small></span><ArrowRight size={18} /></button>
+                  <button type="button" onClick={() => { setInventoryFilter('attention'); setInventoryPage(1); setActiveTab('inventory'); }}><span className="admin-task-icon"><Boxes size={21} /></span><span><strong>{inventorySummary.lowProductCount + inventorySummary.outProductCount} {(inventorySummary.lowProductCount + inventorySummary.outProductCount) === 1 ? 'producto por reponer' : 'productos por reponer'}</strong><small>{inventorySummary.outProductCount} con tallas agotadas · {inventorySummary.lowProductCount} con tallas bajas</small></span><ArrowRight size={18} /></button>
+                  <button type="button" onClick={() => setActiveTab('products')}><span className="admin-task-icon"><ShoppingBag size={21} /></span><span><strong>Administrar catálogo</strong><small>Consulta productos, precios e imágenes.</small></span><ArrowRight size={18} /></button>
                 </div>
-
-                {/* 4. Pedidos Totales & Pendientes (Interactivo) */}
-                <div
-                  className="admin-kpi-card"
-                  onClick={() => setActiveTab('orders')}
-                  style={{ cursor: 'pointer' }}
-                  title="Clic para ir al módulo de pedidos"
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
-                      Pedidos Realizados
-                    </span>
-                    {pendingOrders.length > 0 ? (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', fontWeight: '700', color: '#B45309', backgroundColor: '#FFFBEB', padding: '2px 6px', borderRadius: '4px' }}>
-                        <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#B45309' }} />
-                        {pendingOrders.length} por despachar
-                      </span>
-                    ) : (
-                      <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#15803D', backgroundColor: '#F0FDF4', padding: '2px 6px', borderRadius: '4px' }}>
-                        Al día
-                      </span>
-                    )}
-                  </div>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
-                    {orders.length}
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
-                      {deliveredOrders.length} entregados exitosamente
-                    </span>
-                    <ArrowRight size={13} color="var(--bf-muted)" />
-                  </div>
-                </div>
-
-                {/* 5. Unidades de Prendas Vendidas */}
-                <div
-                  className="admin-kpi-card"
-                  onClick={() => setActiveTab('products')}
-                  style={{ cursor: 'pointer' }}
-                  title="Clic para ver catálogo y productos"
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
-                      Prendas Despachadas
-                    </span>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', fontWeight: '600' }}>
-                      Físico
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
-                    {totalUnitsSold}
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
-                      Unidades totales vendidas
-                    </span>
-                    <ArrowRight size={13} color="var(--bf-muted)" />
-                  </div>
-                </div>
-
-                {/* 6. Existencias Bajas o Críticas */}
-                <div
-                  className="admin-kpi-card"
-                  onClick={() => {
-                    setProductStockFilter('low_stock');
-                    setActiveTab('inventory');
-                  }}
-                  style={{ cursor: 'pointer' }}
-                  title="Clic para filtrar inventario con bajo stock"
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
-                      Alertas de Stock
-                    </span>
-                    {lowStockProducts.length > 0 ? (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', fontWeight: '700', color: '#B91C1C', backgroundColor: 'var(--bf-surface)', padding: '2px 6px', borderRadius: '4px' }}>
-                        <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#B91C1C' }} />
-                        {lowStockProducts.length} críticos
-                      </span>
-                    ) : (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', fontWeight: '700', color: '#15803D', backgroundColor: '#F0FDF4', padding: '2px 6px', borderRadius: '4px' }}>
-                        <span className="chart-pulse-badge" /> Óptimo
-                      </span>
-                    )}
-                  </div>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
-                    {lowStockProducts.length + outOfStockProducts.length}
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
-                      Prendas con 5 o menos existencias
-                    </span>
-                    <ArrowRight size={13} color="var(--bf-muted)" />
-                  </div>
-                </div>
-              </div>
-
+              </section>
               {/* Gráfica Recharts Interactiva Premium */}
-              <div
+              <div className="admin-overview-chart"
                 style={{
                   backgroundColor: 'var(--bf-secondary)',
                   border: '1px solid var(--bf-border)',
@@ -1525,136 +1166,67 @@ export const AdminPanel = ({ setActivePage }) => {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                       <span style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.8px', textTransform: 'uppercase', color: 'var(--bf-muted)' }}>
-                        Evolución Financiera de Ventas
+                        VENTAS EN EL TIEMPO
                       </span>
-                      <span
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          fontSize: '0.68rem',
-                          fontWeight: '700',
-                          color: '#15803D',
-                          backgroundColor: '#F0FDF4',
-                          border: '1px solid #DCFCE7',
-                          padding: '1px 7px',
-                          borderRadius: '12px'
-                        }}
-                      >
-                        <span className="chart-pulse-badge" /> EN VIVO
+                      <span className="admin-live-pill">
+                        <span className="chart-pulse-badge" /> PEDIDOS REGISTRADOS
                       </span>
                     </div>
                     <h3 style={{ fontSize: '1.35rem', fontWeight: '800', margin: 0, color: 'var(--bf-text)', letterSpacing: '-0.02em' }}>
-                      {chartViewMode === 'revenue_accum' && 'Ingresos acumulados del período'}
-                      {chartViewMode === 'revenue' && 'Facturación diaria confirmada'}
-                      {chartViewMode === 'orders' && 'Volumen de pedidos por checkpoint'}
+                      {chartViewMode === 'revenue_accum' && 'Valor acumulado de los pedidos'}
+                      {chartViewMode === 'revenue' && 'Valor de los pedidos por fecha'}
+                      {chartViewMode === 'orders' && 'Cantidad de pedidos por fecha'}
                     </h3>
                     <p style={{ margin: '4px 0 0 0', fontSize: '0.78rem', color: 'var(--bf-muted)' }}>
                       {chartViewMode.startsWith('revenue') 
-                        ? `Total acumulado: ${formatMoney(totalNetRevenue)} en ${orders.length} pedidos (${totalUnitsSold} prendas)`
-                        : `Total de transacciones: ${orders.length} pedidos procesados`}
+                        ? `Total acumulado: ${formatMoney(overviewRevenue)} en ${overviewCount} pedidos (${overviewUnits} unidades)`
+                        : `${overviewCount} pedidos · ${overviewPeriod}`}
                     </p>
                   </div>
 
                   {/* Selector de métricas y tipo de gráfica */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                    {/* Botones de Métrica */}
-                    <div style={{ display: 'flex', backgroundColor: 'var(--bf-surface)', padding: '3px', borderRadius: '6px', gap: '2px' }}>
-                      <button
-                        type="button"
-                        onClick={() => setChartViewMode('revenue_accum')}
-                        style={{
-                          border: 'none',
-                          padding: '6px 12px',
-                          borderRadius: '5px',
-                          fontSize: '0.74rem',
-                          fontWeight: '700',
-                          cursor: 'pointer',
-                          backgroundColor: chartViewMode === 'revenue_accum' ? 'var(--bf-bg)' : 'transparent',
-                          color: chartViewMode === 'revenue_accum' ? 'var(--bf-text)' : 'var(--bf-muted)',
-                          transition: 'all 0.2s ease'
-                        }}
-                      >
-                        Acumulado
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setChartViewMode('revenue')}
-                        style={{
-                          border: 'none',
-                          padding: '6px 12px',
-                          borderRadius: '5px',
-                          fontSize: '0.74rem',
-                          fontWeight: '700',
-                          cursor: 'pointer',
-                          backgroundColor: chartViewMode === 'revenue' ? 'var(--bf-bg)' : 'transparent',
-                          color: chartViewMode === 'revenue' ? 'var(--bf-text)' : 'var(--bf-muted)',
-                          transition: 'all 0.2s ease'
-                        }}
-                      >
-                        Por Día
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setChartViewMode('orders')}
-                        style={{
-                          border: 'none',
-                          padding: '6px 12px',
-                          borderRadius: '5px',
-                          fontSize: '0.74rem',
-                          fontWeight: '700',
-                          cursor: 'pointer',
-                          backgroundColor: chartViewMode === 'orders' ? 'var(--bf-bg)' : 'transparent',
-                          color: chartViewMode === 'orders' ? 'var(--bf-text)' : 'var(--bf-muted)',
-                          transition: 'all 0.2s ease'
-                        }}
-                      >
-                        Pedidos
-                      </button>
+                  <div className="admin-chart-controls">
+                    <div className="admin-period-controls">
+                      {[
+                        { id: 'revenue_accum', label: 'Acumulado' },
+                        { id: 'revenue', label: 'Por día' },
+                        { id: 'orders', label: 'Pedidos' }
+                      ].map(mode => (
+                        <button
+                          key={mode.id}
+                          type="button"
+                          aria-pressed={chartViewMode === mode.id}
+                          onClick={() => setChartViewMode(mode.id)}
+                        >
+                          {mode.label}
+                        </button>
+                      ))}
                     </div>
 
-                    {/* Toggle Curva vs Barras */}
-                    <div style={{ display: 'flex', backgroundColor: 'var(--bf-surface)', padding: '3px', borderRadius: '6px', gap: '2px' }}>
+                    <div className="admin-period-controls">
                       <button
                         type="button"
+                        aria-pressed={chartType === 'area'}
                         onClick={() => setChartType('area')}
-                        title="Ver curva fluida"
-                        style={{
-                          border: 'none',
-                          padding: '6px 10px',
-                          borderRadius: '5px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          backgroundColor: chartType === 'area' ? 'var(--bf-bg)' : 'transparent',
-                          color: chartType === 'area' ? 'var(--bf-text)' : 'var(--bf-muted)',
-                          transition: 'all 0.2s ease'
-                        }}
+                        aria-label="Ver gráfica de líneas"
+                        title="Ver gráfica de líneas"
                       >
-                        <Activity size={14} />
+                        <Activity size={14} aria-hidden="true" />
                       </button>
                       <button
                         type="button"
+                        aria-pressed={chartType === 'bar'}
                         onClick={() => setChartType('bar')}
-                        title="Ver columnas ejecutivas"
-                        style={{
-                          border: 'none',
-                          padding: '6px 10px',
-                          borderRadius: '5px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          backgroundColor: chartType === 'bar' ? 'var(--bf-bg)' : 'transparent',
-                          color: chartType === 'bar' ? 'var(--bf-text)' : 'var(--bf-muted)',
-                          transition: 'all 0.2s ease'
-                        }}
+                        aria-label="Ver gráfica de barras"
+                        title="Ver gráfica de barras"
                       >
-                        <BarChart3 size={14} />
+                        <BarChart3 size={14} aria-hidden="true" />
                       </button>
                     </div>
                   </div>
                 </div>
 
+                {overviewCount === 0 && <div className="admin-chart-empty" role="status"><BarChart3 size={20} aria-hidden="true" /><div><strong>No hay ventas registradas en este período</strong><p>Prueba otro rango de fechas para consultar tus pedidos anteriores.</p></div></div>}
                 {/* Render de Recharts con Animaciones Fluidas y Tooltips */}
                 <div style={{ width: '100%', height: '280px', position: 'relative' }}>
                   <ResponsiveContainer width="100%" height="100%">
@@ -1686,7 +1258,7 @@ export const AdminPanel = ({ setActivePage }) => {
                             if (chartViewMode === 'orders') return `${val}`;
                             if (val === 0) return '$0';
                             if (val >= 1000000) return `$${(val / 1000000).toFixed(1)}M`;
-                            return `$${Math.round(val / 1000)}k`;
+                            return val >= 1000 ? `$${Math.round(val / 1000)} mil` : `$${Math.round(val)}`;
                           }}
                           dx={-5}
                         />
@@ -1726,7 +1298,7 @@ export const AdminPanel = ({ setActivePage }) => {
                             if (chartViewMode === 'orders') return `${val}`;
                             if (val === 0) return '$0';
                             if (val >= 1000000) return `$${(val / 1000000).toFixed(1)}M`;
-                            return `$${Math.round(val / 1000)}k`;
+                            return val >= 1000 ? `$${Math.round(val / 1000)} mil` : `$${Math.round(val)}`;
                           }}
                           dx={-5}
                         />
@@ -1764,11 +1336,11 @@ export const AdminPanel = ({ setActivePage }) => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                       <span style={{ width: '8px', height: '8px', backgroundColor: 'var(--bf-secondary)', borderRadius: '50%' }} />
-                      <span>{chartViewMode.startsWith('revenue') ? 'Facturación Neta COP' : 'Pedidos Confirmados'}</span>
+                      <span>{chartViewMode.startsWith('revenue') ? 'Valor de pedidos (COP)' : 'Pedidos no cancelados'}</span>
                     </span>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                       <span className="chart-pulse-badge" />
-                      <span>Ticket Promedio: <strong>{formatMoney(averageOrderValue)}</strong></span>
+                      <span>Promedio por pedido: <strong>{formatMoney(overviewAverage)}</strong></span>
                     </span>
                   </div>
 
@@ -1779,33 +1351,29 @@ export const AdminPanel = ({ setActivePage }) => {
               </div>
 
               {/* Distribución de Pedidos & Top Prendas */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '20px' }}>
+              <div className="admin-dashboard-split">
                 {/* Columna 1: Distribución por Estados */}
-                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '800' }}>
-                      Estado Operativo de Pedidos
-                    </h4>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
-                      Total {orders.length}
-                    </span>
+                <div className="admin-panel-card">
+                  <div className="admin-panel-head">
+                    <h4>Estado de todos los pedidos</h4>
+                    <span className="admin-panel-meta">Total {orders.length}</span>
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {[
-                      { label: 'Entregados', count: deliveredOrders.length, color: '#15803D', bg: '#F0FDF4' },
-                      { label: 'En proceso / Pendientes', count: pendingOrders.length, color: '#B45309', bg: '#FFFBEB' },
-                      { label: 'Cancelados', count: cancelledOrders.length, color: '#B91C1C', bg: '#FEF2F2' }
+                      { label: 'Entregados', count: deliveredOrders.length, color: '#4ade80' },
+                      { label: 'En proceso / Pendientes', count: pendingOrders.length, color: '#fbbf24' },
+                      { label: 'Cancelados', count: cancelledOrders.length, color: '#ff1724' }
                     ].map(st => {
                       const pct = orders.length > 0 ? Math.round((st.count / orders.length) * 100) : 0;
                       return (
                         <div key={st.label}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', marginBottom: '6px' }}>
-                            <span style={{ color: 'var(--bf-text)', fontWeight: '600' }}>{st.label}</span>
-                            <span style={{ color: 'var(--bf-muted)' }}>{st.count} ({pct}%)</span>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '7px' }}>
+                            <span style={{ color: '#e5e5e5', fontWeight: '600' }}>{st.label}</span>
+                            <span className="admin-tabular" style={{ color: '#a6a6a6' }}>{st.count} ({pct}%)</span>
                           </div>
-                          <div style={{ height: '6px', width: '100%', backgroundColor: 'var(--bf-surface)', borderRadius: '3px', overflow: 'hidden' }}>
-                            <div style={{ height: '100%', width: `${pct}%`, backgroundColor: st.color, borderRadius: '3px' }} />
+                          <div style={{ height: '6px', width: '100%', backgroundColor: '#0b0b0b', borderRadius: '999px', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', width: `${pct}%`, backgroundColor: st.color, borderRadius: '999px' }} />
                           </div>
                         </div>
                       );
@@ -1813,19 +1381,17 @@ export const AdminPanel = ({ setActivePage }) => {
                   </div>
                 </div>
 
-                {/* Columna 2: Top 5 Prendas Más Vendidas */}
-                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '800' }}>
-                      Prendas Más Vendidas
-                    </h4>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Por volumen</span>
+                {/* Columna 2: Top 5 Productos más vendidos */}
+                <div className="admin-panel-card">
+                  <div className="admin-panel-head">
+                    <h4>Productos más vendidos</h4>
+                    <span className="admin-panel-meta">Histórico · Por unidades</span>
                   </div>
 
                   {topProducts.length === 0 ? (
-                    <p style={{ fontSize: '0.8rem', color: 'var(--bf-muted)', margin: 0 }}>Aún no hay ventas registradas.</p>
+                    <p style={{ fontSize: '13px', color: '#999', margin: 0 }}>Aún no hay ventas registradas.</p>
                   ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       {topProducts.map((item, idx) => (
                         <div
                           key={item.id}
@@ -1833,29 +1399,30 @@ export const AdminPanel = ({ setActivePage }) => {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            padding: '8px 0',
-                            borderBottom: idx < topProducts.length - 1 ? '1px solid var(--bf-border)' : 'none'
+                            gap: '12px',
+                            padding: '10px 0',
+                            borderBottom: idx < topProducts.length - 1 ? '1px solid #242424' : 'none'
                           }}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--bf-muted)', width: '16px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
+                            <span className="admin-tabular" style={{ fontSize: '11px', fontWeight: '700', color: '#777', width: '18px', flexShrink: 0 }}>
                               0{idx + 1}
                             </span>
                             <ProductImage mode='thumb'
                               src={item.image}
                               alt={item.name}
-                              style={{ width: '36px', height: '36px', objectFit: 'cover', borderRadius: '4px', backgroundColor: 'var(--bf-surface)' }}
+                              style={{ width: '38px', height: '38px', objectFit: 'contain', borderRadius: '8px', backgroundColor: '#0b0b0b', border: '1px solid #262626', flexShrink: 0 }}
                             />
-                            <div>
-                              <span style={{ fontSize: '0.82rem', fontWeight: '600', color: 'var(--bf-text)', display: 'block' }}>
+                            <div style={{ minWidth: 0 }}>
+                              <span style={{ fontSize: '13px', fontWeight: '600', color: '#f4f4f2', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {item.name}
                               </span>
-                              <span style={{ fontSize: '0.7rem', color: 'var(--bf-muted)' }}>
+                              <span style={{ fontSize: '11px', color: '#999' }}>
                                 {item.quantity} unidades vendidas
                               </span>
                             </div>
                           </div>
-                          <strong style={{ fontSize: '0.84rem', color: 'var(--bf-text)' }}>
+                          <strong className="admin-tabular" style={{ fontSize: '13px', color: '#f4f4f2', flexShrink: 0 }}>
                             {formatMoney(item.revenue)}
                           </strong>
                         </div>
@@ -1866,76 +1433,54 @@ export const AdminPanel = ({ setActivePage }) => {
               </div>
 
               {/* Tabla Resumen de Órdenes Recientes */}
-              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+              <div className="admin-table-card">
+                <div className="admin-panel-head" style={{ padding: '22px 24px 0', marginBottom: '14px' }}>
                   <div>
-                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '800' }}>
-                      Últimos Pedidos Recibidos
-                    </h4>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Transacciones más recientes en tienda</span>
+                    <h4>Últimos pedidos recibidos</h4>
+                    <p>Transacciones más recientes en tienda</p>
                   </div>
                   <button
                     type="button"
+                    className="admin-link-btn"
                     onClick={() => setActiveTab('orders')}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: 'var(--bf-text)',
-                      fontSize: '0.78rem',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}
                   >
                     <span>Ver todos los pedidos</span>
-                    <ArrowRight size={14} />
+                    <ArrowRight size={14} aria-hidden="true" />
                   </button>
                 </div>
 
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
+                <div className="admin-table-scroll">
+                  <table className="admin-table">
                     <thead>
-                      <tr style={{ borderBottom: '1px solid var(--bf-border)', color: 'var(--bf-muted)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        <th style={{ padding: '10px 14px' }}>ID Pedido</th>
-                        <th style={{ padding: '10px 14px' }}>Fecha</th>
-                        <th style={{ padding: '10px 14px' }}>Cliente</th>
-                        <th style={{ padding: '10px 14px' }}>Prendas</th>
-                        <th style={{ padding: '10px 14px' }}>Total (COP)</th>
-                        <th style={{ padding: '10px 14px' }}>Estado</th>
-                        <th style={{ padding: '10px 14px', textAlign: 'right' }}>Acción</th>
+                      <tr>
+                        <th>ID Pedido</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Prendas</th>
+                        <th>Total (COP)</th>
+                        <th>Estado</th>
+                        <th style={{ textAlign: 'right' }}>Acción</th>
                       </tr>
                     </thead>
                     <tbody>
                       {orders.slice(0, 4).map(ord => (
-                        <tr key={ord.orderId} className="admin-table-row" style={{ borderBottom: '1px solid var(--bf-border)' }}>
-                          <td style={{ padding: '12px 14px', fontWeight: '700', color: 'var(--bf-text)' }}>{ord.orderId}</td>
-                          <td style={{ padding: '12px 14px', color: 'var(--bf-muted)' }}>{ord.date}</td>
-                          <td style={{ padding: '12px 14px' }}>
-                            <div style={{ fontWeight: '600', color: 'var(--bf-text)' }}>{ord.customer?.name}</div>
-                            <div style={{ fontSize: '0.7rem', color: 'var(--bf-muted)' }}>{ord.customer?.city || 'Medellín'}</div>
+                        <tr key={ord.orderId}>
+                          <td style={{ fontWeight: '700', color: '#f4f4f2' }}>{ord.orderId}</td>
+                          <td style={{ color: '#999' }}>{ord.date}</td>
+                          <td>
+                            <div style={{ fontWeight: '600', color: '#f4f4f2' }}>{ord.customer?.name}</div>
+                            <div style={{ fontSize: '11px', color: '#888' }}>{ord.customer?.city || 'Medellín'}</div>
                           </td>
-                          <td style={{ padding: '12px 14px', color: 'var(--bf-muted)' }}>{ord.count || (ord.items || []).length} ud(s)</td>
-                          <td style={{ padding: '12px 14px', fontWeight: '700', color: 'var(--bf-text)' }}>{formatMoney(ord.total)}</td>
-                          <td style={{ padding: '12px 14px' }}>{renderOrderStatusBadge(ord.orderStatus)}</td>
-                          <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                          <td className="admin-tabular" style={{ color: '#a6a6a6' }}>{ord.count || (ord.items || []).length} ud(s)</td>
+                          <td className="admin-tabular" style={{ fontWeight: '700', color: '#f4f4f2' }}>{formatMoney(ord.total)}</td>
+                          <td>{renderOrderStatusBadge(ord.orderStatus)}</td>
+                          <td style={{ textAlign: 'right' }}>
                             <button
                               type="button"
+                              className="admin-btn-outline is-compact"
                               onClick={() => {
                                 setSelectedOrderDetails(ord);
                                 setActiveTab('orders');
-                              }}
-                              className="admin-btn-secondary"
-                              style={{
-                                padding: '6px 12px',
-                                backgroundColor: 'var(--bf-surface)',
-                                border: '1px solid var(--bf-border)',
-                                borderRadius: '4px',
-                                fontSize: '0.72rem',
-                                fontWeight: '600',
-                                color: 'var(--bf-text)',
-                                cursor: 'pointer'
                               }}
                             >
                               Detalles
@@ -1954,545 +1499,567 @@ export const AdminPanel = ({ setActivePage }) => {
               VISTA 2: PRODUCTOS (CATÁLOGO DE MODA)
               ============================================================== */}
           {activeTab === 'products' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {/* Barra de Filtros y Búsqueda */}
-              <div
-                style={{
-                  backgroundColor: 'var(--bf-secondary)',
-                  border: '1px solid var(--bf-border)',
-                  borderRadius: '8px',
-                  padding: '16px 20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: '14px'
-                }}
-              >
-                {/* Buscador */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: '260px' }}>
-                  <Search size={16} color="var(--bf-muted)" />
-                  <input
-                    type="text"
-                    placeholder="Buscar prenda por nombre, categoría o ID..."
-                    value={productSearch}
-                    onChange={(e) => setProductSearch(e.target.value)}
-                    style={{
-                      width: '100%',
-                      border: 'none',
-                      backgroundColor: 'transparent',
-                      color: 'var(--bf-text)',
-                      fontSize: '0.86rem',
-                      outline: 'none'
-                    }}
-                  />
+            <div className="admin-view-animated admin-view-stack">
+              <section className="admin-welcome admin-report-heading" aria-labelledby="admin-products-title">
+                <div>
+                  <span className="admin-eyebrow">SAUZ / CATÁLOGO</span>
+                  <h1 id="admin-products-title">CATÁLOGO DE PRENDAS.</h1>
+                  <p>Gestiona referencias, precios en COP, categorías y disponibilidad en tienda.</p>
                 </div>
+                <button type="button" className="admin-primary-action" onClick={handleOpenCreateProduct}>
+                  <Plus size={17} aria-hidden="true" /> Nuevo producto
+                </button>
+              </section>
 
-                {/* Filtros de Categoría */}
-                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', fontWeight: '600', marginRight: '4px' }}>Categoría:</span>
-                  {['Todas', 'Camisetas', 'Sudaderas', 'Chaquetas', 'Pantalones'].map(cat => (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setProductCategoryFilter(cat)}
-                      style={{
-                        padding: '5px 10px',
-                        borderRadius: '4px',
-                        border: 'none',
-                        backgroundColor: productCategoryFilter === cat ? 'var(--bf-bg)' : 'var(--bf-surface)',
-                        color: productCategoryFilter === cat ? 'var(--bf-text)' : 'var(--bf-muted)',
-                        fontSize: '0.74rem',
-                        fontWeight: '600',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Selector de Vista (Tabla vs Cards) */}
-                <div style={{ display: 'flex', border: '1px solid var(--bf-border)', borderRadius: '4px', overflow: 'hidden' }}>
-                  <button
-                    type="button"
-                    onClick={() => setProductViewMode('table')}
-                    style={{
-                      padding: '6px 12px',
-                      backgroundColor: productViewMode === 'table' ? 'var(--bf-bg)' : 'var(--bf-text)',
-                      color: productViewMode === 'table' ? 'var(--bf-text)' : 'var(--bf-muted)',
-                      border: 'none',
-                      fontSize: '0.74rem',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Tabla
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setProductViewMode('cards')}
-                    style={{
-                      padding: '6px 12px',
-                      backgroundColor: productViewMode === 'cards' ? 'var(--bf-bg)' : 'var(--bf-text)',
-                      color: productViewMode === 'cards' ? 'var(--bf-text)' : 'var(--bf-muted)',
-                      border: 'none',
-                      fontSize: '0.74rem',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Tarjetas
-                  </button>
-                </div>
+              <div className="admin-metrics-grid-3">
+                <article className="admin-metric">
+                  <div><span>Total referencias</span><ShoppingBag size={18} aria-hidden="true" /></div>
+                  <strong className="admin-tabular">{products.length}</strong>
+                  <p>{productCategories.length - 1} categorías activas en catálogo.</p>
+                </article>
+                <article className="admin-metric">
+                  <div><span>Listas para venta</span><CheckCircle2 size={18} aria-hidden="true" /></div>
+                  <strong className="admin-tabular is-positive">{products.filter(p => p.price != null && p.stock > 0).length}</strong>
+                  <p>Referencias con precio comercial y stock confirmado.</p>
+                </article>
+                <article className="admin-metric">
+                  <div><span>Por clasificar o sin precio</span><AlertCircle size={18} aria-hidden="true" /></div>
+                  <strong className={`admin-tabular ${products.filter(p => p.price == null || p.stock === 0).length > 0 ? 'is-warning' : ''}`}>{products.filter(p => p.price == null || p.stock === 0).length}</strong>
+                  <p>Prendas pendientes de precio comercial o reposición.</p>
+                </article>
               </div>
 
-              {/* Listado de Productos en Modo Tabla */}
-              {productViewMode === 'table' ? (
-                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', overflow: 'hidden' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '1px solid var(--bf-border)', backgroundColor: 'var(--bf-secondary)', color: 'var(--bf-muted)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        <th style={{ padding: '12px 18px' }}>Prenda</th>
-                        <th style={{ padding: '12px 18px' }}>Categoría</th>
-                        <th style={{ padding: '12px 18px' }}>Precio (COP)</th>
-                        <th style={{ padding: '12px 18px' }}>Existencias</th>
-                        <th style={{ padding: '12px 18px' }}>Estado</th>
-                        <th style={{ padding: '12px 18px', textAlign: 'right' }}>Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredProducts.map(p => (
-                        <tr key={p.id} style={{ borderBottom: '1px solid var(--bf-border)' }}>
-                          <td style={{ padding: '12px 18px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                              <ProductImage mode='thumb'
-                                src={p.image}
-                                alt={p.name}
-                                style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '4px', backgroundColor: 'var(--bf-surface)' }}
-                              />
-                              <div>
-                                <span style={{ fontWeight: '700', color: 'var(--bf-text)', display: 'block' }}>{p.name}</span>
-                                <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>SKU-{p.id}</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ padding: '12px 18px', color: 'var(--bf-muted)' }}>{p.category}</td>
-                          <td style={{ padding: '12px 18px', fontWeight: '700', color: 'var(--bf-text)' }}>{formatMoney(p.price)}</td>
-                          <td style={{ padding: '12px 18px', fontWeight: '600' }}>{p.stock} uds</td>
-                          <td style={{ padding: '12px 18px' }}>{renderStockBadge(p.stock)}</td>
-                          <td style={{ padding: '12px 18px', textAlign: 'right' }}>
-                            <div style={{ display: 'inline-flex', gap: '6px' }}>
-                              <button
-                                type="button"
-                                onClick={() => handleOpenEditProduct(p)}
-                                title="Editar prenda"
-                                style={{
-                                  padding: '6px',
-                                  backgroundColor: 'var(--bf-surface)',
-                                  border: '1px solid var(--bf-border)',
-                                  borderRadius: '4px',
-                                  color: 'var(--bf-text)',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                <Edit3 size={14} />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setDeleteConfirmProduct(p)}
-                                title="Eliminar del catálogo"
-                                style={{
-                                  padding: '6px',
-                                  backgroundColor: 'var(--bf-surface)',
-                                  border: '1px solid #FECACA',
-                                  borderRadius: '4px',
-                                  color: '#DC2626',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                /* Modo Tarjetas */
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' }}>
-                  {filteredProducts.map(p => (
-                    <div
-                      key={p.id}
-                      style={{
-                        backgroundColor: 'var(--bf-secondary)',
-                        border: '1px solid var(--bf-border)',
-                        borderRadius: '8px',
-                        overflow: 'hidden',
-                        display: 'flex',
-                        flexDirection: 'column'
+              {/* Barra estructurada en 2 filas */}
+              <div className="admin-toolbar is-stacked">
+                <div className="admin-toolbar-row">
+                  <div className="admin-search-box">
+                    <Search size={16} aria-hidden="true" />
+                    <input
+                      type="text"
+                      aria-label="Buscar prenda"
+                      placeholder="Buscar prenda por nombre, marca, categoría o SKU..."
+                      value={productSearch}
+                      onChange={(e) => {
+                        setProductSearch(e.target.value);
+                        setProductsPage(1);
                       }}
-                    >
-                      <div style={{ height: '220px', backgroundColor: 'var(--bf-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', position: 'relative' }}>
-                        <ProductImage mode='thumb'
-                          src={p.image}
-                          alt={p.name}
-                          style={{ maxWidth: '85%', maxHeight: '85%', objectFit: 'contain' }}
-                        />
-                        <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
-                          {renderStockBadge(p.stock)}
-                        </div>
-                      </div>
-
-                      <div style={{ padding: '18px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                        <div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
-                            <h4 style={{ margin: 0, fontSize: '0.92rem', fontWeight: '800', color: 'var(--bf-text)' }}>{p.name}</h4>
-                            <span style={{ fontSize: '0.88rem', fontWeight: '800', color: 'var(--bf-text)' }}>{formatMoney(p.price)}</span>
-                          </div>
-                          <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', display: 'block', marginBottom: '14px' }}>{p.category} · SKU-{p.id}</span>
-                        </div>
-
-                        <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid var(--bf-border)', paddingTop: '12px' }}>
-                          <button
-                            type="button"
-                            onClick={() => handleOpenEditProduct(p)}
-                            style={{
-                              flex: 1,
-                              padding: '7px',
-                              backgroundColor: 'var(--bf-surface)',
-                              border: '1px solid var(--bf-border)',
-                              borderRadius: '4px',
-                              fontSize: '0.75rem',
-                              fontWeight: '600',
-                              color: 'var(--bf-text)',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            Editar
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setDeleteConfirmProduct(p)}
-                            style={{
-                              padding: '7px 10px',
-                              backgroundColor: 'var(--bf-surface)',
-                              border: '1px solid #FECACA',
-                              borderRadius: '4px',
-                              fontSize: '0.75rem',
-                              color: '#DC2626',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            Eliminar
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ==============================================================
-              VISTA 3: INVENTARIO (EXISTENCIAS EN TIEMPO REAL & REABASTECIMIENTO)
-              ============================================================== */}
-          {activeTab === 'inventory' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
-              {/* Tarjetas Superiores de Bodega */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '18px 20px' }}>
-                  <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--bf-muted)', display: 'block', marginBottom: '6px' }}>
-                    Total Unidades en Bodega
-                  </span>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--bf-text)' }}>
-                    {totalStockUnits}
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>En {products.length} referencias</span>
-                </div>
-
-                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '18px 20px' }}>
-                  <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--bf-muted)', display: 'block', marginBottom: '6px' }}>
-                    Referencias Críticas (≤ 5)
-                  </span>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: lowStockProducts.length > 0 ? '#B45309' : 'var(--bf-text)' }}>
-                    {lowStockProducts.length}
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Requieren reabastecimiento pronto</span>
-                </div>
-
-                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '18px 20px' }}>
-                  <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--bf-muted)', display: 'block', marginBottom: '6px' }}>
-                    Referencias Agotadas (0)
-                  </span>
-                  <div style={{ fontSize: '1.65rem', fontWeight: '800', color: outOfStockProducts.length > 0 ? '#DC2626' : '#15803D' }}>
-                    {outOfStockProducts.length}
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Sin existencias para venta</span>
-                </div>
-              </div>
-
-              {/* US-25: Módulo de Alerta de Stock Bajo con Umbral Configurable */}
-              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid rgba(230,90,93,0.3)', borderRadius: '12px', padding: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '18px', borderBottom: '1px solid var(--bf-border)', paddingBottom: '14px' }}>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: '800', color: '#e65a5d', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <AlertTriangle size={18} />
-                      <span>Alerta de Productos con Stock Bajo (US-25)</span>
-                    </h4>
-                    <span style={{ fontSize: '0.74rem', color: 'var(--bf-muted)' }}>
-                      Monitoreo en tiempo real de variantes con existencias críticas según umbral establecido.
-                    </span>
+                    />
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '0.74rem', fontWeight: '700', color: 'var(--bf-text)' }}>Umbral Mínimo:</span>
-                    {[3, 5, 10, 15].map((thresh) => (
+                  <div className="admin-filter-group">
+                    {[
+                      { id: 'Todos', label: 'Todos' },
+                      { id: 'in_stock', label: 'Disponible' },
+                      { id: 'low_stock', label: 'Stock bajo' },
+                      { id: 'out_of_stock', label: 'Agotado' }
+                    ].map(st => (
                       <button
-                        key={thresh}
+                        key={st.id}
                         type="button"
+                        className={`admin-filter-pill ${productStockFilter === st.id ? 'is-active' : ''}`}
                         onClick={() => {
-                          setLowStockThreshold(thresh);
-                          fetchLowStockAlerts(thresh);
-                        }}
-                        style={{
-                          padding: '4px 10px',
-                          borderRadius: '6px',
-                          fontSize: '0.74rem',
-                          fontWeight: '700',
-                          cursor: 'pointer',
-                          background: lowStockThreshold === thresh ? '#e65a5d' : 'var(--bf-surface)',
-                          color: '#fff',
-                          border: '1px solid var(--bf-border)',
+                          setProductStockFilter(st.id);
+                          setProductsPage(1);
                         }}
                       >
-                        ≤ {thresh} uds
+                        {st.label}
                       </button>
                     ))}
                   </div>
+
+                  <div className="admin-segmented" role="group" aria-label="Modo de visualización">
+                    <button
+                      type="button"
+                      className={productViewMode === 'table' ? 'is-active' : ''}
+                      onClick={() => setProductViewMode('table')}
+                    >
+                      Tabla
+                    </button>
+                    <button
+                      type="button"
+                      className={productViewMode === 'cards' ? 'is-active' : ''}
+                      onClick={() => setProductViewMode('cards')}
+                    >
+                      Tarjetas
+                    </button>
+                  </div>
                 </div>
 
-                {loadingLowStock ? (
-                  <p style={{ textAlign: 'center', padding: '20px', color: 'var(--bf-muted)' }}>Escaneando inventario...</p>
-                ) : lowStockAlerts.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '24px', background: 'var(--bf-surface)', borderRadius: '8px' }}>
-                    <span style={{ color: '#16a34a', fontWeight: '700', fontSize: '0.88rem' }}>✓ Ningún producto ni variante por debajo del umbral de {lowStockThreshold} unidades.</span>
+                <div className="admin-toolbar-row" style={{ paddingTop: '10px', borderTop: '1px solid #242426' }}>
+                  <div className="admin-filter-group">
+                    <span className="admin-filter-label">Categoría:</span>
+                    {productCategories.map(cat => (
+                      <button
+                        key={cat}
+                        type="button"
+                        className={`admin-filter-pill ${productCategoryFilter === cat ? 'is-active' : ''}`}
+                        onClick={() => {
+                          setProductCategoryFilter(cat);
+                          setProductsPage(1);
+                        }}
+                      >
+                        {cat}
+                      </button>
+                    ))}
                   </div>
-                ) : (
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: 'left' }}>
+                  <span className="admin-panel-meta admin-tabular">
+                    Mostrando {filteredProducts.length} de {products.length} prendas
+                  </span>
+                </div>
+              </div>
+
+              {filteredProducts.length === 0 ? (
+                <div className="admin-table-card">
+                  <div className="admin-empty-state">
+                    <ShoppingBag size={28} aria-hidden="true" />
+                    <h4>No se encontraron prendas</h4>
+                    <p>Ajusta la búsqueda o limpia los filtros activos para ver todo el catálogo.</p>
+                    <button
+                      type="button"
+                      className="admin-btn-outline is-compact"
+                      onClick={() => {
+                        setProductSearch('');
+                        setProductCategoryFilter('Todas');
+                        setProductStockFilter('Todos');
+                        setProductsPage(1);
+                      }}
+                    >
+                      Limpiar filtros
+                    </button>
+                  </div>
+                </div>
+              ) : productViewMode === 'table' ? (
+                <div className="admin-table-card">
+                  <div className="admin-table-scroll">
+                    <table className="admin-table">
                       <thead>
-                        <tr style={{ borderBottom: '1px solid var(--bf-border)', color: 'var(--bf-muted)' }}>
-                          <th style={{ padding: '8px 10px' }}>SKU / Prenda</th>
-                          <th style={{ padding: '8px 10px' }}>Categoría & Marca</th>
-                          <th style={{ padding: '8px 10px' }}>Variante</th>
-                          <th style={{ padding: '8px 10px' }}>Stock Actual</th>
-                          <th style={{ padding: '8px 10px' }}>Estado</th>
-                          <th style={{ padding: '8px 10px', textAlign: 'right' }}>Acción</th>
+                        <tr>
+                          <th>Prenda</th>
+                          <th>Categoría</th>
+                          <th>Precio (COP)</th>
+                          <th>Tallas disponibles</th>
+                          <th>Estado</th>
+                          <th style={{ textAlign: 'right' }}>Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {lowStockAlerts.slice(0, 15).map((item, idx) => (
-                          <tr key={idx} style={{ borderBottom: '1px solid var(--bf-border)' }}>
-                            <td style={{ padding: '10px' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#e65a5d', background: 'rgba(230,90,93,0.1)', padding: '2px 6px', borderRadius: '4px' }}>
-                                  {item.sku}
-                                </span>
-                                <strong style={{ color: 'var(--bf-text)' }}>{item.productName}</strong>
+                        {paginatedProducts.map(p => (
+                          <tr key={p.id}>
+                            <td>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <ProductImage mode='thumb'
+                                  src={p.image}
+                                  alt={p.name}
+                                  style={{ width: '44px', height: '44px', objectFit: 'contain', borderRadius: '8px', backgroundColor: '#0b0b0b', border: '1px solid #262626', flexShrink: 0 }}
+                                />
+                                <div>
+                                  <span style={{ fontWeight: '700', color: '#f4f4f2', display: 'block' }}>{p.name}</span>
+                                  <span style={{ fontSize: '11px', color: '#888' }}>{p.sku || `SKU-${p.id}`}{p.brand ? ` · ${p.brand}` : ''}</span>
+                                </div>
                               </div>
                             </td>
-                            <td style={{ padding: '10px', color: 'var(--bf-muted)' }}>
-                              {item.category} · {item.brand}
+                            <td><span className="admin-tag-pill">{p.category}</span></td>
+                            <td className="admin-tabular" style={{ fontWeight: '700', color: p.price != null ? '#f4f4f2' : '#888' }}>
+                              {p.price != null ? formatMoney(p.price) : 'Por definir'}
                             </td>
-                            <td style={{ padding: '10px' }}>
-                              <span style={{ background: 'var(--bf-surface)', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem' }}>
-                                {item.color} / Talla {item.size}
-                              </span>
+                            <td>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                                <strong className="admin-tabular" style={{ color: '#f4f4f2' }}>{p.stock} uds</strong>
+                                <span style={{ fontSize: '11px', color: '#888' }}>
+                                  {(p.variants?.length ? p.variants.map(v => v.size) : p.sizes || ['Única']).join(', ')}
+                                </span>
+                              </div>
                             </td>
-                            <td style={{ padding: '10px' }}>
-                              <strong style={{ color: item.stock === 0 ? '#ef4444' : '#f59e0b', fontSize: '0.9rem' }}>
-                                {item.stock} uds
-                              </strong>
+                            <td>
+                              {p.price == null ? (
+                                <span className="admin-status-pill is-neutral">Sin precio</span>
+                              ) : p.stock === 0 ? (
+                                <span className="admin-status-pill is-danger">Agotado</span>
+                              ) : p.stock <= 5 ? (
+                                <span className="admin-status-pill is-warning">Stock bajo</span>
+                              ) : (
+                                <span className="admin-status-pill is-success">Disponible</span>
+                              )}
                             </td>
-                            <td style={{ padding: '10px' }}>
-                              <span
-                                style={{
-                                  display: 'inline-block',
-                                  padding: '2px 8px',
-                                  borderRadius: '12px',
-                                  fontSize: '0.68rem',
-                                  fontWeight: '800',
-                                  textTransform: 'uppercase',
-                                  background: item.stock === 0 ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)',
-                                  color: item.stock === 0 ? '#f87171' : '#fbbf24',
-                                  border: item.stock === 0 ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(245,158,11,0.3)',
-                                }}
-                              >
-                                {item.status}
-                              </span>
-                            </td>
-                            <td style={{ padding: '10px', textAlign: 'right' }}>
-                              <button
-                                type="button"
-                                onClick={() => handleQuickRestock(item.productId, 10, item.variantId)}
-                                style={{
-                                  padding: '4px 10px',
-                                  background: 'var(--bf-surface)',
-                                  border: '1px solid var(--bf-border)',
-                                  color: 'var(--bf-text)',
-                                  borderRadius: '4px',
-                                  fontSize: '0.72rem',
-                                  cursor: 'pointer',
-                                  fontWeight: '600',
-                                }}
-                              >
-                                +10 uds rápido
-                              </button>
+                            <td style={{ textAlign: 'right' }}>
+                              <div style={{ display: 'inline-flex', gap: '6px' }}>
+                                <button
+                                  type="button"
+                                  className="admin-icon-btn"
+                                  onClick={() => handleOpenEditProduct(p)}
+                                  title="Editar prenda"
+                                  aria-label={`Editar ${p.name}`}
+                                >
+                                  <Edit3 size={14} aria-hidden="true" />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="admin-icon-btn is-danger"
+                                  onClick={() => setDeleteConfirmProduct(p)}
+                                  title="Eliminar del catálogo"
+                                  aria-label={`Eliminar ${p.name}`}
+                                >
+                                  <Trash2 size={14} aria-hidden="true" />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
-                )}
-              </div>
 
-              {/* Herramienta de Reabastecimiento Rápido */}
-              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.98rem', fontWeight: '800' }}>
-                      Reabastecimiento de Existencias por Prenda
-                    </h4>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
-                      Incrementa las existencias físicas cuando llegue un despacho de confección
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={exportInventoryToCSV}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '6px 12px',
-                      backgroundColor: 'var(--bf-surface)',
-                      border: '1px solid var(--bf-border)',
-                      borderRadius: '4px',
-                      fontSize: '0.75rem',
-                      fontWeight: '600',
-                      color: 'var(--bf-text)',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <Download size={14} />
-                    <span>Exportar Inventario CSV</span>
-                  </button>
+                  {totalProductPages > 1 && (
+                    <div className="admin-pagination">
+                      <span className="admin-tabular">
+                        Página {productsPage} de {totalProductPages} ({filteredProducts.length} prendas)
+                      </span>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          type="button"
+                          className="admin-btn-outline is-compact"
+                          disabled={productsPage === 1}
+                          onClick={() => setProductsPage(p => Math.max(1, p - 1))}
+                        >
+                          Anterior
+                        </button>
+                        <button
+                          type="button"
+                          className="admin-btn-outline is-compact"
+                          disabled={productsPage === totalProductPages}
+                          onClick={() => setProductsPage(p => Math.min(totalProductPages, p + 1))}
+                        >
+                          Siguiente
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
-                  {products.map(p => {
-                    const inputVal = customRestockInputs[p.id] || '';
-                    return (
-                      <div
-                        key={p.id}
-                        style={{
-                          backgroundColor: 'var(--bf-secondary)',
-                          border: '1px solid var(--bf-border)',
-                          borderRadius: '6px',
-                          padding: '16px'
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+              ) : (
+                <>
+                  <div className="admin-product-grid">
+                    {paginatedProducts.map(p => (
+                      <article key={p.id} className="admin-product-card">
+                        <div className="admin-product-media">
                           <ProductImage mode='thumb'
                             src={p.image}
                             alt={p.name}
-                            style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)' }}
                           />
-                          <div style={{ flex: 1 }}>
-                            <strong style={{ fontSize: '0.84rem', color: 'var(--bf-text)', display: 'block' }}>{p.name}</strong>
-                            <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Stock actual: <strong>{p.stock} uds</strong></span>
+                          <div style={{ position: 'absolute', top: '12px', right: '12px' }}>
+                            {renderStockBadge(p.stock)}
                           </div>
-                          {renderStockBadge(p.stock)}
                         </div>
 
-                        {p.variants?.length > 0 && (
-                          <label style={{ display: 'block', marginBottom: '10px', fontSize: '0.75rem' }}>
-                            Variante para reabastecer
-                            <select value={restockVariants[p.id] || p.variants[0].id} onChange={event => setRestockVariants({ ...restockVariants, [p.id]: event.target.value })} style={{ display: 'block', width: '100%', marginTop: '5px', padding: '8px', background: 'var(--bf-surface)', color: 'var(--bf-text)', border: '1px solid var(--bf-border)' }}>
-                              {p.variants.map(variant => <option key={variant.id} value={variant.id}>{variant.size} · {variant.stock} uds</option>)}
-                            </select>
-                          </label>
-                        )}
-                        {/* Botones rápidos */}
-                        <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
-                          {[5, 10, 25].map(qty => (
+                        <div className="admin-product-body">
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '10px', marginBottom: '6px' }}>
+                              <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '700', color: '#f4f4f2' }}>{p.name}</h4>
+                              <span className="admin-tabular" style={{ fontSize: '14px', fontWeight: '700', color: '#f4f4f2', flexShrink: 0 }}>
+                                {p.price != null ? formatMoney(p.price) : 'Por definir'}
+                              </span>
+                            </div>
+                            <span style={{ fontSize: '11px', color: '#888', display: 'block' }}>
+                              {p.category} · {p.sku || `SKU-${p.id}`}{p.brand ? ` · ${p.brand}` : ''}
+                            </span>
+                          </div>
+
+                          <div className="admin-product-actions">
                             <button
-                              key={qty}
                               type="button"
-                              onClick={() => handleQuickRestock(p.id, qty)}
-                              style={{
-                                flex: 1,
-                                padding: '5px',
-                                backgroundColor: 'var(--bf-secondary)',
-                                border: '1px solid var(--bf-border)',
-                                borderRadius: '4px',
-                                fontSize: '0.72rem',
-                                fontWeight: '600',
-                                color: 'var(--bf-text)',
-                                cursor: 'pointer'
-                              }}
+                              className="admin-btn-outline is-compact"
+                              onClick={() => handleOpenEditProduct(p)}
                             >
-                              +{qty} uds
+                              Editar
                             </button>
-                          ))}
+                            <button
+                              type="button"
+                              className="admin-btn-danger"
+                              onClick={() => setDeleteConfirmProduct(p)}
+                            >
+                              Eliminar
+                            </button>
+                          </div>
                         </div>
+                      </article>
+                    ))}
+                  </div>
 
-                        {/* Cantidad personalizada */}
-                        <div style={{ display: 'flex', gap: '6px' }}>
-                          <input
-                            type="number"
-                            min="1"
-                            placeholder="Cant."
-                            value={inputVal}
-                            onChange={(e) => setCustomRestockInputs({ ...customRestockInputs, [p.id]: e.target.value })}
-                            style={{
-                              width: '70px',
-                              padding: '5px 8px',
-                              backgroundColor: 'var(--bf-secondary)',
-                              border: '1px solid var(--bf-border)',
-                              borderRadius: '4px',
-                              fontSize: '0.78rem',
-                              outline: 'none',
-                              textAlign: 'center'
-                            }}
-                          />
+                  {totalProductPages > 1 && (
+                    <div className="admin-table-card">
+                      <div className="admin-pagination" style={{ borderTop: 0 }}>
+                        <span className="admin-tabular">
+                          Página {productsPage} de {totalProductPages} ({filteredProducts.length} prendas)
+                        </span>
+                        <div style={{ display: 'flex', gap: '8px' }}>
                           <button
                             type="button"
-                            onClick={() => handleQuickRestock(p.id, inputVal)}
-                            style={{
-                              flex: 1,
-                              padding: '6px 12px',
-                              backgroundColor: 'var(--bf-secondary)',
-                              color: 'var(--bf-text)',
-                              border: 'none',
-                              borderRadius: '4px',
-                              fontSize: '0.74rem',
-                              fontWeight: '600',
-                              cursor: 'pointer'
-                            }}
+                            className="admin-btn-outline is-compact"
+                            disabled={productsPage === 1}
+                            onClick={() => setProductsPage(p => Math.max(1, p - 1))}
                           >
-                            Sumar a existencias
+                            Anterior
+                          </button>
+                          <button
+                            type="button"
+                            className="admin-btn-outline is-compact"
+                            disabled={productsPage === totalProductPages}
+                            onClick={() => setProductsPage(p => Math.min(totalProductPages, p + 1))}
+                          >
+                            Siguiente
                           </button>
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+
+          {/* ==============================================================
+              VISTA 3: INVENTARIO (CONTROL AGRUPADO POR PRENDA Y TALLA)
+              ============================================================== */}
+          {activeTab === 'inventory' && (
+            <div className="admin-view-animated admin-view-stack">
+              <section className="admin-welcome admin-report-heading" aria-labelledby="admin-inventory-title">
+                <div>
+                  <span className="admin-eyebrow">SAUZ / BODEGA</span>
+                  <h1 id="admin-inventory-title">INVENTARIO Y EXISTENCIAS.</h1>
+                  <p>Consulta todas las tallas por prenda y repón unidades en un clic desde un solo lugar.</p>
                 </div>
+                <div className="admin-report-heading-action">
+                  <button type="button" className="admin-btn-outline" onClick={exportInventoryToCSV}>
+                    <Download size={15} aria-hidden="true" />
+                    <span>Exportar CSV</span>
+                  </button>
+                </div>
+              </section>
+
+              {/* Resumen coherente con la tabla inferior */}
+              <div className="admin-metrics-grid-3">
+                <article className="admin-metric">
+                  <div><span>Unidades en bodega</span><Boxes size={18} aria-hidden="true" /></div>
+                  <strong className="admin-tabular">{inventorySummary.totalUnits}</strong>
+                  <p>Distribuidas en {inventorySummary.productCount} prendas activas.</p>
+                </article>
+
+                <article className="admin-metric">
+                  <div><span>Prendas con stock bajo</span><AlertTriangle size={18} aria-hidden="true" /></div>
+                  <strong className={`admin-tabular ${inventorySummary.lowProductCount > 0 ? 'is-warning' : 'is-positive'}`}>{inventorySummary.lowProductCount}</strong>
+                  <p>{inventorySummary.lowVariantCount} talla(s) con ≤ {lowStockThreshold} unidades.</p>
+                </article>
+
+                <article className="admin-metric">
+                  <div><span>Prendas con talla agotada</span><AlertCircle size={18} aria-hidden="true" /></div>
+                  <strong className={`admin-tabular ${inventorySummary.outProductCount > 0 ? 'is-danger' : 'is-positive'}`}>{inventorySummary.outProductCount}</strong>
+                  <p>{inventorySummary.outVariantCount} talla(s) sin existencias (0 uds).</p>
+                </article>
+              </div>
+
+              {/* Barra única de búsqueda, estado y umbral */}
+              <div className="admin-toolbar">
+                <div className="admin-search-box">
+                  <Search size={16} aria-hidden="true" />
+                  <input
+                    type="text"
+                    aria-label="Buscar en inventario"
+                    placeholder="Buscar prenda, marca, categoría o SKU..."
+                    value={inventorySearch}
+                    onChange={(e) => {
+                      setInventorySearch(e.target.value);
+                      setInventoryPage(1);
+                    }}
+                  />
+                </div>
+
+                <div className="admin-filter-group">
+                  {[
+                    { id: 'all', label: `Todas (${inventorySummary.productCount})` },
+                    { id: 'attention', label: `Por reponer (${inventorySummary.outProductCount + inventorySummary.lowProductCount})` },
+                    { id: 'out', label: `Con agotadas (${inventorySummary.outProductCount})` },
+                    { id: 'ok', label: `Al día (${inventorySummary.healthyProductCount})` }
+                  ].map((f) => (
+                    <button
+                      key={f.id}
+                      type="button"
+                      className={`admin-filter-pill ${inventoryFilter === f.id ? 'is-active' : ''}`}
+                      onClick={() => {
+                        setInventoryFilter(f.id);
+                        setInventoryPage(1);
+                      }}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="admin-filter-group">
+                  <span className="admin-filter-label">Alerta si ≤</span>
+                  {[3, 5, 10, 15].map((thresh) => (
+                    <button
+                      key={thresh}
+                      type="button"
+                      className={`admin-filter-pill is-danger ${lowStockThreshold === thresh ? 'is-active' : ''}`}
+                      onClick={() => {
+                        setLowStockThreshold(thresh);
+                        setInventoryPage(1);
+                      }}
+                    >
+                      {thresh}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tabla agrupada: 1 fila por prenda */}
+              <div className="admin-table-card">
+                {paginatedInventoryRows.length === 0 ? (
+                  <div className="admin-empty-state">
+                    <CheckCircle2 size={28} aria-hidden="true" />
+                    <h4>Sin prendas en esta vista</h4>
+                    <p>Prueba otro filtro o limpia el buscador para ver todo el inventario.</p>
+                    <button
+                      type="button"
+                      className="admin-btn-outline is-compact"
+                      onClick={() => {
+                        setInventorySearch('');
+                        setInventoryFilter('all');
+                        setInventoryPage(1);
+                      }}
+                    >
+                      Ver todas las prendas
+                    </button>
+                  </div>
+                ) : (
+                  <div className="admin-table-scroll">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Prenda</th>
+                          <th>Stock por talla (clic para elegir)</th>
+                          <th>Total</th>
+                          <th style={{ textAlign: 'right' }}>Reponer stock</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {paginatedInventoryRows.map(({ product: p, variants, totalStock, status, suggestedVariant }) => {
+                          const activeVariantId = restockVariants[p.id] || suggestedVariant?.id;
+                          const selectedVariant = variants.find(v => v.id === activeVariantId) || suggestedVariant || variants[0];
+                          const inputVal = customRestockInputs[p.id] || '';
+                          return (
+                            <tr key={p.id}>
+                              <td>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                  <ProductImage mode='thumb'
+                                    src={p.image}
+                                    alt={p.name}
+                                    style={{ width: '44px', height: '44px', objectFit: 'contain', borderRadius: '8px', backgroundColor: '#0b0b0b', border: '1px solid #262626', flexShrink: 0 }}
+                                  />
+                                  <div>
+                                    <strong style={{ color: '#f4f4f2', display: 'block' }}>{p.name}</strong>
+                                    <span style={{ fontSize: '11px', color: '#888' }}>
+                                      {p.sku || `SKU-${p.id}`} · {p.category}{p.brand ? ` · ${p.brand}` : ''}
+                                    </span>
+                                  </div>
+                                </div>
+                              </td>
+
+                              <td>
+                                <div className="admin-size-chips">
+                                  {variants.map((v) => {
+                                    const isSelected = selectedVariant?.id === v.id;
+                                    const tone = v.stock === 0 ? 'is-out' : (v.stock <= lowStockThreshold ? 'is-low' : '');
+                                    return (
+                                      <button
+                                        key={v.id || v.size}
+                                        type="button"
+                                        className={`admin-size-chip ${tone} ${isSelected ? 'is-selected' : ''}`}
+                                        onClick={() => setRestockVariants(prev => ({ ...prev, [p.id]: v.id }))}
+                                        title={`Seleccionar talla ${v.size} (${v.stock} uds)`}
+                                      >
+                                        <span>{v.size}</span>
+                                        <strong>{v.stock}</strong>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </td>
+
+                              <td>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '5px' }}>
+                                  <strong className="admin-tabular" style={{ color: '#f4f4f2' }}>{totalStock} uds</strong>
+                                  <span className={`admin-status-pill ${status === 'out' ? 'is-danger' : (status === 'low' ? 'is-warning' : 'is-success')}`}>
+                                    {status === 'out' ? 'Talla agotada' : (status === 'low' ? 'Stock bajo' : 'Al día')}
+                                  </span>
+                                </div>
+                              </td>
+
+                              <td style={{ textAlign: 'right' }}>
+                                <div className="admin-inventory-restock">
+                                  <span className="admin-inventory-target">
+                                    Talla {selectedVariant?.size}:
+                                  </span>
+                                  {[5, 10].map((qty) => (
+                                    <button
+                                      key={qty}
+                                      type="button"
+                                      className="admin-btn-outline is-compact"
+                                      onClick={() => handleQuickRestock(p.id, qty, selectedVariant?.id)}
+                                    >
+                                      +{qty}
+                                    </button>
+                                  ))}
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    className="admin-inventory-qty"
+                                    aria-label={`Cantidad para ${p.name} talla ${selectedVariant?.size}`}
+                                    placeholder="Cant."
+                                    value={inputVal}
+                                    onChange={(e) => setCustomRestockInputs({ ...customRestockInputs, [p.id]: e.target.value })}
+                                  />
+                                  <button
+                                    type="button"
+                                    className="admin-btn-outline is-compact"
+                                    onClick={() => handleQuickRestock(p.id, inputVal, selectedVariant?.id)}
+                                  >
+                                    Sumar
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {totalInventoryPages > 1 && (
+                  <div className="admin-pagination">
+                    <span className="admin-tabular">
+                      Página {inventoryPage} de {totalInventoryPages} ({filteredInventoryRows.length} prendas)
+                    </span>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        type="button"
+                        className="admin-btn-outline is-compact"
+                        disabled={inventoryPage === 1}
+                        onClick={() => setInventoryPage(p => Math.max(1, p - 1))}
+                      >
+                        Anterior
+                      </button>
+                      <button
+                        type="button"
+                        className="admin-btn-outline is-compact"
+                        disabled={inventoryPage === totalInventoryPages}
+                        onClick={() => setInventoryPage(p => Math.min(totalInventoryPages, p + 1))}
+                      >
+                        Siguiente
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -2501,227 +2068,216 @@ export const AdminPanel = ({ setActivePage }) => {
               VISTA 4: PEDIDOS (GESTIÓN INTEGRAL DE ÓRDENES)
               ============================================================== */}
           {activeTab === 'orders' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {/* Barra de Filtros y Búsqueda */}
-              <div
-                style={{
-                  backgroundColor: 'var(--bf-secondary)',
-                  border: '1px solid var(--bf-border)',
-                  borderRadius: '8px',
-                  padding: '16px 20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: '14px'
-                }}
-              >
-                {/* Búsqueda */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: '260px' }}>
-                  <Search size={16} color="var(--bf-muted)" />
-                  <input
-                    type="text"
-                    placeholder="Buscar por ID, cliente, correo o ciudad..."
-                    value={orderSearch}
-                    onChange={(e) => setOrderSearch(e.target.value)}
-                    style={{
-                      width: '100%',
-                      border: 'none',
-                      backgroundColor: 'transparent',
-                      color: 'var(--bf-text)',
-                      fontSize: '0.86rem',
-                      outline: 'none'
-                    }}
-                  />
+            <div className="admin-view-animated admin-view-stack">
+              <section className="admin-welcome admin-report-heading" aria-labelledby="admin-orders-title">
+                <div>
+                  <span className="admin-eyebrow">SAUZ / OPERACIÓN</span>
+                  <h1 id="admin-orders-title">GESTIÓN DE PEDIDOS.</h1>
+                  <p>Consulta órdenes recibidas, actualiza estados de despacho y registra guías de envío.</p>
                 </div>
+                <div className="admin-report-heading-action">
+                  <button
+                    type="button"
+                    className="admin-btn-outline is-compact"
+                    onClick={() => setOrderSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
+                  >
+                    {orderSortOrder === 'desc' ? <ChevronDown size={14} aria-hidden="true" /> : <ChevronUp size={14} aria-hidden="true" />}
+                    <span>{orderSortOrder === 'desc' ? 'Recientes' : 'Antiguos'}</span>
+                  </button>
+                  <button type="button" className="admin-btn-outline is-compact" onClick={exportOrdersToCSV}>
+                    <Download size={14} aria-hidden="true" />
+                    <span>CSV</span>
+                  </button>
+                </div>
+              </section>
 
-                {/* Filtros por Estado */}
-                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
-                  {['Todos', 'En proceso', 'Enviado', 'Entregado', 'Cancelado'].map(st => (
-                    <button
-                      key={st}
-                      type="button"
-                      onClick={() => {
-                        setOrderStatusFilter(st);
+              <div className="admin-metrics-grid-3">
+                <article className="admin-metric">
+                  <div><span>Total pedidos</span><ClipboardList size={18} aria-hidden="true" /></div>
+                  <strong className="admin-tabular">{orders.length}</strong>
+                  <p>Órdenes históricas registradas en tienda.</p>
+                </article>
+                <article className="admin-metric">
+                  <div><span>Pendientes por gestionar</span><Clock size={18} aria-hidden="true" /></div>
+                  <strong className={`admin-tabular ${pendingOrders.length > 0 ? 'is-warning' : 'is-positive'}`}>{pendingOrders.length}</strong>
+                  <p>Pedidos recibidos, aceptados o en preparación.</p>
+                </article>
+                <article className="admin-metric">
+                  <div><span>Pedidos entregados</span><PackageCheck size={18} aria-hidden="true" /></div>
+                  <strong className="admin-tabular is-positive">{deliveredOrders.length}</strong>
+                  <p>Órdenes completadas satisfactoriamente.</p>
+                </article>
+              </div>
+
+              {/* Barra estructurada */}
+              <div className="admin-toolbar is-stacked">
+                <div className="admin-toolbar-row">
+                  <div className="admin-search-box">
+                    <Search size={16} aria-hidden="true" />
+                    <input
+                      type="text"
+                      aria-label="Buscar pedido"
+                      placeholder="Buscar por ID, cliente, correo o ciudad..."
+                      value={orderSearch}
+                      onChange={(e) => {
+                        setOrderSearch(e.target.value);
                         setOrdersPage(1);
                       }}
-                      style={{
-                        padding: '5px 11px',
-                        borderRadius: '4px',
-                        border: 'none',
-                        backgroundColor: orderStatusFilter === st ? 'var(--bf-bg)' : 'var(--bf-surface)',
-                        color: orderStatusFilter === st ? 'var(--bf-text)' : 'var(--bf-muted)',
-                        fontSize: '0.74rem',
-                        fontWeight: '600',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {st}
-                    </button>
-                  ))}
+                    />
+                  </div>
+                  <span className="admin-panel-meta admin-tabular">
+                    {filteredOrders.length} pedido(s) en vista
+                  </span>
                 </div>
 
-                {/* Exportar CSV */}
-                <button
-                  type="button"
-                  onClick={exportOrdersToCSV}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '6px 12px',
-                    backgroundColor: 'var(--bf-surface)',
-                    border: '1px solid var(--bf-border)',
-                    borderRadius: '4px',
-                    fontSize: '0.75rem',
-                    fontWeight: '600',
-                    color: 'var(--bf-text)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <Download size={14} />
-                  <span>Descargar CSV</span>
-                </button>
+                <div className="admin-toolbar-row" style={{ paddingTop: '10px', borderTop: '1px solid #242426' }}>
+                  <div className="admin-filter-group">
+                    <span className="admin-filter-label">Estado:</span>
+                    {[
+                      { id: 'Todos', label: `Todos (${orders.length})` },
+                      { id: 'Por gestionar', label: `Pendientes (${pendingOrders.length})` },
+                      { id: 'Pendiente', label: 'Recibido' },
+                      { id: 'Aceptado', label: 'Aceptado' },
+                      { id: 'En proceso', label: 'En preparación' },
+                      { id: 'Enviado', label: 'Enviado' },
+                      { id: 'Entregado', label: 'Entregado' },
+                      { id: 'Cancelado', label: 'Cancelado' }
+                    ].map(st => (
+                      <button
+                        key={st.id}
+                        type="button"
+                        className={`admin-filter-pill ${orderStatusFilter === st.id ? 'is-active' : ''}`}
+                        onClick={() => {
+                          setOrderStatusFilter(st.id);
+                          setOrdersPage(1);
+                        }}
+                      >
+                        {st.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Tabla de Pedidos */}
-              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', overflow: 'hidden' }}>
+              <div className="admin-table-card">
                 {paginatedOrders.length === 0 ? (
-                  <div style={{ padding: '60px 20px', textAlign: 'center' }}>
-                    <ClipboardList size={32} color="var(--bf-muted)" style={{ margin: '0 auto 10px' }} />
-                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: 'var(--bf-text)' }}>No se encontraron órdenes</h4>
-                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--bf-muted)' }}>Intenta ajustar el término de búsqueda o el filtro de estado.</p>
-                  </div>
-                ) : (
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '1px solid var(--bf-border)', backgroundColor: 'var(--bf-secondary)', color: 'var(--bf-muted)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        <th style={{ padding: '12px 16px' }}>ID Pedido</th>
-                        <th style={{ padding: '12px 16px' }}>Fecha</th>
-                        <th style={{ padding: '12px 16px' }}>Cliente</th>
-                        <th style={{ padding: '12px 16px' }}>Pago</th>
-                        <th style={{ padding: '12px 16px' }}>Total COP</th>
-                        <th style={{ padding: '12px 16px' }}>Estado Operativo</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'right' }}>Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {paginatedOrders.map(ord => (
-                        <tr key={ord.orderId} style={{ borderBottom: '1px solid var(--bf-border)' }}>
-                          <td style={{ padding: '14px 16px', fontWeight: '700', color: 'var(--bf-text)' }}>
-                            {ord.orderId}
-                          </td>
-                          <td style={{ padding: '14px 16px', color: 'var(--bf-muted)' }}>
-                            {ord.date}
-                          </td>
-                          <td style={{ padding: '14px 16px' }}>
-                            <div style={{ fontWeight: '600', color: 'var(--bf-text)' }}>{ord.customer?.name}</div>
-                            <div style={{ fontSize: '0.7rem', color: 'var(--bf-muted)' }}>{ord.customer?.email}</div>
-                          </td>
-                          <td style={{ padding: '14px 16px' }}>
-                            <span style={{ fontSize: '0.76rem', color: 'var(--bf-text)', fontWeight: '500', display: 'block' }}>
-                              {ord.payment?.method === 'card' ? 'Tarjeta' : (ord.payment?.method === 'transfer' ? 'Transferencia' : 'Efectivo')}
-                            </span>
-                            <span style={{ fontSize: '0.68rem', color: 'var(--bf-muted)' }}>
-                              {ord.payment?.status}
-                            </span>
-                          </td>
-                          <td style={{ padding: '14px 16px', fontWeight: '800', color: 'var(--bf-text)' }}>
-                            {formatMoney(ord.total)}
-                          </td>
-                          <td style={{ padding: '14px 16px' }}>
-                            {/* Selector directo de estado autorizado */}
-                            <select
-                              value={ord.orderStatus || 'En proceso'}
-                              onChange={(e) => updateOrderStatus(ord.orderId, e.target.value)}
-                              style={{
-                                padding: '4px 8px',
-                                borderRadius: '4px',
-                                fontSize: '0.74rem',
-                                fontWeight: '600',
-                                backgroundColor: 'var(--bf-surface)',
-                                border: '1px solid var(--bf-border)',
-                                color: 'var(--bf-text)',
-                                cursor: 'pointer',
-                                outline: 'none'
-                              }}
-                            >
-                              <option value="En proceso">En proceso</option>
-                              <option value="Enviado">Enviado</option>
-                              <option value="Entregado">Entregado</option>
-                              <option value="Cancelado">Cancelado</option>
-                            </select>
-                          </td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right' }}>
-                            <button
-                              type="button"
-                              onClick={() => setSelectedOrderDetails(ord)}
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '4px',
-                                padding: '5px 10px',
-                                backgroundColor: 'var(--bf-surface)',
-                                border: '1px solid var(--bf-border)',
-                                borderRadius: '4px',
-                                fontSize: '0.74rem',
-                                fontWeight: '600',
-                                color: 'var(--bf-text)',
-                                cursor: 'pointer'
-                              }}
-                            >
-                              <Eye size={13} />
-                              <span>Ver</span>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-
-                {/* Paginación */}
-                {totalOrderPages > 1 && (
-                  <div
-                    style={{
-                      padding: '12px 16px',
-                      borderTop: '1px solid var(--bf-border)',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      fontSize: '0.78rem',
-                      color: 'var(--bf-muted)'
-                    }}
-                  >
-                    <span>
-                      Página {ordersPage} de {totalOrderPages} ({filteredOrders.length} pedidos en total)
-                    </span>
-                    <div style={{ display: 'flex', gap: '6px' }}>
+                  <div className="admin-empty-state">
+                    <ClipboardList size={30} aria-hidden="true" />
+                    <h4>No se encontraron órdenes</h4>
+                    <p>Intenta ajustar el término de búsqueda o cambia el filtro de estado.</p>
+                    {orderStatusFilter !== 'Todos' && (
                       <button
                         type="button"
+                        className="admin-btn-outline is-compact"
+                        onClick={() => {
+                          setOrderStatusFilter('Todos');
+                          setOrderSearch('');
+                          setOrdersPage(1);
+                        }}
+                      >
+                        Ver todos los pedidos
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="admin-table-scroll">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Pedido</th>
+                          <th>Cliente</th>
+                          <th>Prendas</th>
+                          <th>Pago</th>
+                          <th>Total (COP)</th>
+                          <th>Estado actual</th>
+                          <th style={{ textAlign: 'right' }}>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {paginatedOrders.map(ord => {
+                          const itemCount = ord.count || (ord.items || []).reduce((s, it) => s + Number(it.quantity || 1), 0);
+                          const firstItem = ord.items?.[0]?.name;
+                          return (
+                            <tr key={ord.orderId}>
+                              <td>
+                                <strong style={{ color: '#f4f4f2', display: 'block' }}>{ord.orderId}</strong>
+                                <span style={{ fontSize: '11px', color: '#888' }}>{ord.date}</span>
+                              </td>
+                              <td>
+                                <div style={{ fontWeight: '600', color: '#f4f4f2' }}>{ord.customer?.name}</div>
+                                <div style={{ fontSize: '11px', color: '#888' }}>{ord.customer?.email}{ord.customer?.city ? ` · ${ord.customer.city}` : ''}</div>
+                              </td>
+                              <td>
+                                <strong className="admin-tabular" style={{ color: '#e5e5e5', display: 'block' }}>{itemCount} {itemCount === 1 ? 'prenda' : 'prendas'}</strong>
+                                {firstItem && <span style={{ fontSize: '11px', color: '#888' }}>{firstItem}{ord.items?.length > 1 ? ` +${ord.items.length - 1}` : ''}</span>}
+                              </td>
+                              <td>
+                                <span style={{ fontSize: '12px', color: '#e5e5e5', fontWeight: '600', display: 'block' }}>
+                                  {ord.payment?.method === 'card' ? 'Tarjeta' : (ord.payment?.method === 'transfer' ? 'Transferencia' : 'Efectivo')}
+                                </span>
+                                <span style={{ fontSize: '11px', color: '#888' }}>
+                                  {ord.payment?.status}
+                                </span>
+                              </td>
+                              <td className="admin-tabular" style={{ fontWeight: '700', color: '#f4f4f2' }}>
+                                {formatMoney(ord.total)}
+                              </td>
+                              <td>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
+                                  {renderOrderStatusBadge(ord.orderStatus)}
+                                  <select
+                                    className="admin-inline-select"
+                                    aria-label={`Cambiar estado del pedido ${ord.orderId}`}
+                                    value={ord.orderStatus || 'En proceso'}
+                                    onChange={(e) => updateOrderStatus(ord.orderId, e.target.value)}
+                                  >
+                                    <option value="Pendiente">Recibido / Pendiente</option>
+                                    <option value="Aceptado">Aceptado</option>
+                                    <option value="En proceso">En preparación</option>
+                                    <option value="Enviado">Enviado</option>
+                                    <option value="Entregado">Entregado</option>
+                                    <option value="Cancelado">Cancelado</option>
+                                  </select>
+                                </div>
+                              </td>
+                              <td style={{ textAlign: 'right' }}>
+                                <button
+                                  type="button"
+                                  className="admin-btn-outline is-compact"
+                                  onClick={() => setSelectedOrderDetails(ord)}
+                                >
+                                  <Eye size={13} aria-hidden="true" />
+                                  <span>Detalle</span>
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {totalOrderPages > 1 && (
+                  <div className="admin-pagination">
+                    <span className="admin-tabular">
+                      Página {ordersPage} de {totalOrderPages} ({filteredOrders.length} pedidos en total)
+                    </span>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        type="button"
+                        className="admin-btn-outline is-compact"
                         disabled={ordersPage === 1}
                         onClick={() => setOrdersPage(p => Math.max(1, p - 1))}
-                        style={{
-                          padding: '4px 10px',
-                          backgroundColor: 'var(--bf-surface)',
-                          border: '1px solid var(--bf-border)',
-                          borderRadius: '4px',
-                          cursor: ordersPage === 1 ? 'not-allowed' : 'pointer'
-                        }}
                       >
                         Anterior
                       </button>
                       <button
                         type="button"
+                        className="admin-btn-outline is-compact"
                         disabled={ordersPage === totalOrderPages}
                         onClick={() => setOrdersPage(p => Math.min(totalOrderPages, p + 1))}
-                        style={{
-                          padding: '4px 10px',
-                          backgroundColor: 'var(--bf-surface)',
-                          border: '1px solid var(--bf-border)',
-                          borderRadius: '4px',
-                          cursor: ordersPage === totalOrderPages ? 'not-allowed' : 'pointer'
-                        }}
                       >
                         Siguiente
                       </button>
@@ -2736,91 +2292,128 @@ export const AdminPanel = ({ setActivePage }) => {
               VISTA 5: CLIENTES (DIRECTORIO DE COMPRADORES)
               ============================================================== */}
           {activeTab === 'customers' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div
-                style={{
-                  backgroundColor: 'var(--bf-secondary)',
-                  border: '1px solid var(--bf-border)',
-                  borderRadius: '8px',
-                  padding: '16px 20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: '14px'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: '260px' }}>
-                  <Search size={16} color="var(--bf-muted)" />
+            <div className="admin-view-animated admin-view-stack">
+              <section className="admin-welcome admin-report-heading" aria-labelledby="admin-customers-title">
+                <div>
+                  <span className="admin-eyebrow">SAUZ / COMUNIDAD</span>
+                  <h1 id="admin-customers-title">DIRECTORIO DE CLIENTES.</h1>
+                  <p>Historial de compradores registrados, frecuencia de pedidos y facturación acumulada.</p>
+                </div>
+                <div className="admin-report-heading-action">
+                  <span className="admin-date-current admin-tabular">{filteredCustomers.length} clientes</span>
+                </div>
+              </section>
+
+              <div className="admin-metrics-grid-3">
+                <article className="admin-metric">
+                  <div><span>Clientes registrados</span><Users size={18} aria-hidden="true" /></div>
+                  <strong className="admin-tabular">{customers.length}</strong>
+                  <p>Compradores con al menos una orden registrada.</p>
+                </article>
+                <article className="admin-metric">
+                  <div><span>Clientes recurrentes</span><TrendingUp size={18} aria-hidden="true" /></div>
+                  <strong className="admin-tabular is-positive">{customers.filter(c => c.orderCount > 1).length}</strong>
+                  <p>Compradores con 2 o más pedidos en la tienda.</p>
+                </article>
+                <article className="admin-metric">
+                  <div><span>Compra promedio por cliente</span><DollarSign size={18} aria-hidden="true" /></div>
+                  <strong className="admin-tabular">
+                    {formatMoney(customers.length ? Math.round(customers.reduce((s, c) => s + Number(c.totalSpent || 0), 0) / customers.length) : 0)}
+                  </strong>
+                  <p>Facturación acumulada dividida entre compradores.</p>
+                </article>
+              </div>
+
+              <div className="admin-toolbar">
+                <div className="admin-search-box">
+                  <Search size={16} aria-hidden="true" />
                   <input
                     type="text"
+                    aria-label="Buscar cliente"
                     placeholder="Buscar cliente por nombre, email o ciudad..."
                     value={customerSearch}
-                    onChange={(e) => setCustomerSearch(e.target.value)}
-                    style={{
-                      width: '100%',
-                      border: 'none',
-                      backgroundColor: 'transparent',
-                      color: 'var(--bf-text)',
-                      fontSize: '0.86rem',
-                      outline: 'none'
+                    onChange={(e) => {
+                      setCustomerSearch(e.target.value);
+                      setCustomersPage(1);
                     }}
                   />
                 </div>
-
-                <span style={{ fontSize: '0.78rem', color: 'var(--bf-muted)' }}>
-                  {filteredCustomers.length} clientes encontrados
+                <span className="admin-panel-meta admin-tabular">
+                  {loadingCustomers ? 'Cargando directorio...' : `${filteredCustomers.length} clientes encontrados`}
                 </span>
               </div>
 
-              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid var(--bf-border)', backgroundColor: 'var(--bf-secondary)', color: 'var(--bf-muted)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      <th style={{ padding: '12px 16px' }}>Cliente</th>
-                      <th style={{ padding: '12px 16px' }}>Contacto</th>
-                      <th style={{ padding: '12px 16px' }}>Ciudad / Ubicación</th>
-                      <th style={{ padding: '12px 16px' }}>Pedidos</th>
-                      <th style={{ padding: '12px 16px' }}>Facturación Acumulada</th>
-                      <th style={{ padding: '12px 16px' }}>Última Compra</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredCustomers.map((c, idx) => (
-                      <tr key={idx} style={{ borderBottom: '1px solid var(--bf-border)' }}>
-                        <td style={{ padding: '14px 16px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div
-                              style={{
-                                width: '32px',
-                                height: '32px',
-                                borderRadius: '50%',
-                                backgroundColor: 'var(--bf-surface)',
-                                color: 'var(--bf-text)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '0.75rem',
-                                fontWeight: '700'
-                              }}
-                            >
-                              {c.name ? c.name.charAt(0).toUpperCase() : 'C'}
-                            </div>
-                            <strong style={{ color: 'var(--bf-text)' }}>{c.name}</strong>
-                          </div>
-                        </td>
-                        <td style={{ padding: '14px 16px', color: 'var(--bf-muted)' }}>
-                          <div>{c.email}</div>
-                          {c.phone && <div style={{ fontSize: '0.7rem' }}>{c.phone}</div>}
-                        </td>
-                        <td style={{ padding: '14px 16px', color: 'var(--bf-text)' }}>{c.city || 'Medellín'}</td>
-                        <td style={{ padding: '14px 16px', fontWeight: '600' }}>{c.orderCount} pedido(s)</td>
-                        <td style={{ padding: '14px 16px', fontWeight: '800', color: 'var(--bf-text)' }}>{formatMoney(c.totalSpent)}</td>
-                        <td style={{ padding: '14px 16px', color: 'var(--bf-muted)' }}>{c.lastOrderDate}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="admin-table-card">
+                {paginatedCustomers.length === 0 ? (
+                  <div className="admin-empty-state">
+                    <Users size={30} aria-hidden="true" />
+                    <h4>Sin resultados en el directorio</h4>
+                    <p>No hay clientes que coincidan con el término de búsqueda.</p>
+                  </div>
+                ) : (
+                  <div className="admin-table-scroll">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Cliente</th>
+                          <th>Contacto</th>
+                          <th>Ciudad</th>
+                          <th>Pedidos</th>
+                          <th>Total comprado (COP)</th>
+                          <th>Última compra</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {paginatedCustomers.map((c, idx) => (
+                          <tr key={idx}>
+                            <td>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div className="admin-customer-avatar">
+                                  {c.name ? c.name.charAt(0).toUpperCase() : 'C'}
+                                </div>
+                                <strong style={{ color: '#f4f4f2' }}>{c.name}</strong>
+                              </div>
+                            </td>
+                            <td style={{ color: '#999' }}>
+                              <div>{c.email}</div>
+                              {c.phone && <div style={{ fontSize: '11px', color: '#777' }}>{c.phone}</div>}
+                            </td>
+                            <td><span className="admin-tag-pill">{c.city || 'Medellín'}</span></td>
+                            <td className="admin-tabular" style={{ fontWeight: '600' }}>{c.orderCount} {c.orderCount === 1 ? 'pedido' : 'pedidos'}</td>
+                            <td className="admin-tabular" style={{ fontWeight: '700', color: '#f4f4f2' }}>{formatMoney(c.totalSpent)}</td>
+                            <td style={{ color: '#999' }}>{c.lastOrderDate}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {totalCustomerPages > 1 && (
+                  <div className="admin-pagination">
+                    <span className="admin-tabular">
+                      Página {customersPage} de {totalCustomerPages} ({filteredCustomers.length} clientes)
+                    </span>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        type="button"
+                        className="admin-btn-outline is-compact"
+                        disabled={customersPage === 1}
+                        onClick={() => setCustomersPage(p => Math.max(1, p - 1))}
+                      >
+                        Anterior
+                      </button>
+                      <button
+                        type="button"
+                        className="admin-btn-outline is-compact"
+                        disabled={customersPage === totalCustomerPages}
+                        onClick={() => setCustomersPage(p => Math.min(totalCustomerPages, p + 1))}
+                      >
+                        Siguiente
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -2829,60 +2422,127 @@ export const AdminPanel = ({ setActivePage }) => {
               VISTA 6: VENTAS (DESGLOSE FINANCIERO & RECAUDO)
               ============================================================== */}
           {activeTab === 'sales' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
-                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '20px' }}>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', textTransform: 'uppercase', fontWeight: '700', display: 'block', marginBottom: '6px' }}>
-                    Ventas Brutas Totales
-                  </span>
-                  <div style={{ fontSize: '1.6rem', fontWeight: '800', color: 'var(--bf-text)' }}>{formatMoney(totalGrossRevenue)}</div>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Incluye todas las órdenes registradas</span>
+            <div className="admin-view-animated admin-view-stack">
+              <section className="admin-welcome admin-report-heading" aria-labelledby="admin-sales-title">
+                <div>
+                  <span className="admin-eyebrow">SAUZ / RESULTADOS</span>
+                  <h1 id="admin-sales-title">ANALÍTICA FINANCIERA.</h1>
+                  <p>Desglose de ingresos confirmados, órdenes canceladas y distribución por medio de pago.</p>
                 </div>
+                <div className="admin-report-heading-action">
+                  <span className="admin-date-current">{quickPeriodLabel}</span>
+                </div>
+              </section>
 
-                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '20px' }}>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', textTransform: 'uppercase', fontWeight: '700', display: 'block', marginBottom: '6px' }}>
-                    Ventas Netas Confirmadas
-                  </span>
-                  <div style={{ fontSize: '1.6rem', fontWeight: '800', color: '#15803D' }}>{formatMoney(totalNetRevenue)}</div>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>Órdenes vigentes en preparación y entregadas</span>
-                </div>
+              <div className="admin-metrics-grid">
+                <article className="admin-metric">
+                  <div><span>Ventas brutas</span><DollarSign size={18} aria-hidden="true" /></div>
+                  <strong className="admin-tabular">{formatMoney(periodGrossRevenue)}</strong>
+                  <p>Incluye {periodOrders.length} órdenes registradas en el período.</p>
+                </article>
 
-                <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '20px' }}>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)', textTransform: 'uppercase', fontWeight: '700', display: 'block', marginBottom: '6px' }}>
-                    Volumen Cancelado
-                  </span>
-                  <div style={{ fontSize: '1.6rem', fontWeight: '800', color: '#DC2626' }}>{formatMoney(cancelledRevenue)}</div>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>{cancelledOrders.length} pedido(s) dados de baja</span>
-                </div>
+                <article className="admin-metric">
+                  <div><span>Ventas netas confirmadas</span><TrendingUp size={18} aria-hidden="true" /></div>
+                  <strong className="admin-tabular is-positive">{formatMoney(periodNetRevenue)}</strong>
+                  <p>{periodValidOrders.length} órdenes válidas (excluye canceladas).</p>
+                </article>
+
+                <article className="admin-metric">
+                  <div><span>Promedio por pedido</span><CreditCard size={18} aria-hidden="true" /></div>
+                  <strong className="admin-tabular">{formatMoney(periodAverageOrderValue)}</strong>
+                  <p>Ticket promedio sobre ventas confirmadas.</p>
+                </article>
+
+                <article className="admin-metric">
+                  <div><span>Volumen cancelado</span><XCircle size={18} aria-hidden="true" /></div>
+                  <strong className="admin-tabular is-danger">{formatMoney(periodCancelledRevenue)}</strong>
+                  <p>{periodCancelledOrders.length} pedido(s) dados de baja en el período.</p>
+                </article>
               </div>
 
               {/* Métodos de Pago */}
-              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
-                <h4 style={{ margin: '0 0 16px 0', fontSize: '0.98rem', fontWeight: '800' }}>Distribución por Medio de Pago</h4>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+              <section className="admin-panel-card" aria-labelledby="admin-payments-title">
+                <div className="admin-panel-head">
+                  <div>
+                    <h4 id="admin-payments-title">Distribución por medio de pago</h4>
+                    <p>Recaudo neto confirmado por canal durante {quickPeriodLabel.toLowerCase()}.</p>
+                  </div>
+                  <span className="admin-panel-meta admin-tabular">Neto total histórico: {formatMoney(totalNetRevenue)}</span>
+                </div>
+                <div className="admin-payment-grid">
                   {[
                     { method: 'Tarjeta de Crédito / Débito', key: 'card' },
                     { method: 'Transferencia Bancolombia / Nequi', key: 'transfer' },
                     { method: 'Pago Contra Entrega en Efectivo', key: 'cash' }
                   ].map(m => {
-                    const matchOrders = validOrders.filter(o => (o.payment?.method || 'card') === m.key);
+                    const matchOrders = periodValidOrders.filter(o => (o.payment?.method || 'card') === m.key);
                     const sum = matchOrders.reduce((acc, o) => acc + (o.total || 0), 0);
-                    const pct = totalNetRevenue > 0 ? Math.round((sum / totalNetRevenue) * 100) : 0;
+                    const pct = periodNetRevenue > 0 ? Math.round((sum / periodNetRevenue) * 100) : 0;
                     return (
-                      <div key={m.key} style={{ padding: '16px', backgroundColor: 'var(--bf-secondary)', borderRadius: '6px', border: '1px solid var(--bf-border)' }}>
-                        <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--bf-text)', display: 'block', marginBottom: '4px' }}>
+                      <article key={m.key} className="admin-payment-card">
+                        <span style={{ fontSize: '12px', fontWeight: '600', color: '#b4b4b4' }}>
                           {m.method}
                         </span>
-                        <div style={{ fontSize: '1.35rem', fontWeight: '800', color: 'var(--bf-text)', marginBottom: '4px' }}>
+                        <strong className="admin-tabular" style={{ fontSize: '24px', letterSpacing: '-0.03em', color: '#f4f4f2' }}>
                           {formatMoney(sum)}
+                        </strong>
+                        <div className="admin-progress-track">
+                          <div className="admin-progress-fill" style={{ width: `${pct}%` }} />
                         </div>
-                        <span style={{ fontSize: '0.72rem', color: 'var(--bf-muted)' }}>
-                          {matchOrders.length} transacción(es) · {pct}% del total
+                        <span className="admin-tabular" style={{ fontSize: '11px', color: '#888' }}>
+                          {matchOrders.length} transacción(es) · {pct}% del período
                         </span>
-                      </div>
+                      </article>
                     );
                   })}
                 </div>
+              </section>
+
+              {/* Tabla de movimientos del período */}
+              <div className="admin-table-card">
+                <div className="admin-panel-head" style={{ padding: '22px 24px 0', marginBottom: '14px' }}>
+                  <div>
+                    <h4>Detalle de ventas del período</h4>
+                    <p>Órdenes contabilizadas durante {quickPeriodLabel.toLowerCase()}.</p>
+                  </div>
+                  <span className="admin-panel-meta admin-tabular">{periodOrders.length} movimiento(s)</span>
+                </div>
+                {periodOrders.length === 0 ? (
+                  <div className="admin-empty-state">
+                    <DollarSign size={28} aria-hidden="true" />
+                    <h4>Sin movimientos en este período</h4>
+                    <p>Selecciona un rango más amplio en la barra superior para consultar transacciones.</p>
+                  </div>
+                ) : (
+                  <div className="admin-table-scroll">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Pedido</th>
+                          <th>Fecha</th>
+                          <th>Cliente</th>
+                          <th>Medio de pago</th>
+                          <th>Estado</th>
+                          <th style={{ textAlign: 'right' }}>Valor (COP)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {periodOrders.slice(0, 12).map(ord => (
+                          <tr key={ord.orderId}>
+                            <td style={{ fontWeight: '700', color: '#f4f4f2' }}>{ord.orderId}</td>
+                            <td style={{ color: '#999' }}>{ord.date}</td>
+                            <td>{ord.customer?.name}</td>
+                            <td>{ord.payment?.method === 'card' ? 'Tarjeta' : (ord.payment?.method === 'transfer' ? 'Transferencia' : 'Efectivo')}</td>
+                            <td>{renderOrderStatusBadge(ord.orderStatus)}</td>
+                            <td className="admin-tabular" style={{ textAlign: 'right', fontWeight: '700', color: ord.orderStatus === 'Cancelado' ? '#ff4d57' : '#f4f4f2' }}>
+                              {formatMoney(ord.total)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -2891,86 +2551,87 @@ export const AdminPanel = ({ setActivePage }) => {
               VISTA 7: REPORTES (MÉTRICAS & EXPORTACIÓN)
               ============================================================== */}
           {activeTab === 'reports' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
-              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
-                <h4 style={{ margin: '0 0 6px 0', fontSize: '1.05rem', fontWeight: '800' }}>Centro de Informes y Exportación</h4>
-                <p style={{ margin: '0 0 20px 0', fontSize: '0.82rem', color: 'var(--bf-muted)' }}>
-                  Descarga en formato CSV plano los registros operativos de ventas e inventario para auditoría contable.
-                </p>
+            <div className="admin-view-animated admin-view-stack">
+              <section className="admin-welcome admin-report-heading" aria-labelledby="admin-reports-title">
+                <div>
+                  <span className="admin-eyebrow">SAUZ / REPORTES</span>
+                  <h1 id="admin-reports-title">REPORTES Y EXPORTACIÓN.</h1>
+                  <p>Descarga registros operativos en CSV y consulta el rendimiento comercial por categoría.</p>
+                </div>
+              </section>
 
-                <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+              <section className="admin-panel-card" aria-labelledby="admin-export-title">
+                <div className="admin-panel-head">
+                  <div>
+                    <h4 id="admin-export-title">Centro de informes</h4>
+                    <p>Descarga en formato CSV plano los registros operativos de ventas e inventario para auditoría contable.</p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                   <button
                     type="button"
+                    className="admin-primary-action"
                     onClick={exportOrdersToCSV}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '10px 18px',
-                      backgroundColor: 'var(--bf-secondary)',
-                      color: 'var(--bf-text)',
-                      borderRadius: '6px',
-                      border: 'none',
-                      fontSize: '0.82rem',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
                   >
-                    <Download size={16} />
-                    <span>Exportar Libro de Pedidos (CSV)</span>
+                    <Download size={16} aria-hidden="true" />
+                    <span>Exportar libro de pedidos (CSV)</span>
                   </button>
 
                   <button
                     type="button"
+                    className="admin-btn-outline"
                     onClick={exportInventoryToCSV}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '10px 18px',
-                      backgroundColor: 'var(--bf-secondary)',
-                      color: 'var(--bf-text)',
-                      borderRadius: '6px',
-                      border: '1px solid var(--bf-border)',
-                      fontSize: '0.82rem',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
                   >
-                    <Download size={16} />
-                    <span>Exportar Existencias en Bodega (CSV)</span>
+                    <Download size={16} aria-hidden="true" />
+                    <span>Exportar existencias en bodega (CSV)</span>
                   </button>
                 </div>
-              </div>
+              </section>
 
               {/* Tabla de Rendimiento por Categoría */}
-              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '24px' }}>
-                <h4 style={{ margin: '0 0 16px 0', fontSize: '0.98rem', fontWeight: '800' }}>Rendimiento Comercial por Categoría</h4>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid var(--bf-border)', color: 'var(--bf-muted)', fontSize: '0.72rem', textTransform: 'uppercase' }}>
-                      <th style={{ padding: '10px 14px' }}>Categoría</th>
-                      <th style={{ padding: '10px 14px' }}>Prendas Activas</th>
-                      <th style={{ padding: '10px 14px' }}>Existencias Físicas</th>
-                      <th style={{ padding: '10px 14px' }}>Ingresos Generados</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {['Camisetas', 'Sudaderas', 'Chaquetas', 'Pantalones'].map(cat => {
-                      const prods = products.filter(p => p.category === cat);
-                      const stockSum = prods.reduce((acc, p) => acc + (p.stock || 0), 0);
-                      const revenue = categorySales[cat] || 0;
-                      return (
-                        <tr key={cat} style={{ borderBottom: '1px solid var(--bf-border)' }}>
-                          <td style={{ padding: '12px 14px', fontWeight: '700' }}>{cat}</td>
-                          <td style={{ padding: '12px 14px', color: 'var(--bf-muted)' }}>{prods.length} modelo(s)</td>
-                          <td style={{ padding: '12px 14px' }}>{stockSum} uds</td>
-                          <td style={{ padding: '12px 14px', fontWeight: '700', color: 'var(--bf-text)' }}>{formatMoney(revenue)}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+              <div className="admin-table-card">
+                <div className="admin-panel-head" style={{ padding: '22px 24px 0', marginBottom: '14px' }}>
+                  <div>
+                    <h4>Rendimiento comercial por categoría</h4>
+                    <p>Totales históricos acumulados sobre pedidos no cancelados.</p>
+                  </div>
+                  <span className="admin-panel-meta admin-tabular">{categorySummary.length} categorías · {formatMoney(totalNetRevenue)}</span>
+                </div>
+                <div className="admin-table-scroll">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Categoría</th>
+                        <th>Modelos activos</th>
+                        <th>Unidades en bodega</th>
+                        <th>Participación</th>
+                        <th style={{ textAlign: 'right' }}>Ingresos generados</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {categorySummary.map(cat => {
+                        const share = totalNetRevenue > 0 ? Math.round((cat.revenue / totalNetRevenue) * 100) : 0;
+                        return (
+                          <tr key={cat.category}>
+                            <td style={{ fontWeight: '700', color: '#f4f4f2' }}>{cat.category}</td>
+                            <td className="admin-tabular" style={{ color: '#999' }}>{cat.productCount} modelo(s)</td>
+                            <td className="admin-tabular">{cat.stockUnits} uds</td>
+                            <td>
+                              <div className="admin-share-cell">
+                                <div className="admin-progress-track">
+                                  <div className="admin-progress-fill" style={{ width: `${share}%` }} />
+                                </div>
+                                <span className="admin-tabular" style={{ fontSize: '12px', color: '#a6a6a6', minWidth: '34px' }}>{share}%</span>
+                              </div>
+                            </td>
+                            <td className="admin-tabular" style={{ textAlign: 'right', fontWeight: '700', color: '#f4f4f2' }}>{formatMoney(cat.revenue)}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
@@ -2979,92 +2640,96 @@ export const AdminPanel = ({ setActivePage }) => {
               VISTA 8: CONFIGURACIÓN (AJUSTES DE LA MARCA)
               ============================================================== */}
           {activeTab === 'settings' && (
-            <div style={{ maxWidth: '680px', display: 'flex', flexDirection: 'column', gap: '22px' }}>
-              <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '8px', padding: '28px' }}>
-                <h4 style={{ margin: '0 0 6px 0', fontSize: '1.05rem', fontWeight: '800' }}>Información Corporativa de Sauz Store</h4>
-                <p style={{ margin: '0 0 20px 0', fontSize: '0.8rem', color: 'var(--bf-muted)' }}>
-                  Parámetros del sistema de facturación y despacho para Colombia.
-                </p>
+            <div className="admin-view-animated admin-view-stack">
+              <section className="admin-welcome admin-report-heading" aria-labelledby="admin-settings-title">
+                <div>
+                  <span className="admin-eyebrow">SAUZ / PREFERENCIAS</span>
+                  <h1 id="admin-settings-title">AJUSTES DE LA TIENDA.</h1>
+                  <p>Parámetros operativos, tributarios y logísticos vigentes para Sauz Store Colombia.</p>
+                </div>
+                <div className="admin-report-heading-action">
+                  <button
+                    type="button"
+                    className="admin-primary-action"
+                    onClick={() => showToast('Parámetros corporativos validados correctamente')}
+                  >
+                    Validar parámetros
+                  </button>
+                </div>
+              </section>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                      Nombre de la Marca
-                    </label>
-                    <input
-                      type="text"
-                      readOnly
-                      value="Sauz Store Colombia"
-                      style={{ width: '100%', padding: '9px 12px', backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '6px', fontSize: '0.86rem', color: 'var(--bf-text)', boxSizing: 'border-box' }}
-                    />
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+              <div className="admin-dashboard-split">
+                <div className="admin-table-card">
+                  <div className="admin-panel-head" style={{ padding: '22px 24px 0', marginBottom: '14px' }}>
                     <div>
-                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                        Moneda Operativa
-                      </label>
-                      <input
-                        type="text"
-                        readOnly
-                        value="COP ($ Peso Colombiano)"
-                        style={{ width: '100%', padding: '9px 12px', backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '6px', fontSize: '0.86rem', color: 'var(--bf-text)', boxSizing: 'border-box' }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                        Tasa de IVA Aplicable
-                      </label>
-                      <input
-                        type="text"
-                        readOnly
-                        value="16% (Incluido en Total)"
-                        style={{ width: '100%', padding: '9px 12px', backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '6px', fontSize: '0.86rem', color: 'var(--bf-text)', boxSizing: 'border-box' }}
-                      />
+                      <h4>Identidad y facturación</h4>
+                      <p>Parámetros comerciales y fiscales aplicados al checkout.</p>
                     </div>
                   </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                      Bodega y Centro Logístico
-                    </label>
-                    <input
-                      type="text"
-                      readOnly
-                      value="Calle 10 # 40-20, El Poblado, Medellín, Colombia"
-                      style={{ width: '100%', padding: '9px 12px', backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '6px', fontSize: '0.86rem', color: 'var(--bf-text)', boxSizing: 'border-box' }}
-                    />
+                  <div className="admin-table-scroll">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Parámetro</th>
+                          <th>Valor vigente</th>
+                          <th>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td style={{ fontWeight: '600', color: '#f4f4f2' }}>Nombre comercial</td>
+                          <td>Sauz Store Colombia</td>
+                          <td><span className="admin-status-pill is-success">Activo</span></td>
+                        </tr>
+                        <tr>
+                          <td style={{ fontWeight: '600', color: '#f4f4f2' }}>Moneda operativa</td>
+                          <td className="admin-tabular">COP ($ Peso Colombiano)</td>
+                          <td><span className="admin-status-pill is-neutral">COP</span></td>
+                        </tr>
+                        <tr>
+                          <td style={{ fontWeight: '600', color: '#f4f4f2' }}>Impuesto (IVA)</td>
+                          <td className="admin-tabular">16% incluido en total</td>
+                          <td><span className="admin-status-pill is-info">Vigente</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
+                </div>
 
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                      Tiempo Promedio de Entrega
-                    </label>
-                    <input
-                      type="text"
-                      readOnly
-                      value="2 a 4 días hábiles nacionales"
-                      style={{ width: '100%', padding: '9px 12px', backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '6px', fontSize: '0.86rem', color: 'var(--bf-text)', boxSizing: 'border-box' }}
-                    />
+                <div className="admin-table-card">
+                  <div className="admin-panel-head" style={{ padding: '22px 24px 0', marginBottom: '14px' }}>
+                    <div>
+                      <h4>Logística y despacho</h4>
+                      <p>Centro de distribución y tiempos de entrega nacional.</p>
+                    </div>
                   </div>
-
-                  <div style={{ marginTop: '8px' }}>
-                    <button
-                      type="button"
-                      onClick={() => showToast('Parámetros corporativos validados correctamente')}
-                      style={{
-                        padding: '9px 18px',
-                        backgroundColor: 'var(--bf-secondary)',
-                        color: 'var(--bf-text)',
-                        border: 'none',
-                        borderRadius: '6px',
-                        fontSize: '0.82rem',
-                        fontWeight: '600',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Guardar Preferencias
-                    </button>
+                  <div className="admin-table-scroll">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Parámetro</th>
+                          <th>Valor vigente</th>
+                          <th>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td style={{ fontWeight: '600', color: '#f4f4f2' }}>Bodega principal</td>
+                          <td>Calle 10 # 40-20, El Poblado, Medellín</td>
+                          <td><span className="admin-status-pill is-success">Operativa</span></td>
+                        </tr>
+                        <tr>
+                          <td style={{ fontWeight: '600', color: '#f4f4f2' }}>Plazo de entrega</td>
+                          <td>2 a 4 días hábiles nacionales</td>
+                          <td><span className="admin-status-pill is-neutral">Nacional</span></td>
+                        </tr>
+                        <tr>
+                          <td style={{ fontWeight: '600', color: '#f4f4f2' }}>Umbral de alerta stock</td>
+                          <td className="admin-tabular">≤ {lowStockThreshold} unidades por talla</td>
+                          <td><span className="admin-status-pill is-warning">Monitoreado</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -3076,387 +2741,375 @@ export const AdminPanel = ({ setActivePage }) => {
       {/* ==============================================================
           MODAL: CREAR / EDITAR PRENDA DE CATÁLOGO
           ============================================================== */}
-      {isCreateProductModalOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 10010,
-            backgroundColor: 'rgba(0,0,0,0.45)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px'
-          }}
-        >
-          <div
-            style={{
-              width: '100%',
-              maxWidth: '500px',
-              backgroundColor: 'var(--bf-secondary)',
-              border: '1px solid var(--bf-border)',
-              borderRadius: '8px',
-              padding: '28px',
-              boxShadow: '0 20px 45px rgba(0,0,0,0.12)'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: '800', color: 'var(--bf-text)' }}>
-                {editingProduct ? 'Editar Prenda' : 'Nueva Prenda de Colección'}
-              </h3>
-              <button
-                type="button"
-                onClick={() => setIsCreateProductModalOpen(false)}
-                style={{ background: 'none', border: 'none', color: 'var(--bf-muted)', cursor: 'pointer', padding: '4px' }}
-              >
-                <X size={18} />
-              </button>
-            </div>
+      {isCreateProductModalOpen && (() => {
+        const formVariants = productForm.variantsList || [];
+        const totalFormStock = formVariants.reduce((sum, v) => sum + (Number(v.stock) || 0), 0);
+        const galleryOptions = [
+          { value: '/Productos/jordan_Blanca.png', label: 'Camisa Jordan Blanca' },
+          { value: '/Productos/Jordan_negra.png', label: 'Camisa Jordan Negra' },
+          { value: '/Productos/hellstart_negra.png', label: 'Camisa Hellstar' },
+          { value: '/Productos/moon.png', label: 'Camisa Moon' },
+          { value: '/Productos/Ungd.png', label: 'Camisa Undg' },
+          { value: '/Productos/letras_negra.png', label: 'Camisa Letras' },
+          { value: '/Productos/Monastery_lado1.png', label: 'Hoodie Monastery' },
+          { value: '/Productos/hoodie_negro.png', label: 'Hoodie Estrella' },
+          { value: '/Productos/hoddie_blanco3.png', label: 'Hoodie Blanco Estrella' },
+          { value: '/Productos/hoodie_negro2.png', label: 'Hoodie Negro Estampado' },
+          { value: '/Productos/hodie_Blanco2.png', label: 'Hoodie Angel' },
+          { value: '/Productos/Hugo_sueter.png', label: 'Hoodie Hugo' }
+        ];
+        const isCustomImage = productForm.image && !galleryOptions.some(o => o.value === productForm.image);
 
-            <form onSubmit={handleSaveProductSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                  Nombre de la prenda *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej. Hoodie Hellstar Edición Limitada"
-                  value={productForm.name}
-                  onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '9px 12px',
-                    border: '1px solid var(--bf-border)',
-                    borderRadius: '6px',
-                    fontSize: '0.86rem',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <label>Marca
-                  <input value={productForm.brand || ''} onChange={(e) => setProductForm({ ...productForm, brand: e.target.value })} />
-                </label>
-                <label>Subcategoría
-                  <input value={productForm.subcategory || ''} onChange={(e) => setProductForm({ ...productForm, subcategory: e.target.value })} />
-                </label>
-                <label>Variantes confirmadas (talla,stock por línea)
-                  <textarea rows="4" placeholder={'M,3\nL,0'} value={productForm.variantsText || ''} onChange={(e) => setProductForm({ ...productForm, variantsText: e.target.value })} />
-                </label>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        return (
+          <div role="dialog" aria-modal="true" className="admin-modal-backdrop">
+            <div className="admin-modal-card is-product">
+              <div className="admin-modal-header">
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                    Categoría *
-                  </label>
-                  <select
-                    value={productForm.category}
-                    onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px',
-                      border: '1px solid var(--bf-border)',
-                      borderRadius: '6px',
-                      fontSize: '0.86rem',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                      backgroundColor: 'var(--bf-secondary)'
-                    }}
-                  >
-                    <option value="Camisetas">Camisetas</option>
-                    <option value="Sudaderas">Sudaderas</option>
-                    <option value="Chaquetas">Chaquetas</option>
-                    <option value="Pantalones">Pantalones</option>
-                    <option value="Zapatillas">Zapatillas</option>
-                    <option value="Gorras">Gorras</option>
-                    <option value="Conjuntos">Conjuntos</option>
-                    <option value="Accesorios">Accesorios</option>
-                  </select>
+                  <span className="admin-eyebrow">SAUZ / CATÁLOGO</span>
+                  <h3 style={{ marginTop: '6px' }}>
+                    {editingProduct ? 'Editar prenda' : 'Nueva prenda de colección'}
+                  </h3>
                 </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                    Precio Comercial (COP) *
-                  </label>
-                  <input
-                    type="number"
-                    required={false}
-                    min="1000"
-                    step="1000"
-                    placeholder="249000"
-                    value={productForm.price}
-                    onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px',
-                      border: '1px solid var(--bf-border)',
-                      borderRadius: '6px',
-                      fontSize: '0.86rem',
-                      outline: 'none',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                    Precio Anterior Opcional (COP)
-                  </label>
-                  <input
-                    type="number"
-                    min="1000"
-                    step="1000"
-                    placeholder="299000"
-                    value={productForm.previousPrice || ''}
-                    onChange={(e) => setProductForm({ ...productForm, previousPrice: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px',
-                      border: '1px solid var(--bf-border)',
-                      borderRadius: '6px',
-                      fontSize: '0.86rem',
-                      outline: 'none',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                    Colores Disponibles (separados por coma)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Negro, Blanco, Rojo"
-                    value={productForm.colors || ''}
-                    onChange={(e) => setProductForm({ ...productForm, colors: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px',
-                      border: '1px solid var(--bf-border)',
-                      borderRadius: '6px',
-                      fontSize: '0.86rem',
-                      outline: 'none',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingTop: '20px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.84rem', fontWeight: '700' }}>
-                    <input
-                      type="checkbox"
-                      checked={Boolean(productForm.commercial)}
-                      onChange={(e) => setProductForm({ ...productForm, commercial: e.target.checked })}
-                    />
-                    <span>Habilitar para compra comercial</span>
-                  </label>
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                    Stock total (calculado desde variantes)
-                  </label>
-                  <input
-                    type="number"
-                    required={false}
-                    min="0"
-                    value={productForm.stock}
-                    readOnly
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px',
-                      border: '1px solid var(--bf-border)',
-                      borderRadius: '6px',
-                      fontSize: '0.86rem',
-                      outline: 'none',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                    Imagen *
-                  </label>
-                  <select
-                    value={productForm.image}
-                    onChange={(e) => setProductForm({ ...productForm, image: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px',
-                      border: '1px solid var(--bf-border)',
-                      borderRadius: '6px',
-                      fontSize: '0.86rem',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                      backgroundColor: 'var(--bf-secondary)'
-                    }}
-                  >
-                    {productForm.image?.startsWith('/Productos/sauz-') && <option value={productForm.image}>{productForm.image.split('/').pop()}</option>}
-                    <option value="/Productos/jordan_Blanca.png">Camisa Jordan Blanca</option>
-                    <option value="/Productos/Jordan_negra.png">Camisa Jordan Negra</option>
-                    <option value="/Productos/hellstart_negra.png">Camisa Hellstar</option>
-                    <option value="/Productos/moon.png">Camisa Moon</option>
-                    <option value="/Productos/Ungd.png">Camisa Undg</option>
-                    <option value="/Productos/letras_negra.png">Camisa Letras</option>
-                    <option value="/Productos/Monastery_lado1.png">Hoodie Monastery</option>
-                    <option value="/Productos/hoodie_negro.png">Hoodie Estrella</option>
-                    <option value="/Productos/hoddie_blanco3.png">Hoodie Blanco Estrella</option>
-                    <option value="/Productos/hoodie_negro2.png">Hoodie Negro Estampado</option>
-                    <option value="/Productos/hodie_Blanco2.png">Hoodie Angel</option>
-                    <option value="/Productos/Hugo_sueter.png">Hoodie Hugo</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'var(--bf-text)', marginBottom: '6px' }}>
-                  Descripción Editorial de la Prenda
-                </label>
-                <textarea
-                  rows="3"
-                  placeholder="Confeccionada con algodón de 260 GSM, corte holgado y detalles de marca..."
-                  value={productForm.description}
-                  onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '9px 12px',
-                    border: '1px solid var(--bf-border)',
-                    borderRadius: '6px',
-                    fontSize: '0.86rem',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    fontFamily: 'inherit'
-                  }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '8px' }}>
                 <button
                   type="button"
+                  className="admin-modal-close"
+                  aria-label="Cerrar modal de producto"
                   onClick={() => setIsCreateProductModalOpen(false)}
-                  style={{
-                    padding: '9px 16px',
-                    backgroundColor: 'var(--bf-surface)',
-                    border: '1px solid var(--bf-border)',
-                    borderRadius: '6px',
-                    fontSize: '0.8rem',
-                    fontWeight: '600',
-                    color: 'var(--bf-text)',
-                    cursor: 'pointer'
-                  }}
                 >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  style={{
-                    padding: '9px 20px',
-                    backgroundColor: 'var(--bf-secondary)',
-                    color: 'var(--bf-text)',
-                    border: 'none',
-                    borderRadius: '6px',
-                    fontSize: '0.8rem',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  {editingProduct ? 'Guardar Cambios' : 'Crear Prenda'}
+                  <X size={16} />
                 </button>
               </div>
-            </form>
+
+              <form onSubmit={handleSaveProductSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                <div className="admin-product-modal-grid">
+                  {/* Columna izquierda: Datos, precio y tallas */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <section className="admin-form-section">
+                      <div className="admin-form-section-head">
+                        <h4>1. Información básica</h4>
+                        <span>Datos visibles en el catálogo</span>
+                      </div>
+
+                      <label className="admin-field">
+                        Nombre de la prenda *
+                        <input
+                          type="text"
+                          required
+                          placeholder="Ej. Hoodie Nike Tech Fleece Negro"
+                          value={productForm.name}
+                          onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
+                        />
+                      </label>
+
+                      <div className="admin-form-grid">
+                        <label className="admin-field">
+                          Marca
+                          <input
+                            placeholder="Ej. Nike, Adidas, SAUZ"
+                            value={productForm.brand || ''}
+                            onChange={(e) => setProductForm({ ...productForm, brand: e.target.value })}
+                          />
+                        </label>
+                        <label className="admin-field">
+                          Categoría *
+                          <select
+                            value={productForm.category}
+                            onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
+                          >
+                            <option value="Camisetas">Camisetas</option>
+                            <option value="Sudaderas">Sudaderas</option>
+                            <option value="Chaquetas">Chaquetas</option>
+                            <option value="Pantalones">Pantalones</option>
+                            <option value="Zapatillas">Zapatillas</option>
+                            <option value="Gorras">Gorras</option>
+                            <option value="Conjuntos">Conjuntos</option>
+                            <option value="Accesorios">Accesorios</option>
+                          </select>
+                        </label>
+                      </div>
+
+                      <div className="admin-form-grid">
+                        <label className="admin-field">
+                          Subcategoría (opcional)
+                          <input
+                            placeholder="Ej. Oversize, Running"
+                            value={productForm.subcategory || ''}
+                            onChange={(e) => setProductForm({ ...productForm, subcategory: e.target.value })}
+                          />
+                        </label>
+                        <label className="admin-field">
+                          Colores disponibles (opcional)
+                          <input
+                            type="text"
+                            placeholder="Negro, Blanco, Gris"
+                            value={productForm.colors || ''}
+                            onChange={(e) => setProductForm({ ...productForm, colors: e.target.value })}
+                          />
+                        </label>
+                      </div>
+                    </section>
+
+                    <section className="admin-form-section">
+                      <div className="admin-form-section-head">
+                        <h4>2. Precio y venta</h4>
+                        {Number(productForm.price) > 0 && (
+                          <span className="admin-price-hint">{formatMoney(Number(productForm.price))}</span>
+                        )}
+                      </div>
+
+                      <div className="admin-form-grid">
+                        <label className="admin-field">
+                          Precio de venta (COP) *
+                          <input
+                            type="number"
+                            min="1000"
+                            step="1000"
+                            placeholder="165000"
+                            value={productForm.price}
+                            onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
+                          />
+                        </label>
+                        <label className="admin-field">
+                          Precio anterior opcional (COP)
+                          <input
+                            type="number"
+                            min="1000"
+                            step="1000"
+                            placeholder="195000"
+                            value={productForm.previousPrice || ''}
+                            onChange={(e) => setProductForm({ ...productForm, previousPrice: e.target.value })}
+                          />
+                        </label>
+                      </div>
+
+                      <label className="admin-toggle-card">
+                        <input
+                          type="checkbox"
+                          checked={Boolean(productForm.commercial)}
+                          onChange={(e) => setProductForm({ ...productForm, commercial: e.target.checked })}
+                        />
+                        <span>
+                          <strong>Habilitar para compra en la tienda</strong>
+                          <small>Si está activo y tiene precio y stock, los clientes podrán agregarla a la bolsa.</small>
+                        </span>
+                      </label>
+                    </section>
+
+                    <section className="admin-form-section">
+                      <div className="admin-form-section-head">
+                        <h4>3. Tallas y existencias</h4>
+                        <span className="admin-tabular" style={{ color: '#f4f4f2', fontWeight: '700' }}>
+                          Stock total: {totalFormStock} uds
+                        </span>
+                      </div>
+
+                      <div className="admin-variant-list">
+                        {formVariants.map((row, idx) => (
+                          <div key={row.id || idx} className="admin-variant-row">
+                            <input
+                              type="text"
+                              aria-label={`Talla ${idx + 1}`}
+                              placeholder="Talla (ej. M, 40, Única)"
+                              value={row.size}
+                              onChange={(e) => {
+                                const next = [...formVariants];
+                                next[idx] = { ...next[idx], size: e.target.value };
+                                setProductForm({ ...productForm, variantsList: next });
+                              }}
+                            />
+                            <input
+                              type="number"
+                              min="0"
+                              aria-label={`Unidades para talla ${row.size || idx + 1}`}
+                              placeholder="Cantidad"
+                              value={row.stock}
+                              onChange={(e) => {
+                                const next = [...formVariants];
+                                next[idx] = { ...next[idx], stock: e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value, 10) || 0) };
+                                setProductForm({ ...productForm, variantsList: next });
+                              }}
+                            />
+                            <button
+                              type="button"
+                              className="admin-icon-btn is-danger"
+                              aria-label={`Quitar talla ${row.size || idx + 1}`}
+                              disabled={formVariants.length <= 1}
+                              onClick={() => {
+                                setProductForm({
+                                  ...productForm,
+                                  variantsList: formVariants.filter((_, i) => i !== idx)
+                                });
+                              }}
+                            >
+                              <Trash2 size={14} aria-hidden="true" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="admin-variant-presets">
+                        <button
+                          type="button"
+                          className="admin-btn-outline is-compact"
+                          onClick={() => {
+                            setProductForm({
+                              ...productForm,
+                              variantsList: [
+                                ...formVariants,
+                                { id: `size-${Date.now().toString(36)}`, size: '', stock: 0 }
+                              ]
+                            });
+                          }}
+                        >
+                          <Plus size={13} aria-hidden="true" />
+                          <span>Agregar talla</span>
+                        </button>
+                        <button
+                          type="button"
+                          className="admin-btn-outline is-compact"
+                          onClick={() => setProductForm({ ...productForm, variantsList: DEFAULT_VARIANTS.map(v => ({ ...v })) })}
+                        >
+                          Usar S · M · L · XL
+                        </button>
+                        <button
+                          type="button"
+                          className="admin-btn-outline is-compact"
+                          onClick={() => setProductForm({ ...productForm, variantsList: [{ id: 'size-unica', size: 'Única', stock: totalFormStock }] })}
+                        >
+                          Talla única
+                        </button>
+                      </div>
+                    </section>
+                  </div>
+
+                  {/* Columna derecha: Fotografía y descripción */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <section className="admin-image-panel">
+                      <div className="admin-form-section-head">
+                        <h4>Imagen de la prenda *</h4>
+                        <span>Vista previa</span>
+                      </div>
+
+                      <div className="admin-image-preview">
+                        <ProductImage mode='card' src={productForm.image} alt={productForm.name || 'Vista previa'} />
+                      </div>
+
+                      <label className="admin-upload-dropzone">
+                        <Upload size={18} aria-hidden="true" />
+                        <strong>{uploadingImage ? 'Subiendo imagen...' : 'Adjuntar imagen desde tu computador'}</strong>
+                        <span>PNG, JPG, WEBP o AVIF (máx. 5 MB)</span>
+                        <input
+                          type="file"
+                          accept="image/png,image/jpeg,image/webp,image/avif"
+                          disabled={uploadingImage}
+                          onChange={handleProductImageUpload}
+                        />
+                      </label>
+
+                      <label className="admin-field">
+                        O elegir imagen existente
+                        <select
+                          value={productForm.image}
+                          onChange={(e) => setProductForm({ ...productForm, image: e.target.value })}
+                        >
+                          {isCustomImage && (
+                            <option value={productForm.image}>
+                              Imagen adjuntada ({productForm.image.split('/').pop()})
+                            </option>
+                          )}
+                          {galleryOptions.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </select>
+                      </label>
+                    </section>
+
+                    <section className="admin-form-section">
+                      <label className="admin-field">
+                        Descripción de la prenda
+                        <textarea
+                          rows="4"
+                          placeholder="Materiales, gramaje, corte y detalles destacados..."
+                          value={productForm.description}
+                          onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
+                        />
+                      </label>
+                    </section>
+                  </div>
+                </div>
+
+                <div className="admin-modal-actions">
+                  <button
+                    type="button"
+                    className="admin-btn-outline"
+                    onClick={() => setIsCreateProductModalOpen(false)}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="admin-primary-action"
+                    disabled={uploadingImage}
+                  >
+                    {editingProduct ? 'Guardar cambios' : 'Crear prenda'}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* ==============================================================
           MODAL: DETALLES COMPLETOS DE PEDIDO
           ============================================================== */}
       {selectedOrderDetails && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 10010,
-            backgroundColor: 'rgba(0,0,0,0.45)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px'
-          }}
-        >
-          <div
-            style={{
-              width: '100%',
-              maxWidth: '600px',
-              backgroundColor: 'var(--bf-secondary)',
-              border: '1px solid var(--bf-border)',
-              borderRadius: '8px',
-              padding: '28px',
-              boxShadow: '0 20px 45px rgba(0,0,0,0.12)',
-              maxHeight: '90vh',
-              overflowY: 'auto'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px', borderBottom: '1px solid var(--bf-border)', paddingBottom: '16px' }}>
+        <div role="dialog" aria-modal="true" className="admin-modal-backdrop">
+          <div className="admin-modal-card is-wide">
+            <div className="admin-modal-header">
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: '800', color: 'var(--bf-text)' }}>
-                    {selectedOrderDetails.orderId}
-                  </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  <h3>{selectedOrderDetails.orderId}</h3>
                   {renderOrderStatusBadge(selectedOrderDetails.orderStatus)}
                 </div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--bf-muted)', display: 'block', marginTop: '4px' }}>
+                <span style={{ fontSize: '12px', color: '#999', display: 'block', marginTop: '6px' }}>
                   Fecha de compra: {selectedOrderDetails.date}
                 </span>
               </div>
               <button
                 type="button"
+                className="admin-modal-close"
+                aria-label="Cerrar detalles del pedido"
                 onClick={() => setSelectedOrderDetails(null)}
-                style={{ background: 'none', border: 'none', color: 'var(--bf-muted)', cursor: 'pointer', padding: '4px' }}
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
             {/* Datos del Cliente y Despacho */}
-            <div style={{ backgroundColor: 'var(--bf-secondary)', border: '1px solid var(--bf-border)', borderRadius: '6px', padding: '16px', marginBottom: '20px' }}>
-              <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--bf-muted)', display: 'block', marginBottom: '8px' }}>
-                Información de Entrega
+            <div style={{ backgroundColor: '#191919', border: '1px solid #2d2d2d', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
+              <span className="admin-eyebrow" style={{ display: 'block', marginBottom: '12px' }}>
+                INFORMACIÓN DE ENTREGA
               </span>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', fontSize: '0.82rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', fontSize: '13px' }}>
                 <div>
-                  <span style={{ color: 'var(--bf-muted)', display: 'block', fontSize: '0.7rem' }}>Comprador:</span>
-                  <strong>{selectedOrderDetails.customer?.name}</strong>
+                  <span style={{ color: '#888', display: 'block', fontSize: '11px', marginBottom: '2px' }}>Comprador</span>
+                  <strong style={{ color: '#f4f4f2' }}>{selectedOrderDetails.customer?.name}</strong>
                 </div>
                 <div>
-                  <span style={{ color: 'var(--bf-muted)', display: 'block', fontSize: '0.7rem' }}>Email:</span>
-                  <span>{selectedOrderDetails.customer?.email}</span>
+                  <span style={{ color: '#888', display: 'block', fontSize: '11px', marginBottom: '2px' }}>Correo</span>
+                  <span style={{ color: '#e5e5e5' }}>{selectedOrderDetails.customer?.email}</span>
                 </div>
                 <div>
-                  <span style={{ color: 'var(--bf-muted)', display: 'block', fontSize: '0.7rem' }}>Teléfono:</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: '#888', display: 'block', fontSize: '11px', marginBottom: '2px' }}>Teléfono</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span>{selectedOrderDetails.customer?.phone || 'No registrado'}</span>
                     {selectedOrderDetails.customer?.phone && (
                       <a
                         href={`https://wa.me/${selectedOrderDetails.customer.phone.replace(/\D/g, '')}?text=Hola%20${encodeURIComponent(selectedOrderDetails.customer.name)}%2C%20te%20escribimos%20de%20Sauz%20Store%20sobre%20tu%20pedido%20${selectedOrderDetails.orderId}`}
                         target="_blank"
                         rel="noreferrer"
-                        style={{ color: '#15803D', fontWeight: '600', textDecoration: 'none', fontSize: '0.75rem' }}
+                        style={{ color: '#4ade80', fontWeight: '600', textDecoration: 'none', fontSize: '12px' }}
                       >
                         WhatsApp
                       </a>
@@ -3464,7 +3117,7 @@ export const AdminPanel = ({ setActivePage }) => {
                   </div>
                 </div>
                 <div>
-                  <span style={{ color: 'var(--bf-muted)', display: 'block', fontSize: '0.7rem' }}>Dirección y Ciudad:</span>
+                  <span style={{ color: '#888', display: 'block', fontSize: '11px', marginBottom: '2px' }}>Dirección y ciudad</span>
                   <span>{selectedOrderDetails.customer?.address}, {selectedOrderDetails.customer?.city || 'Medellín'}</span>
                 </div>
               </div>
@@ -3472,8 +3125,8 @@ export const AdminPanel = ({ setActivePage }) => {
 
             {/* Prendas Llevadas */}
             <div style={{ marginBottom: '20px' }}>
-              <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--bf-muted)', display: 'block', marginBottom: '10px' }}>
-                Prendas en esta Orden ({(selectedOrderDetails.items || []).length})
+              <span className="admin-eyebrow" style={{ display: 'block', marginBottom: '10px' }}>
+                PRENDAS EN ESTA ORDEN ({(selectedOrderDetails.items || []).length})
               </span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {(selectedOrderDetails.items || []).map((item, idx) => (
@@ -3483,26 +3136,27 @@ export const AdminPanel = ({ setActivePage }) => {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
+                      gap: '12px',
                       padding: '10px 12px',
-                      backgroundColor: 'var(--bf-secondary)',
-                      border: '1px solid var(--bf-border)',
-                      borderRadius: '6px'
+                      backgroundColor: '#191919',
+                      border: '1px solid #2d2d2d',
+                      borderRadius: '10px'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
                       <ProductImage mode='thumb'
                         src={item.image}
                         alt={item.name}
-                        style={{ width: '36px', height: '36px', objectFit: 'cover', borderRadius: '4px', backgroundColor: 'var(--bf-surface)' }}
+                        style={{ width: '38px', height: '38px', objectFit: 'contain', borderRadius: '6px', backgroundColor: '#0b0b0b', border: '1px solid #262626', flexShrink: 0 }}
                       />
-                      <div>
-                        <strong style={{ fontSize: '0.82rem', color: 'var(--bf-text)', display: 'block' }}>{item.name}{item.size ? ` · Talla ${item.size}` : ''}</strong>
-                        <span style={{ fontSize: '0.7rem', color: 'var(--bf-muted)' }}>
+                      <div style={{ minWidth: 0 }}>
+                        <strong style={{ fontSize: '13px', color: '#f4f4f2', display: 'block' }}>{item.name}{item.size ? ` · Talla ${item.size}` : ''}</strong>
+                        <span className="admin-tabular" style={{ fontSize: '11px', color: '#999' }}>
                           {item.quantity} ud(s) × {formatMoney(item.price)}
                         </span>
                       </div>
                     </div>
-                    <span style={{ fontWeight: '700', fontSize: '0.84rem', color: 'var(--bf-text)' }}>
+                    <span className="admin-tabular" style={{ fontWeight: '700', fontSize: '13px', color: '#f4f4f2', flexShrink: 0 }}>
                       {formatMoney(item.price * item.quantity)}
                     </span>
                   </div>
@@ -3511,83 +3165,79 @@ export const AdminPanel = ({ setActivePage }) => {
             </div>
 
             {/* Resumen Financiero de la Orden */}
-            <div style={{ borderTop: '1px solid var(--bf-border)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--bf-muted)' }}>
-                <span>Subtotal:</span>
-                <span>{formatMoney(selectedOrderDetails.subtotal || (selectedOrderDetails.total * 0.84))}</span>
+            <div style={{ borderTop: '1px solid #2b2b2b', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#999' }}>
+                <span>Subtotal</span>
+                <span className="admin-tabular">{formatMoney(selectedOrderDetails.subtotal || (selectedOrderDetails.total * 0.84))}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--bf-muted)' }}>
-                <span>IVA (16%):</span>
-                <span>{formatMoney(selectedOrderDetails.tax || (selectedOrderDetails.total * 0.16))}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#999' }}>
+                <span>IVA (16%)</span>
+                <span className="admin-tabular">{formatMoney(selectedOrderDetails.tax || (selectedOrderDetails.total * 0.16))}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1rem', fontWeight: '800', color: 'var(--bf-text)', borderTop: '1px solid var(--bf-border)', paddingTop: '8px' }}>
-                <span>Total Facturado:</span>
-                <span>{formatMoney(selectedOrderDetails.total)}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: '700', color: '#f4f4f2', borderTop: '1px solid #2b2b2b', paddingTop: '10px' }}>
+                <span>Total facturado</span>
+                <span className="admin-tabular">{formatMoney(selectedOrderDetails.total)}</span>
               </div>
             </div>
 
-            {/* Historial de Seguimiento (US-24) */}
-            <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid var(--bf-border)' }}>
-              <strong style={{ fontSize: '0.8rem', color: 'var(--bf-text)', display: 'block', marginBottom: '8px' }}>
-                Historial de Seguimiento (US-24)
+            <OrderShippingEditor key={selectedOrderDetails.orderId} order={selectedOrderDetails} onSaved={setSelectedOrderDetails} />
+
+            {/* Historial de Seguimiento */}
+            <div style={{ marginTop: '18px', paddingTop: '16px', borderTop: '1px solid #2b2b2b' }}>
+              <strong style={{ fontSize: '13px', color: '#f4f4f2', display: 'block', marginBottom: '10px' }}>
+                Historial de seguimiento
               </strong>
               {selectedOrderDetails.trackingHistory && selectedOrderDetails.trackingHistory.length > 0 ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '14px' }}>
                   {selectedOrderDetails.trackingHistory.map((step, idx) => (
-                    <div key={idx} style={{ fontSize: '0.74rem', background: 'var(--bf-surface)', padding: '6px 10px', borderRadius: '4px', borderLeft: '3px solid #e65a5d' }}>
-                      <div style={{ fontWeight: '700', color: 'var(--bf-text)' }}>{step.status} · <small style={{ color: 'var(--bf-muted)' }}>{step.dateFormatted || step.timestamp}</small></div>
-                      <div style={{ color: 'var(--bf-muted)' }}>{step.note}</div>
+                    <div key={idx} style={{ fontSize: '12px', background: '#191919', padding: '10px 12px', borderRadius: '8px', borderLeft: '3px solid var(--sauz-red)' }}>
+                      <div style={{ fontWeight: '700', color: '#f4f4f2' }}>{step.status} · <small style={{ color: '#888', fontWeight: '500' }}>{step.dateFormatted || step.timestamp}</small></div>
+                      {step.note && <div style={{ color: '#a6a6a6', marginTop: '3px' }}>{step.note}</div>}
                     </div>
                   ))}
                 </div>
               ) : (
-                <span style={{ fontSize: '0.74rem', color: 'var(--bf-muted)', display: 'block', marginBottom: '10px' }}>Sin eventos de seguimiento registrados aún.</span>
+                <span style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '12px' }}>Sin eventos de seguimiento registrados aún.</span>
               )}
 
               {/* Selector de Estado y Nota de Despacho */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                  <span style={{ fontSize: '0.78rem', color: 'var(--bf-muted)' }}>Nuevo estado operativo:</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '12px', color: '#a6a6a6', fontWeight: '600' }}>Nuevo estado operativo</span>
                   <select
                     id="adminOrderStatusSelect"
+                    className="admin-inline-select"
                     defaultValue={selectedOrderDetails.orderStatus || 'En proceso'}
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '4px',
-                      border: '1px solid var(--bf-border)',
-                      backgroundColor: 'var(--bf-surface)',
-                      fontSize: '0.78rem',
-                      fontWeight: '600',
-                      color: 'var(--bf-text)',
-                      cursor: 'pointer'
-                    }}
                   >
                     <option value="Pendiente">Pendiente</option>
-                    <option value="En proceso">En proceso</option>
+                    <option value="Aceptado">Aceptado</option>
+                    <option value="En proceso">En preparación</option>
                     <option value="Enviado">Enviado</option>
                     <option value="Entregado">Entregado</option>
                     <option value="Cancelado">Cancelado</option>
                   </select>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <input
                     type="text"
                     placeholder="Nota de seguimiento (ej. Guía #982137 de Envía)"
                     value={orderTrackingNote}
                     onChange={(e) => setOrderTrackingNote(e.target.value)}
                     style={{
-                      flex: 1,
-                      padding: '6px 10px',
-                      borderRadius: '4px',
-                      border: '1px solid var(--bf-border)',
-                      background: 'var(--bf-surface)',
-                      color: 'var(--bf-text)',
-                      fontSize: '0.76rem',
+                      flex: '1 1 220px',
+                      padding: '9px 12px',
+                      borderRadius: '10px',
+                      border: '1px solid #3a3a3a',
+                      background: '#111',
+                      color: '#f4f4f2',
+                      fontSize: '12px',
+                      outline: 'none'
                     }}
                   />
                   <button
                     type="button"
+                    className="admin-btn-danger-solid"
                     onClick={async () => {
                       const sel = document.getElementById('adminOrderStatusSelect');
                       const newStatus = sel ? sel.value : selectedOrderDetails.orderStatus;
@@ -3597,18 +3247,8 @@ export const AdminPanel = ({ setActivePage }) => {
                       }
                       setOrderTrackingNote('');
                     }}
-                    style={{
-                      padding: '6px 12px',
-                      background: '#e65a5d',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: '4px',
-                      fontSize: '0.75rem',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                    }}
                   >
-                    Actualizar Estado
+                    Actualizar estado
                   </button>
                 </div>
               </div>
@@ -3621,66 +3261,27 @@ export const AdminPanel = ({ setActivePage }) => {
           MODAL DE CONFIRMACIÓN DE ELIMINACIÓN
           ============================================================== */}
       {deleteConfirmProduct && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 10020,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px'
-          }}
-        >
-          <div
-            style={{
-              width: '100%',
-              maxWidth: '420px',
-              backgroundColor: 'var(--bf-secondary)',
-              borderRadius: '8px',
-              padding: '24px',
-              boxShadow: '0 20px 45px rgba(0,0,0,0.15)'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#DC2626', marginBottom: '12px' }}>
-              <AlertCircle size={22} />
-              <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: '800' }}>Confirmar eliminación</h4>
+        <div role="dialog" aria-modal="true" className="admin-modal-backdrop" style={{ zIndex: 10020 }}>
+          <div className="admin-modal-card is-narrow">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ff4d57', marginBottom: '12px' }}>
+              <AlertCircle size={20} aria-hidden="true" />
+              <h4 style={{ margin: 0, fontSize: '16px', fontWeight: '700' }}>Confirmar eliminación</h4>
             </div>
-            <p style={{ margin: '0 0 20px 0', fontSize: '0.84rem', color: 'var(--bf-muted)', lineHeight: 1.5 }}>
-              ¿Estás seguro de que deseas eliminar la prenda <strong>"{deleteConfirmProduct.name}"</strong>? Esta acción removerá el slot de bodega y de la tienda pública.
+            <p style={{ margin: '0 0 20px 0', fontSize: '13px', color: '#a6a6a6', lineHeight: 1.6 }}>
+              ¿Estás seguro de que deseas eliminar la prenda <strong style={{ color: '#f4f4f2' }}>"{deleteConfirmProduct.name}"</strong>? Esta acción removerá la referencia del catálogo y de bodega.
             </p>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+            <div className="admin-modal-actions" style={{ marginTop: 0 }}>
               <button
                 type="button"
+                className="admin-btn-outline"
                 onClick={() => setDeleteConfirmProduct(null)}
-                style={{
-                  padding: '8px 14px',
-                  backgroundColor: 'var(--bf-surface)',
-                  border: '1px solid var(--bf-border)',
-                  borderRadius: '4px',
-                  fontSize: '0.78rem',
-                  fontWeight: '600',
-                  cursor: 'pointer'
-                }}
               >
                 Cancelar
               </button>
               <button
                 type="button"
+                className="admin-btn-danger-solid"
                 onClick={handleExecuteDeleteProduct}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#DC2626',
-                  color: 'var(--bf-text)',
-                  border: 'none',
-                  borderRadius: '4px',
-                  fontSize: '0.78rem',
-                  fontWeight: '600',
-                  cursor: 'pointer'
-                }}
               >
                 Eliminar prenda
               </button>
@@ -3699,12 +3300,12 @@ export const AdminPanel = ({ setActivePage }) => {
             display: flex !important;
             position: fixed !important;
             inset: 0 auto 0 0 !important;
-            box-shadow: 0 0 50px rgba(0,0,0,0.2) !important;
+            box-shadow: 0 0 50px rgba(0,0,0,0.4) !important;
           }
           .admin-mobile-toggle-btn {
             display: flex !important;
           }
-          .admin-period-controls {
+          .admin-topbar .admin-period-controls {
             display: none !important;
           }
         }

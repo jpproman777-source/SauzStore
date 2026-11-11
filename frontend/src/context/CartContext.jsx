@@ -335,17 +335,19 @@ export const CartProvider = ({ children }) => {
   };
 
   // Actualizar estado de una orden (Admin)
-  const updateOrderStatus = async (orderId, newStatus, note, location) => {
+  const updateOrderStatus = async (orderId, newStatus, note, location, shippingTracking) => {
     try {
+      let token;
+      try { token=JSON.parse(localStorage.getItem("sauz_auth_user") || "null")?.token; } catch {}
       const res = await fetch(`/api/orders/${orderId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderStatus: newStatus, note, location }),
+        headers: { "Content-Type": "application/json", ...(token ? { Authorization:`Bearer ${token}` } : {}) },
+        body: JSON.stringify({ orderStatus: newStatus, note, location, shippingTracking }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al actualizar pedido");
       fetchOrders();
-      showToast(`Pedido ${orderId}: ${newStatus}`);
+      showToast(newStatus ? `Pedido ${orderId}: ${newStatus}` : `Guía del pedido ${orderId} actualizada`);
       return data;
     } catch (err) {
       showToast(err.message);

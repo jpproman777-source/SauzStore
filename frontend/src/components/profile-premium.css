@@ -1,0 +1,72 @@
+.sauz-profile-dialog { margin:auto; padding:0; border:1px solid #353535; border-radius:18px; width:min(800px,calc(100vw - 40px)); max-width:none; max-height:calc(100dvh - 40px); background:#0d0d0d; color:#eee; overflow:hidden; font-family:var(--font-nike,"Helvetica Neue",Arial,sans-serif); }
+.sauz-profile-dialog::backdrop { background:#000b; backdrop-filter:blur(8px); }
+.sauz-profile-shell { display:flex; flex-direction:column; max-height:calc(100dvh - 42px); }
+.sauz-profile-header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:28px 30px; background:#101010; border-bottom:1px solid #292929; }
+.sauz-profile-identity { display:flex; align-items:center; gap:16px; min-width:0; }
+.sauz-profile-avatar { display:grid; place-items:center; width:54px; height:54px; flex-shrink:0; border:1px solid color-mix(in srgb, var(--edition-accent, var(--sauz-red)) 45%, #292929); background:color-mix(in srgb, var(--edition-accent, var(--sauz-red)) 10%, #111); color:var(--edition-accent, var(--sauz-red)); border-radius:50%; font-family:"SAUZ Archivo Black",Arial,sans-serif; font-size:23px; }
+.sauz-profile-identity > div:last-child { min-width:0; }
+.sauz-profile-kicker { font-size:8px; line-height:1.5; font-weight:650; letter-spacing:.15em; color:#999; margin:0 0 7px; }
+.sauz-profile-header h2 { font-family:"SAUZ Archivo Black",Arial,sans-serif; font-size:23px; font-weight:900; letter-spacing:-.04em; line-height:1.2; margin:0; overflow-wrap:anywhere; }
+.sauz-profile-email { font-size:12px; color:#999; margin:7px 0 0; overflow-wrap:anywhere; }
+.sauz-profile-close { display:grid; place-items:center; width:42px; height:42px; border:1px solid #3b3b3b; background:transparent; color:#ddd; border-radius:50%; cursor:pointer; flex-shrink:0; }
+.sauz-profile-nav { display:flex; gap:8px; padding:14px 30px; border-bottom:1px solid #292929; background:#0e0e0e; }
+.sauz-profile-nav button { display:flex; align-items:center; justify-content:center; gap:9px; flex:1; min-height:46px; padding:10px 14px; border:1px solid transparent; border-radius:999px; background:transparent; color:#999; font:600 12px/1.4 var(--font-nike); cursor:pointer; transition:background-color 180ms ease,color 180ms ease; }
+.sauz-profile-nav button[aria-pressed="true"] { background:#f2f2ed; color:#111; }
+.sauz-profile-nav b { display:grid; place-items:center; min-width:20px; height:20px; padding:0 4px; background:#ffffff12; border-radius:50%; font-size:10px; }
+.sauz-profile-nav [aria-pressed="true"] b { background:#deded8; color:#111; }
+.sauz-profile-content { flex:1; min-height:0; overflow:auto; padding:26px 30px; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:#444 #111; }
+.sauz-profile-section-title { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:22px; }
+.sauz-profile-section-title h3 { font-family:"SAUZ Archivo Black",Arial,sans-serif; font-weight:900; font-size:25px; line-height:1.2; letter-spacing:-.04em; margin:0; }
+.sauz-profile-section-title > span { color:#888; font-size:11px; padding-bottom:3px; }
+.sauz-profile-dialog .sauz-profile-order { padding:22px !important; background:#151515 !important; border:1px solid #333 !important; border-radius:12px !important; box-shadow:none !important; }
+.sauz-profile-order-heading { padding-bottom:18px !important; margin-bottom:18px !important; gap:12px !important; }
+.sauz-profile-order-heading > div:first-child > span:first-child { font-size:12px !important; letter-spacing:.04em !important; }
+.sauz-profile-order-heading > div:first-child > span:last-child { font-size:10px !important; margin-top:6px !important; }
+.sauz-profile-order-heading > div:last-child > span { font-size:9px !important; font-weight:600 !important; padding:5px 10px !important; }
+.sauz-profile-dialog .sauz-profile-order-total { font-family:"SAUZ Archivo Black",Arial,sans-serif; font-size:20px !important; letter-spacing:-.04em; margin-top:10px !important; }
+.sauz-profile-order-item { padding:9px 0; gap:14px !important; }
+.sauz-profile-order-item > div:first-child { border-radius:6px !important; }
+.sauz-profile-order-item > div:nth-child(2) { min-width:0; }
+.sauz-profile-order-item > div:nth-child(2) > span:first-child { font-size:13px; line-height:1.5; }
+.sauz-profile-order-item > div:nth-child(2) > span:last-child { display:block; margin-top:5px; font-size:11px !important; }
+.sauz-profile-order-item > span:last-child { font-size:12px; white-space:nowrap; }
+.sauz-profile-dialog .sauz-profile-tracking { width:100%; justify-content:space-between; min-height:44px; font-size:12px !important; color:var(--edition-accent, var(--sauz-red)) !important; }
+.sauz-profile-tracking svg { transition:transform 180ms ease; }
+.sauz-profile-tracking[aria-expanded="true"] svg { transform:rotate(180deg); }
+.sauz-profile-dialog form input:not([type="checkbox"]) { box-sizing:border-box; min-height:46px; font-family:var(--font-nike); font-size:14px !important; background:#181818 !important; border:1px solid #3b3b3b !important; }
+.sauz-profile-dialog form label { font-size:11px !important; letter-spacing:0 !important; text-transform:none !important; }
+.sauz-profile-dialog form button[type="submit"] { min-height:44px; padding:12px 22px !important; border-radius:999px !important; background:#f2f2ed !important; color:#111 !important; font-family:var(--font-nike); font-size:12px !important; letter-spacing:0 !important; }
+.sauz-profile-dialog form h5,.sauz-profile-dialog form h4 { font-family:var(--font-nike); letter-spacing:-.02em; }
+.sauz-profile-footer { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:18px 30px; background:#101010; border-top:1px solid #292929; }
+.sauz-profile-footer button { display:flex; align-items:center; justify-content:center; gap:10px; min-height:44px; padding:12px 20px; border-radius:999px; font:650 12px/1.4 var(--font-nike); cursor:pointer; }
+.sauz-profile-logout { background:transparent; color:var(--edition-accent, var(--sauz-red)); border:1px solid color-mix(in srgb, var(--edition-accent, var(--sauz-red)) 45%, #292929); }
+.sauz-profile-done { background:#f2f2ed; color:#111; border:1px solid #f2f2ed; min-width:110px; }
+.sauz-profile-dialog :focus-visible { outline:2px solid var(--edition-accent, var(--sauz-red)); outline-offset:3px; }
+.sauz-profile-dialog button:disabled { opacity:.5; cursor:wait; }
+@media(hover:hover) { .sauz-profile-nav button:not([aria-pressed="true"]):hover { background:#222; color:white; } .sauz-profile-close:hover { background:#222; border-color:#777; } .sauz-profile-logout:hover { color:var(--edition-accent, var(--sauz-red)); background:color-mix(in srgb, var(--edition-accent, var(--sauz-red)) 10%, #111); } .sauz-profile-done:hover { background:#dcdcd6; } }
+@media(max-width:620px) {
+  .sauz-profile-dialog { width:calc(100vw - 20px); max-height:calc(100dvh - 20px); border-radius:14px; }
+  .sauz-profile-shell { max-height:calc(100dvh - 22px); }
+  .sauz-profile-header { padding:20px 16px; gap:12px; }
+  .sauz-profile-avatar { width:42px; height:42px; font-size:19px; }
+  .sauz-profile-identity { gap:11px; }
+  .sauz-profile-header h2 { font-size:19px; }
+  .sauz-profile-email { font-size:10px; }
+  .sauz-profile-nav { padding:12px 10px; gap:4px; }
+  .sauz-profile-nav button { padding:10px 6px; gap:5px; font-size:10px; }
+  .sauz-profile-nav button > svg { width:15px; }
+  .sauz-profile-nav b { min-width:16px; height:16px; font-size:9px; }
+  .sauz-profile-content { padding:22px 16px; }
+  .sauz-profile-section-title h3 { font-size:22px; }
+  .sauz-profile-section-title > span { font-size:9px; }
+  .sauz-profile-dialog .sauz-profile-order { padding:16px !important; }
+  .sauz-profile-order-item { flex-wrap:wrap; gap:10px !important; }
+  .sauz-profile-order-item > div:first-child { width:48px !important; height:48px !important; }
+  .sauz-profile-order-item > div:nth-child(2) { flex-basis:calc(100% - 60px) !important; }
+  .sauz-profile-order-item > span:last-child { margin-left:58px; }
+  .sauz-profile-form-grid { grid-template-columns:minmax(0,1fr) !important; }
+  .sauz-profile-content form input { font-size:16px !important; }
+  .sauz-profile-footer { padding:16px; gap:10px; }
+  .sauz-profile-footer button { font-size:11px; padding:11px 15px; }
+}
+@media(prefers-reduced-motion:reduce) { .sauz-profile-nav button,.sauz-profile-tracking svg { transition:none; } }

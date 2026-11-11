@@ -1,0 +1,65 @@
+ID,SKU,Producto,Categoria,Precio,Moneda,Tallas propuestas,Unidades por talla propuestas,Stock propuesto
+13,SAUZ-NEW-001,Sudadera Nike de bloques gris y negro,Sudaderas,155000,COP,S / M / L / XL,4,16
+14,SAUZ-NEW-002,Sudadera Nike negra con logotipo frontal,Sudaderas,165000,COP,S / M / L / XL,4,16
+15,SAUZ-NEW-003,Camiseta Adidas negra de tres rayas,Camisetas,65000,COP,S / M / L / XL,4,16
+16,SAUZ-NEW-004,Sudadera Jordan gris con emblema rojo,Sudaderas,155000,COP,S / M / L / XL,4,16
+17,SAUZ-NEW-005,Conjunto deportivo negro con emblema por confirmar,Conjuntos,215000,COP,S / M / L / XL,4,16
+18,SAUZ-NEW-006,Conjunto Adidas verde y crema,Conjuntos,195000,COP,S / M / L / XL,4,16
+19,SAUZ-NEW-007,Sudadera Adidas crema y negra,Sudaderas,155000,COP,S / M / L / XL,4,16
+20,SAUZ-NEW-008,Camiseta Nike negra con franjas rojas,Camisetas,85000,COP,S / M / L / XL,4,16
+21,SAUZ-NEW-009,Sudadera Adidas de paneles crema y negro,Sudaderas,145000,COP,S / M / L / XL,4,16
+22,SAUZ-NEW-010,"Camiseta Nike negra, blanca y roja",Camisetas,75000,COP,S / M / L / XL,4,16
+23,SAUZ-NEW-011,Conjunto Nike gris y negro,Conjuntos,215000,COP,S / M / L / XL,4,16
+24,SAUZ-NEW-012,Camiseta Adidas negra con cuello,Camisetas,65000,COP,S / M / L / XL,4,16
+25,SAUZ-NEW-013,Zapatillas Nike blancas y azul marino,Zapatillas,275000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18
+26,SAUZ-NEW-014,Sudadera Nike negra con mangas de color,Sudaderas,165000,COP,S / M / L / XL,4,16
+27,SAUZ-NEW-015,Zapatillas Jordan negras y rojas,Zapatillas,295000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18
+28,SAUZ-NEW-016,Sudadera Nike gris y negra,Sudaderas,155000,COP,S / M / L / XL,4,16
+29,SAUZ-NEW-017,Camiseta Nike negra con franjas rojas,Camisetas,85000,COP,S / M / L / XL,4,16
+30,SAUZ-NEW-019,Chaqueta Adidas negra de tres rayas,Chaquetas,185000,COP,S / M / L / XL,4,16
+31,SAUZ-NEW-021,Sudadera Nike negra con paneles crema y lila,Sudaderas,145000,COP,S / M / L / XL,4,16
+32,SAUZ-NEW-022,Zapatillas Jordan blancas y negras,Zapatillas,305000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18
+33,SAUZ-NEW-023,Zapatillas Adidas crema y verde,Zapatillas,285000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18
+34,SAUZ-NEW-024,Sudadera Nike color crema,Sudaderas,145000,COP,S / M / L / XL,4,16
+35,SAUZ-NEW-025,Zapatillas Adidas negras con rayas blancas,Zapatillas,275000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18
+36,SAUZ-NEW-026,Sudadera Nike negra y crema,Sudaderas,165000,COP,S / M / L / XL,4,16
+37,SAUZ-NEW-027,"Zapatillas Nike blancas, negras y rojas",Zapatillas,265000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18
+38,SAUZ-NEW-028,Sudadera Nike negra con mangas blancas,Sudaderas,155000,COP,S / M / L / XL,4,16
+39,SAUZ-NEW-029,Gorra SAUZ negra de visera plana,Gorras,85000,COP,Única,8,8
+40,SAUZ-NEW-030,Gorra New Era Los Angeles Dodgers azul,Gorras,65000,COP,Única,8,8
+41,SAUZ-NEW-031,Gorra New Era Oakland Athletics verde,Gorras,75000,COP,Única,8,8
+42,SAUZ-NEW-033,Gorra SAUZ negra de perfil bajo,Gorras,65000,COP,Única,8,8
+43,SAUZ-NEW-034,Gorra SAUZ negra con bordado tonal,Gorras,75000,COP,Única,8,8
+44,SAUZ-NEW-035,Gorra New Era Chicago White Sox negra,Gorras,85000,COP,Única,8,8
+45,SAUZ-NEW-036,Gorra New Era Oakland Athletics verde y amarilla,Gorras,65000,COP,Única,8,8
+46,SAUZ-NEW-037,Gorra New Era Boston Red Sox azul y roja,Gorras,75000,COP,Única,8,8
+47,SAUZ-NEW-038,Gorra SAUZ negra de malla,Gorras,85000,COP,Única,8,8
+48,SAUZ-NEW-039,Gorra New Era New York Yankees azul,Gorras,65000,COP,Única,8,8
+49,SAUZ-NEW-040,Gorra New Era Boston Red Sox azul,Gorras,75000,COP,Única,8,8
+50,SAUZ-NEW-042,Gorra New Era San Francisco Giants negra,Gorras,65000,COP,Única,8,8
+51,SAUZ-NEW-043,Gorra New Era San Diego Padres marrón,Gorras,75000,COP,Única,8,8
+52,SAUZ-NEW-044,Gorra New Era Atlanta Braves azul y roja,Gorras,85000,COP,Única,8,8
+53,SAUZ-NEW-045,Gorra New Era Detroit Tigers azul,Gorras,65000,COP,Única,8,8
+54,SAUZ-NEW-046,Gorra New Era Atlanta Braves verde con forro,Gorras,75000,COP,Única,8,8
+55,SAUZ-NEW-047,Gorra New Era San Diego Padres marrón y crema,Gorras,85000,COP,Única,8,8
+56,SAUZ-NEW-049,Gorra New Era Atlanta Braves crema y roja,Gorras,75000,COP,Única,8,8
+57,SAUZ-NEW-050,Gorra New Era San Diego Padres marrón y crema,Gorras,85000,COP,Única,8,8
+58,SAUZ-NEW-051,Zapatillas Jordan blancas con detalles rojos,Zapatillas,295000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18
+59,SAUZ-NEW-052,"Zapatillas Jordan blancas, grises y rojas",Zapatillas,305000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18
+60,SAUZ-NEW-053,"Zapatillas Jordan blancas, negras y rojas",Zapatillas,315000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18
+61,SAUZ-NEW-055,Gorra SAUZ negra con bordado blanco,Gorras,75000,COP,Única,8,8
+62,SAUZ-NEW-056,Camiseta SAUZ negra con logotipo,Camisetas,85000,COP,S / M / L / XL,4,16
+63,SAUZ-NEW-057,Zapatillas Jordan negras y rojas,Zapatillas,295000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18
+64,SAUZ-NEW-058,Pantalón cargo Nike negro,Pantalones,125000,COP,S / M / L / XL,4,16
+65,SAUZ-NEW-059,Zapatillas Jordan negras con detalles multicolor,Zapatillas,315000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18
+66,SAUZ-NEW-060,Pantalón cargo negro de marca por confirmar,Pantalones,115000,COP,S / M / L / XL,4,16
+67,SAUZ-NEW-062,Sudadera negra de marca por confirmar,Sudaderas,165000,COP,S / M / L / XL,4,16
+68,SAUZ-NEW-063,Chaqueta bomber negra de marca por confirmar,Chaquetas,175000,COP,S / M / L / XL,4,16
+69,SAUZ-NEW-065,Zapatillas Jordan blancas y rojas de caña alta,Zapatillas,315000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18
+70,SAUZ-NEW-066,Camiseta Nike negra de corte amplio,Camisetas,65000,COP,S / M / L / XL,4,16
+71,SAUZ-NEW-067,Chaqueta Adidas negra de tres rayas,Chaquetas,185000,COP,S / M / L / XL,4,16
+72,SAUZ-NEW-068,Conjunto deportivo negro de marca por confirmar,Conjuntos,215000,COP,S / M / L / XL,4,16
+73,SAUZ-NEW-069,Sudadera Jordan negra con emblema pequeño,Sudaderas,145000,COP,S / M / L / XL,4,16
+74,SAUZ-NEW-070,Gorra Adidas negra con logotipo blanco,Gorras,75000,COP,Única,8,8
+75,SAUZ-NEW-018,Zapatillas Nike blancas y azul marino con cordones oscuros,Zapatillas,265000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18
+76,SAUZ-NEW-032,Zapatillas Adidas crema y verde con cierre de tiras,Zapatillas,285000,COP,38 / 39 / 40 / 41 / 42 / 43,3,18

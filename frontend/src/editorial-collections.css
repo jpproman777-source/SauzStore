@@ -18,7 +18,7 @@
   margin: 18px 0 24px;
 }
 .collection-heading h2 em { font-style: normal; white-space: nowrap; }
-.collection-heading h2 em::after { content: ""; display: inline-block; width: .14em; height: .14em; background: #cc3036; border-radius: 50%; margin-left: .03em; }
+.collection-heading h2 em::after { content: ""; display: inline-block; width: .14em; height: .14em; background: var(--sauz-red); border-radius: 50%; margin-left: .03em; }
 .collection-heading p { font-size: clamp(1rem, 1.3vw, 1.22rem); color: #c4c4c4; margin: 0; }
 .collection-editorial-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 .collection-editorial-card {
@@ -34,8 +34,6 @@
   text-decoration: none;
 }
 .collection-editorial-card img { width: 100%; height: 100%; display: block; object-fit: cover; }
-.collection-editorial-card.is-wide::before { content: ""; position: absolute; inset: 0; background: var(--editorial-image) center / cover; opacity: .25; }
-.collection-editorial-card.is-wide img { position: relative; object-fit: contain; }
 .collection-editorial-shade {
   position: absolute;
   inset: 0;
@@ -62,8 +60,8 @@
 .collection-editorial-card:hover .collection-editorial-shade,
 .collection-editorial-card:focus-visible .collection-editorial-shade { opacity: .88; }
 .collection-editorial-card:hover .collection-editorial-arrow,
-.collection-editorial-card:focus-visible .collection-editorial-arrow { background: #c53b40; border-color: #c53b40; transform: translate(2px, -2px); }
-.collection-experience :focus-visible { outline: 2px solid #e35b60; outline-offset: 3px; }
+.collection-editorial-card:focus-visible .collection-editorial-arrow { background: var(--sauz-red); border-color: var(--sauz-red); transform: translate(2px, -2px); }
+.collection-experience :focus-visible { outline: 2px solid var(--sauz-red); outline-offset: 3px; }
 @media (max-width: 1000px) {
   .collection-experience { padding-inline: 4%; }
   .collection-heading h2 { font-size: clamp(2.7rem, 6vw, 4.5rem); }

@@ -1,0 +1,59 @@
+.bf-home .sauz-catalog-button {
+  position:relative;
+  isolation:isolate;
+  display:inline-flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  min-height:54px;
+  padding:7px 7px 7px 24px;
+  flex-shrink:0;
+  overflow:hidden;
+  border:1px solid #f5f5f3;
+  border-radius:999px;
+  background:#f5f5f3;
+  color:#101010;
+  font-family:var(--font-nike, "Helvetica Neue", Arial, sans-serif);
+  font-size:13px;
+  font-weight:750;
+  line-height:1.3;
+  text-align:left;
+  cursor:pointer;
+  transition:color 220ms ease, border-color 220ms ease, transform 220ms ease;
+}
+.sauz-catalog-button::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:var(--sauz-red);
+  transform:translateX(-101%);
+  transition:transform 340ms cubic-bezier(.22,.68,0,1);
+}
+.sauz-catalog-button-icon {
+  display:grid;
+  place-items:center;
+  width:38px;
+  height:38px;
+  flex-shrink:0;
+  border-radius:50%;
+  background:#101010;
+  color:white;
+  transition:background-color 220ms ease, color 220ms ease;
+}
+.sauz-catalog-button-icon svg { transition:transform 260ms cubic-bezier(.22,.68,0,1); }
+.bf-home .sauz-catalog-button:focus-visible { outline:2px solid var(--sauz-red); outline-offset:5px; color:white; border-color:var(--sauz-red); }
+.sauz-catalog-button:focus-visible::before { transform:translateX(0); }
+.sauz-catalog-button:focus-visible .sauz-catalog-button-icon svg { transform:translate(2px,-2px); }
+@media(hover:hover) {
+  .bf-home .sauz-catalog-button:hover { color:white; border-color:var(--sauz-red); transform:translateY(-2px); }
+  .sauz-catalog-button:hover::before { transform:translateX(0); }
+  .sauz-catalog-button:hover .sauz-catalog-button-icon { background:white; color:var(--sauz-red); }
+  .sauz-catalog-button:hover .sauz-catalog-button-icon svg { transform:translate(2px,-2px); }
+}
+.bf-home .sauz-catalog-button:active { transform:scale(.98); }
+@media(max-width:620px) { .bf-home .sauz-catalog-button { max-width:100%; min-height:52px; gap:18px; padding-left:20px; } }
+@media(prefers-reduced-motion:reduce) {
+  .bf-home .sauz-catalog-button,.sauz-catalog-button::before,.sauz-catalog-button-icon,.sauz-catalog-button-icon svg { transition:none; }
+  .bf-home .sauz-catalog-button:hover,.bf-home .sauz-catalog-button:active,.sauz-catalog-button-icon svg { transform:none !important; }
+}

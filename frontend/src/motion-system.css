@@ -80,13 +80,13 @@
 .bag-remove { transition: color var(--sauz-motion-micro) ease, border-color var(--sauz-motion-micro) ease, background-color var(--sauz-motion-micro) ease, transform var(--sauz-motion-micro) var(--sauz-ease); }
 .premium-sizes button:hover:not(:disabled),
 .premium-filter-options button:hover,
-.collection-arrows button:hover:not(:disabled) { border-color: #d96366; }
+.collection-arrows button:hover:not(:disabled) { border-color: var(--sauz-red); }
 .premium-search input,
 .premium-toolbar select,
 .premium-price-range input { transition: border-color var(--sauz-motion-micro) ease, background-color var(--sauz-motion-micro) ease; }
 .premium-search:focus-within input,
 .premium-toolbar select:focus,
-.premium-price-range input:focus { border-color: #d96366; }
+.premium-price-range input:focus { border-color: var(--sauz-red); }
 .bf-header { backdrop-filter: none; -webkit-backdrop-filter: none; }
 .bf-desktop-nav button,
 .bf-header-actions button,

@@ -21,8 +21,8 @@ async function run() {
   }
   assert.ok(response?.ok, 'El servidor no inició');
   const { products } = await response.json();
-  assert.equal(products.length, 62);
-  assert.ok(products.every(p => p.active && p.commercial === false));
+  assert.equal(products.length, 64);
+  assert.ok(products.every(p => p.active && p.commercial === true && p.price > 0 && p.variants.length > 0));
   for (const product of products) {
     const image = await fetch(`${base}${product.image}`);
     assert.equal(image.status, 200, product.image);
@@ -31,12 +31,20 @@ async function run() {
   const add = await fetch(`${base}/api/cart/items`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ productId: products[0].id, quantity: 1 }),
+    body: JSON.stringify({ productId: products[0].id, quantity: 1, variantId: products[0].variants[0].id }),
   });
-  assert.equal(add.status, 409);
+  assert.equal(add.status, 200);
+  const addedCart = await (await fetch(`${base}/api/cart`)).json();
+  assert.equal(addedCart.cart.count, 1);
+  const excessive = await fetch(`${base}/api/cart/items`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ productId: products[0].id, variantId: products[0].variants[0].id, quantity: 9999 }),
+  });
+  assert.equal(excessive.status, 409);
+  await fetch(`${base}/api/cart`, { method: 'DELETE' });
   const cart = await (await fetch(`${base}/api/cart`)).json();
   assert.equal(cart.cart.count, 0);
-  console.log('API: 62 fichas públicas, 62 imágenes accesibles, compra pendiente bloqueada, carrito intacto.');
+  console.log('API: 64 fichas públicas, 64 imágenes accesibles, precios COP y variantes configurados, carrito y límite de stock verificados.');
 }
 
 run().catch(error => {

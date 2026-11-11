@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { Cart } from "./pages/Cart";
@@ -16,6 +17,7 @@ import { AdminLogin } from "./components/AdminLogin";
 import { Home } from "./pages/Home";
 import { Catalog } from "./pages/Catalog";
 import { About } from "./pages/About";
+import Brands from "./pages/Brands";
 import { Location } from "./pages/Location";
 import { ProductDetail } from "./pages/ProductDetail";
 import { StyleStudio } from "./pages/StyleStudio";
@@ -46,7 +48,7 @@ const readCatalogLocation = () => {
 };
 
 export const App = () => {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, isProfileOpen, setIsProfileOpen } = useAuth();
 
   // Determinar página inicial basada en la URL del navegador
   const getInitialPageFromUrl = () => {
@@ -55,6 +57,7 @@ export const App = () => {
     const path = rawPath.replace(/\/+$/, "") || "/";
     if (path === "/carrito" || path === "/bolsa") return "cart";
     if (path.startsWith("/producto/")) return "productDetail";
+    if (path === "/mi-cuenta") return "account";
     if (path === "/admin/login") return "adminLogin";
     if (path === "/admin") return "admin";
     if (path === "/style-studio" || path === "/studio") return "styleStudio";
@@ -65,6 +68,7 @@ export const App = () => {
     if (path === "/community") return "community";
     if (path === "/size-finder" || path === "/tallas") return "sizeFinder";
     if (path === "/catalogo" || path === "/catalog") return "catalog";
+    if (path === "/marcas" || path === "/brands") return "brands";
     if (path === "/nosotros" || path === "/about") return "about";
     if (path === "/ubicacion" || path === "/location") return "location";
     return "home";
@@ -116,6 +120,7 @@ export const App = () => {
 
   // Función de navegación segura
   const handleNavigate = (page) => {
+    if (page === "account" && isAdmin) page = "admin";
     if (page === "admin") {
       // Access remains enforced by the admin route render guard below.
       // Navigation must not read the pre-login user captured by an async handler.
@@ -145,6 +150,8 @@ export const App = () => {
     else if (page === "community") path = "/community";
     else if (page === "sizeFinder") path = "/size-finder";
     else if (page === "catalog") path = activePage === "productDetail" && catalogUrl.current ? catalogUrl.current : "/catalogo";
+    else if (page === "account") path = "/mi-cuenta";
+    else if (page === "brands") path = "/marcas";
     else if (page === "about") path = "/nosotros";
     else if (page === "location") path = "/ubicacion";
 
@@ -156,30 +163,20 @@ export const App = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleCatalogFilter = ({ category, brand, query, sort } = {}) => {
-    if (category !== undefined) {
-      setSelectedCategory(category === "Sneakers" ? "Zapatillas" : category);
+  const handleCatalogFilter = ({ category = "Todas", brand = "Todas", query = "", sort = "destacados" } = {}) => {
+    const normalizedCategory = category === "Sneakers" ? "Zapatillas" : category || "Todas";
+    const normalizedQuery = typeof query === "string" ? query : "";
+    setSelectedCategory(normalizedCategory);
+    setSearchQuery(normalizedQuery);
+
+    const params = new URLSearchParams();
+    if (brand && brand !== "Todas") params.set("marca", brand);
+    if (sort && sort !== "destacados") params.set("orden", sort);
+    if (normalizedCategory && normalizedCategory !== "Todas") {
+      params.set("coleccion", normalizedCategory);
     }
-    if (query !== undefined) {
-      setSearchQuery(query);
-    }
-    const params = new URLSearchParams(window.location.search);
-    if (brand !== undefined) {
-      if (brand && brand !== "Todas") params.set("marca", brand);
-      else params.delete("marca");
-    }
-    if (sort !== undefined) {
-      if (sort && sort !== "destacados") params.set("orden", sort);
-      else params.delete("orden");
-    }
-    if (category !== undefined) {
-      if (category && category !== "Todas") params.set("coleccion", category === "Sneakers" ? "Zapatillas" : category);
-      else params.delete("coleccion");
-    }
-    if (query !== undefined) {
-      if (query.trim()) params.set("q", query.trim());
-      else params.delete("q");
-    }
+    if (normalizedQuery.trim()) params.set("q", normalizedQuery.trim());
+
     const qStr = params.toString();
     const targetUrl = "/catalogo" + (qStr ? "?" + qStr : "");
     window.history.pushState(null, "", targetUrl);
@@ -189,16 +186,35 @@ export const App = () => {
   };
 
   const handleCategorySelect = (category) => {
-    setSelectedCategory(category === "Sneakers" ? "Zapatillas" : category);
-    handleNavigate("catalog");
+    handleCatalogFilter({
+      category: category === "Sneakers" ? "Zapatillas" : category || "Todas",
+      brand: "Todas",
+      query: "",
+      sort: "destacados",
+    });
   };
 
   const handleCollectionSelect = (collection) => {
-    setSelectedCategory(
-      collection === "Jordan" || collection === "Todas" ? "Todas" : collection === "Sneakers" ? "Zapatillas" : collection,
-    );
-    setSearchQuery(collection === "Jordan" ? "Jordan" : "");
-    handleNavigate("catalog");
+    if (collection === "Jordan") {
+      handleCatalogFilter({
+        category: "Todas",
+        brand: "Jordan",
+        query: "",
+        sort: "destacados",
+      });
+      return;
+    }
+    handleCatalogFilter({
+      category:
+        collection === "Todas"
+          ? "Todas"
+          : collection === "Sneakers"
+            ? "Zapatillas"
+            : collection,
+      brand: "Todas",
+      query: "",
+      sort: "destacados",
+    });
   };
 
   const handleProductSelect = (productId) => {
@@ -213,6 +229,20 @@ export const App = () => {
     window.dispatchEvent(new Event("sauz:navigation"));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  useEffect(() => {
+    if (isProfileOpen && user) {
+      setIsProfileOpen(false);
+      handleNavigate(isAdmin ? 'admin' : 'account');
+    }
+  }, [isProfileOpen, user, isAdmin]);
+
+  useEffect(() => {
+    if (activePage === "account" && isAdmin) {
+      window.history.replaceState(null, "", "/admin");
+      setActivePage("admin");
+    }
+  }, [activePage, isAdmin]);
 
   // ==============================================================
   // RUTA 1: LOGIN ADMINISTRATIVO INDEPENDIENTE (/admin/login)
@@ -229,7 +259,7 @@ export const App = () => {
   // ==============================================================
   // RUTA 2: PANEL DE ADMINISTRACIÓN PROTEGIDO (/admin)
   // ==============================================================
-  if (activePage === "admin") {
+  if (activePage === "admin" || (activePage === "account" && isAdmin)) {
     if (!user || user.role !== "admin") {
       return (
         <div className="admin-app-wrapper">
@@ -281,6 +311,7 @@ export const App = () => {
           setActivePage={handleNavigate}
           onCategorySelect={handleCategorySelect}
           onProductSelect={handleProductSelect}
+          onCatalogFilter={handleCatalogFilter}
         />
       )}
 
@@ -360,9 +391,23 @@ export const App = () => {
         />
       )}
 
-      {activePage === "about" && <About setActivePage={handleNavigate} />}
+      {activePage === "brands" && <Brands onCatalogFilter={handleCatalogFilter} />}
+
+      {activePage === "about" && <About onCatalogFilter={handleCatalogFilter} />}
 
       {activePage === "location" && <Location />}
+
+      {activePage === 'account' && (user ? <ClientProfileModal pageMode onNavigate={handleNavigate} onProductSelect={handleProductSelect} /> : <main className="account-signin" aria-labelledby="account-signin-title">
+        <section className="account-signin-card">
+          <span className="account-signin-eyebrow">SAUZ / MI CUENTA</span>
+          <h1 id="account-signin-title">TU ESPACIO.<br />TU ESTILO.</h1>
+          <p>Vuelve a entrar para consultar tus favoritos, tu selección y el estado de tus pedidos.</p>
+          <div className="account-signin-actions">
+            <button className="account-signin-primary" type="button" onClick={() => handleNavigate('adminLogin')}>Iniciar sesión <ArrowRight size={18} aria-hidden="true" /></button>
+            <button className="account-signin-secondary" type="button" onClick={() => handleNavigate('home')}><ArrowLeft size={16} aria-hidden="true" /> Volver a la tienda</button>
+          </div>
+        </section>
+      </main>)}
 
       {/* Pie de página */}
       <Footer
@@ -376,7 +421,6 @@ export const App = () => {
       <CheckoutModal />
       <ReceiptModal />
       <Toast />
-      <ClientProfileModal />
     </div>
   );
 };

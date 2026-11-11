@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/authService';
+import { claimGuestFavorites } from '../lib/favorites';
 
 const AuthContext = createContext();
 
@@ -64,6 +65,7 @@ export const AuthProvider = ({ children }) => {
     setAuthError(null);
     try {
       const data = await authService.login(email, password);
+      try { claimGuestFavorites(localStorage, data.user); } catch {}
       setUser(data.user);
       setIsLoginOpen(false);
       return data.user;
@@ -81,6 +83,7 @@ export const AuthProvider = ({ children }) => {
     setAuthError(null);
     try {
       const data = await authService.register(userData);
+      try { claimGuestFavorites(localStorage, data.user); } catch {}
       setUser(data.user);
       setIsLoginOpen(false);
       return data.user;
@@ -114,8 +117,10 @@ export const AuthProvider = ({ children }) => {
       const data = await authService.updateProfile({
         userId: user?.id,
         ...profileData,
+        email: user?.email,
+        newEmail: profileData.email,
       });
-      setUser(data.user);
+      setUser({ ...data.user, token:user?.token });
       return data.user;
     } catch (err) {
       setAuthError(err.message);

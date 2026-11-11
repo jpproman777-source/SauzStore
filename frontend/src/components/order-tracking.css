@@ -1,0 +1,32 @@
+.order-tracking { border:1px solid #323232; border-radius:12px; padding:24px; background:#101010; color:#eee; margin:22px 0; }
+.order-tracking-status { display:flex; align-items:flex-start; gap:14px; }
+.order-status-icon { display:grid; place-items:center; width:48px; height:48px; flex-shrink:0; border:1px solid color-mix(in srgb, var(--edition-accent, var(--sauz-red)) 45%, #292929); border-radius:12px; background:color-mix(in srgb, var(--edition-accent, var(--sauz-red)) 10%, #111); color:var(--edition-accent, var(--sauz-red)); }
+.order-status-icon.is-cancelled { color:var(--edition-accent, var(--sauz-red)); }
+.order-tracking-kicker { display:block; color:#888; font-size:9px; letter-spacing:.1em; margin-bottom:6px; }
+.order-tracking h4 { font-family:"SAUZ Archivo Black",Arial,sans-serif; font-size:22px; letter-spacing:-.035em; line-height:1.2; margin:0; }
+.order-tracking p { color:#999; font-size:12px; line-height:1.7; margin:8px 0 0; }
+.order-progress { display:flex; list-style:none; padding:0; margin:28px 0; }
+.order-progress li { position:relative; display:flex; flex:1; flex-direction:column; align-items:center; gap:10px; min-width:0; text-align:center; color:#777; font-size:10px; line-height:1.4; }
+.order-progress li::before { content:""; position:absolute; top:13px; right:50%; width:100%; height:1px; background:#363636; }
+.order-progress li:first-child::before { display:none; }
+.order-progress-node { display:grid; place-items:center; position:relative; z-index:1; width:28px; height:28px; border:1px solid #444; background:#161616; border-radius:50%; color:#777; font-size:10px; }
+.order-progress li.is-complete { color:#d1d1cb; }
+.order-progress li.is-complete::before { background:color-mix(in srgb, var(--edition-accent, var(--sauz-red)) 10%, #111); }
+.is-complete .order-progress-node { border-color:color-mix(in srgb, var(--edition-accent, var(--sauz-red)) 45%, #292929); background:color-mix(in srgb, var(--edition-accent, var(--sauz-red)) 10%, #111); color:var(--edition-accent, var(--sauz-red)); }
+.is-current .order-progress-node { background:#f2f2ec; color:#111; border-color:#f2f2ec; box-shadow:0 0 0 4px #ffffff0b; }
+.order-progress .is-current { color:#fff; font-weight:650; }
+.order-shipping-guide { padding:18px; background:#191919; border:1px solid #303030; border-radius:9px; }
+.order-guide-heading { display:flex; align-items:center; gap:10px; font-size:12px; }
+.order-guide-heading svg { color:var(--edition-accent, var(--sauz-red)); }
+.order-guide-data { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px; }
+.order-guide-data span { display:block; color:#888; font-size:10px; margin-bottom:7px; }
+.order-guide-data strong,.order-guide-data code { color:#e5e5de; font-size:13px; overflow-wrap:anywhere; }
+.order-guide-data code { user-select:all; }
+.order-guide-actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:20px; }
+.order-guide-actions button,.order-guide-actions a { display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1px solid #4c4c4c; border-radius:999px; min-height:42px; padding:10px 14px; font:600 11px/1.5 var(--font-nike); background:transparent; color:#ddd; cursor:pointer; text-decoration:none; }
+.order-guide-actions a { margin-left:auto; background:#f1f1ec; color:#111; border-color:#f1f1ec; }
+.order-copy-message { display:block; color:#aaa; font-size:10px; line-height:1.6; margin-top:8px; }
+.order-tracking-last { border-top:1px solid #2a2a2a; margin-top:20px; padding-top:16px; }
+.order-tracking-last > span { color:#777; font-size:9px; letter-spacing:.06em; text-transform:uppercase; }
+.order-tracking-last small { display:flex; align-items:center; gap:5px; color:#888; font-size:10px; margin-top:8px; }
+@media(max-width:620px) { .order-tracking { padding:18px 14px; } .order-tracking h4 { font-size:20px; } .order-status-icon { width:40px; height:40px; } .order-progress li { font-size:8px; gap:9px; } .order-progress-node { width:26px; height:26px; } .order-guide-data { grid-template-columns:1fr; gap:14px; } .order-guide-actions a { margin-left:0; } .order-shipping-guide { padding:15px; } }

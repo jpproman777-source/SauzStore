@@ -28,6 +28,10 @@ export const addressService = {
    * @param {string|number} addressId
    * @param {object} params { userId, email }
    */
+  async updateAddress(addressId, payload) {
+    return api.put(`/api/users/addresses/${encodeURIComponent(addressId)}`, payload);
+  },
+
   async deleteAddress(addressId, { userId, email } = {}) {
     const params = new URLSearchParams();
     if (userId) params.set('userId', userId);

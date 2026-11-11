@@ -10,7 +10,7 @@ const PROFILES = {
     tagline: 'Monocromático, estructurado y letal.',
     description: 'Tu estilo se fundamenta en siluetas limpias donde el negro y los tonos carbón protagonizan cada look. Valoras la densidad de los tejidos, los hoodies pesados de 450 gsm y sneakers icónicos que contrasten con sutiles acentos oscuros.',
     keywords: ['All-Black', 'Heavyweight Fleece', 'Monastery', 'Jordan Retro'],
-    accent: '#e65a5d',
+    accent: '#ff1724',
     preferredCategory: 'Sudaderas',
     brand: 'SAUZ',
   },
@@ -182,9 +182,9 @@ export const SauzStyleDna = ({ onProductSelect, setActivePage }) => {
     >
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(230,90,93,0.12)', border: '1px solid rgba(230,90,93,0.3)', marginBottom: '12px' }}>
-          <Sparkles size={14} color="#e65a5d" />
-          <span style={{ fontSize: '0.74rem', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#e65a5d' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(255, 23, 36,0.12)', border: '1px solid rgba(255, 23, 36,0.3)', marginBottom: '12px' }}>
+          <Sparkles size={14} color="#ff1724" />
+          <span style={{ fontSize: '0.74rem', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#ff1724' }}>
             SAUZ STYLE DNA · TEST VISUAL DE IDENTIDAD URBANA
           </span>
         </div>
@@ -219,7 +219,7 @@ export const SauzStyleDna = ({ onProductSelect, setActivePage }) => {
               style={{
                 width: `${((currentStep + 1) / QUESTIONS.length) * 100}%`,
                 height: '100%',
-                background: '#e65a5d',
+                background: '#ff1724',
                 transition: 'width 0.3s ease',
               }}
             />
@@ -254,7 +254,7 @@ export const SauzStyleDna = ({ onProductSelect, setActivePage }) => {
                   alignItems: 'center',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#e65a5d';
+                  e.currentTarget.style.borderColor = '#ff1724';
                   e.currentTarget.style.background = '#202028';
                 }}
                 onMouseLeave={(e) => {
@@ -263,7 +263,7 @@ export const SauzStyleDna = ({ onProductSelect, setActivePage }) => {
                 }}
               >
                 <span>{opt.text}</span>
-                <ArrowRight size={16} color="#e65a5d" />
+                <ArrowRight size={16} color="#ff1724" />
               </button>
             ))}
           </div>
@@ -339,7 +339,7 @@ export const SauzStyleDna = ({ onProductSelect, setActivePage }) => {
                 onClick={() => setActivePage('fitBuilder')}
                 style={{
                   padding: '10px 24px',
-                  background: '#e65a5d',
+                  background: '#ff1724',
                   border: 'none',
                   color: '#fff',
                   borderRadius: '8px',
@@ -361,7 +361,7 @@ export const SauzStyleDna = ({ onProductSelect, setActivePage }) => {
           {/* Recomendaciones Reales del Catálogo para este Perfil */}
           <div>
             <div style={{ marginBottom: '18px' }}>
-              <span style={{ fontSize: '0.72rem', color: '#e65a5d', fontWeight: '800', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              <span style={{ fontSize: '0.72rem', color: '#ff1724', fontWeight: '800', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                 CURADURÍA PERSONALIZADA
               </span>
               <h3 style={{ margin: '4px 0 0', fontSize: '1.3rem', fontWeight: '800' }}>
@@ -389,7 +389,7 @@ export const SauzStyleDna = ({ onProductSelect, setActivePage }) => {
                     <ProductImage mode="catalog" src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                   </div>
                   <div>
-                    <span style={{ fontSize: '0.68rem', color: '#e65a5d', textTransform: 'uppercase', fontWeight: '700' }}>
+                    <span style={{ fontSize: '0.68rem', color: '#ff1724', textTransform: 'uppercase', fontWeight: '700' }}>
                       {p.brand || 'SAUZ'}
                     </span>
                     <strong style={{ fontSize: '0.92rem', color: '#fff', display: 'block', margin: '4px 0' }}>

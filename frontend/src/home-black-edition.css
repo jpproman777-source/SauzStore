@@ -777,7 +777,7 @@
 :root {
   --edition-header: #050505;
   --edition-header-h: 82px;
-  --edition-accent: #ff1724;
+  --edition-accent: var(--sauz-red);
 }
 .bf-header {
   height: var(--edition-header-h);

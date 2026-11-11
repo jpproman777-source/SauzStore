@@ -14,8 +14,8 @@ test("El catálogo comercial conserva IDs únicos y precios existentes", () => {
     products.length,
   );
   assert.equal(products.filter(product => product.active === false).length, 12);
-  assert.equal(products.filter(product => product.active !== false).length, 62);
-  assert.ok(products.filter(product => product.active !== false).every(product => !isCommercial(product)));
+  assert.equal(products.filter(product => product.active !== false).length, 64);
+  assert.ok(products.filter(product => product.active !== false).every(product => isCommercial(product) && canBuy(product)));
 });
 test("Una referencia de demostración nunca queda habilitada para compra", () => {
   for (const product of products) {
@@ -46,4 +46,30 @@ test("La compra exige precio y stock de una variante confirmada", () => {
   assert.equal(canBuy(product), true);
   assert.equal(canBuy({ ...product, variants: [{ id: "M", size: "M", stock: 0 }] }), false);
   assert.equal(canBuy({ ...product, variants: [] }), false);
+});
+
+test("Los modelos Nike y Adidas distintos tienen fichas y fotografías independientes", () => {
+  for (const [first, second] of [['013', '018'], ['023', '032']]) {
+    const a = products.find(p => p.sku === `SAUZ-NEW-${first}`);
+    const b = products.find(p => p.sku === `SAUZ-NEW-${second}`);
+    assert.ok(a && b && a.active && b.active);
+    assert.notEqual(a.id, b.id);
+    assert.equal(a.image, `/Productos/sauz-${first}.png`);
+    assert.equal(b.image, `/Productos/sauz-${second}.png`);
+    assert.ok(!a.alternateImages.includes(b.image));
+    assert.ok(!b.alternateImages.includes(a.image));
+    assert.ok(Number.isInteger(b.price) && b.price > 0);
+    assert.equal(canBuy(b), true);
+  }
+});
+
+test("Los precios están en COP y el stock coincide con las variantes", () => {
+  for (const product of products.filter(p => p.active !== false)) {
+    assert.equal(product.currency, 'COP');
+    assert.ok(Number.isInteger(product.price) && product.price > 0);
+    assert.equal(product.stock, product.variants.reduce((sum, v) => sum + v.stock, 0));
+    assert.equal(new Set(product.variants.map(v => v.id)).size, product.variants.length);
+    assert.ok(product.variants.every(v => v.size && Number.isInteger(v.stock) && v.stock > 0));
+    assert.equal(product.configurationStatus, null);
+  }
 });

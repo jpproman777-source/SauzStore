@@ -20,4 +20,9 @@ export const approvedBrandAssets = {
     width: 802,
     height: 556,
   },
+  NEW_ERA: {
+    src: "/logos/web/new-era.png",
+    width: 2017,
+    height: 780,
+  },
 };

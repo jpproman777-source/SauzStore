@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { authService } from '../services/authService';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, AlertCircle, Loader2, User, Phone, MapPin, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowLeft, AlertCircle, Loader2, User, Phone, MapPin, CheckCircle2 } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
+import './auth-premium.css';
 
 export const AdminLogin = ({ setActivePage }) => {
   const { login, register, authLoading, authError, setAuthError } = useAuth();
@@ -69,9 +69,9 @@ export const AdminLogin = ({ setActivePage }) => {
         } else {
           showToast(`Bienvenido a SAUZ STORE, ${loggedUser.name}`);
           if (typeof window !== 'undefined' && window.history) {
-            window.history.pushState(null, '', '/');
+            window.history.pushState(null, '', '/mi-cuenta');
           }
-          setActivePage('home');
+          setActivePage('account');
         }
       } catch (err) {
         setLocalError(err.message || 'Credenciales incorrectas. Verifique su correo y contraseña.');
@@ -106,24 +106,12 @@ export const AdminLogin = ({ setActivePage }) => {
 
         showToast(`Cuenta creada exitosamente, ${newUser.name}`);
         if (typeof window !== 'undefined' && window.history) {
-          window.history.pushState(null, '', '/');
+          window.history.pushState(null, '', '/mi-cuenta');
         }
-        setActivePage('home');
+        setActivePage('account');
       } catch (err) {
         setLocalError(err.message || 'No fue posible completar el registro. Intente nuevamente.');
       }
-    }
-  };
-
-  const handleFillDemo = (type) => {
-    resetForm();
-    setMode('login');
-    if (type === 'admin') {
-      setEmail('admin@sauzstore.com');
-      setPassword('admin123');
-    } else {
-      setEmail('cliente@sauzstore.com');
-      setPassword('cliente123');
     }
   };
 
@@ -137,7 +125,7 @@ export const AdminLogin = ({ setActivePage }) => {
   const displayError = localError || authError;
 
   return (
-    <div className="sauz-auth-container">
+    <div className="sauz-auth-container sauz-login-refined">
       {/* Barra superior con navegación de regreso */}
       <header className="sauz-auth-top-bar">
         <button
@@ -149,7 +137,6 @@ export const AdminLogin = ({ setActivePage }) => {
           <ArrowLeft size={16} />
           <span>Volver a la tienda</span>
         </button>
-        <span className="sauz-auth-badge">BLACK EDITION / ACCESO SEGURO</span>
       </header>
 
       {/* Tarjeta Central Minimalista */}
@@ -160,40 +147,16 @@ export const AdminLogin = ({ setActivePage }) => {
             <BrandLogo variant="header" />
           </div>
           <h1 className="sauz-auth-title">
-            {mode === 'login' && 'Iniciar Sesión'}
-            {mode === 'register' && 'Crear Cuenta'}
-            {mode === 'forgot' && 'Recuperar Contraseña'}
+            {mode === 'login' && 'Inicio de sesión'}
+            {mode === 'register' && 'Crear cuenta'}
+            {mode === 'forgot' && 'Recuperar contraseña'}
           </h1>
           <p className="sauz-auth-subtitle">
-            {mode === 'login' && 'Ingresa con tu correo y contraseña para gestionar tus pedidos y perfil.'}
+            {mode === 'login' && 'Ingresa tu correo y contraseña para acceder.'}
             {mode === 'register' && 'Regístrate para guardar favoritos, rastrear envíos y acelerar tu compra.'}
             {mode === 'forgot' && 'Ingresa tu correo para recibir las instrucciones de restablecimiento.'}
           </p>
         </div>
-
-        {/* Selector de Pestañas (Login / Registro) */}
-        {mode !== 'forgot' && (
-          <div className="sauz-auth-tabs" role="tablist">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === 'login'}
-              className={`sauz-auth-tab ${mode === 'login' ? 'active' : ''}`}
-              onClick={() => handleModeChange('login')}
-            >
-              Iniciar Sesión
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === 'register'}
-              className={`sauz-auth-tab ${mode === 'register' ? 'active' : ''}`}
-              onClick={() => handleModeChange('register')}
-            >
-              Crear Cuenta
-            </button>
-          </div>
-        )}
 
         {/* Mensaje de Alerta / Error */}
         {displayError && (
@@ -206,7 +169,7 @@ export const AdminLogin = ({ setActivePage }) => {
         {/* Estado de Recuperación Enviada */}
         {mode === 'forgot' && recoverySent ? (
           <div className="sauz-auth-recovery-notice">
-            <CheckCircle2 size={36} color="#e65a5d" />
+            <CheckCircle2 size={36} color="#ff1724" />
             <h3>Solicitud Registrada</h3>
             <p>
               Si el correo <strong>{email}</strong> se encuentra registrado en nuestro sistema,
@@ -268,15 +231,7 @@ export const AdminLogin = ({ setActivePage }) => {
               <div className="sauz-auth-field">
                 <div className="sauz-auth-field-header">
                   <label htmlFor="auth-password">Contraseña</label>
-                  {mode === 'login' && (
-                    <button
-                      type="button"
-                      className="sauz-auth-forgot-link"
-                      onClick={() => handleModeChange('forgot')}
-                    >
-                      ¿Olvidaste tu contraseña?
-                    </button>
-                  )}
+
                 </div>
                 <div className="sauz-auth-input-wrap">
                   <Lock size={18} className="sauz-auth-input-icon" />
@@ -295,6 +250,7 @@ export const AdminLogin = ({ setActivePage }) => {
                     className="sauz-auth-eye-btn"
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                    aria-pressed={showPassword}
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -355,7 +311,8 @@ export const AdminLogin = ({ setActivePage }) => {
               </>
             )}
 
-            {/* Botón Principal de Envío */}
+            {/* Acciones de acceso */}
+            <div className="sauz-auth-actions">
             <button
               type="submit"
               className="sauz-auth-submit-btn"
@@ -369,15 +326,19 @@ export const AdminLogin = ({ setActivePage }) => {
               ) : (
                 <>
                   <span>
-                    {mode === 'login' && 'INICIAR SESIÓN'}
-                    {mode === 'register' && 'CREAR MI CUENTA'}
-                    {mode === 'forgot' && 'ENVIAR ENLACE'}
+                    {mode === 'login' && 'Iniciar sesión'}
+                    {mode === 'register' && 'Crear mi cuenta'}
+                    {mode === 'forgot' && 'Enviar enlace'}
                   </span>
-                  <ArrowRight size={16} />
                 </>
               )}
             </button>
 
+            </div>
+            {mode !== 'forgot' && <div className="sauz-auth-links">
+              {mode === 'login' && <button type="button" className="sauz-auth-forgot-link" onClick={() => handleModeChange('forgot')}>¿Olvidaste tu contraseña?</button>}
+              <p>{mode === 'login' ? '¿Aún no tienes cuenta?' : '¿Ya tienes cuenta?'} <button type="button" className="sauz-auth-secondary-btn" disabled={authLoading} onClick={() => handleModeChange(mode === 'login' ? 'register' : 'login')}>{mode === 'login' ? 'Crear cuenta' : 'Iniciar sesión'}</button></p>
+            </div>}
             {/* Botón de Cancelar en Modo Olvido */}
             {mode === 'forgot' && (
               <button
@@ -391,31 +352,6 @@ export const AdminLogin = ({ setActivePage }) => {
           </form>
         )}
 
-        {/* Accesos Rápidos de Prueba (Demo Credentials) */}
-        <div className="sauz-auth-demo-box">
-          <div className="sauz-auth-demo-label">
-            <ShieldCheck size={14} />
-            <span>ACCESOS DE DEMOSTRACIÓN</span>
-          </div>
-          <div className="sauz-auth-demo-buttons">
-            <button
-              type="button"
-              className="sauz-auth-demo-pill"
-              onClick={() => handleFillDemo('cliente')}
-            >
-              <span>Cliente:</span>
-              <strong>cliente@sauzstore.com</strong>
-            </button>
-            <button
-              type="button"
-              className="sauz-auth-demo-pill"
-              onClick={() => handleFillDemo('admin')}
-            >
-              <span>Admin:</span>
-              <strong>admin@sauzstore.com</strong>
-            </button>
-          </div>
-        </div>
       </main>
     </div>
   );

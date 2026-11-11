@@ -1,6 +1,14 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { randomBytes } = require('node:crypto');
+const operationalSessions = new Map();
+const createOperationalSession = user => {
+  for (const [token,session] of operationalSessions) if (session.expiresAt < Date.now()) operationalSessions.delete(token);
+  const token=randomBytes(32).toString('hex');
+  operationalSessions.set(token,{userId:user.id,expiresAt:Date.now()+12*60*60*1000});
+  return token;
+};
 const {
   AUTHORIZED_MODELS,
   buildOutfitSummary,
@@ -231,6 +239,8 @@ const MIME_TYPES = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.avif': 'image/avif',
   '.mp4': 'video/mp4',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon'
@@ -239,7 +249,9 @@ const MIME_TYPES = {
 function serveStaticFile(req, res, pathname) {
   let relativePath = pathname === '/' ? 'index.html' : pathname.replace(/^\//, '');
   const safePath = path.normalize(relativePath).replace(/^(\.\.[\/\\])+/, '');
-  let filePath = path.join(FRONTEND_DIR, safePath);
+  let filePath = pathname.startsWith('/uploads/')
+    ? path.join(PUBLIC_DIR, safePath)
+    : path.join(FRONTEND_DIR, safePath);
 
   // Vite publica frontend/img en la raíz de la URL. El backend también debe
   // servir esos recursos cuando se inició antes de que existiera dist.
@@ -322,7 +334,7 @@ const server = http.createServer(async (req, res) => {
         return sendJSON(res, 200, {
           success: true,
           message: `Bienvenido a Sauz Store, ${user.name}`,
-          user: userSafe
+          user: { ...userSafe, token:createOperationalSession(user) }
         });
       }
 
@@ -370,6 +382,7 @@ const server = http.createServer(async (req, res) => {
 
       // POST /api/auth/logout (US-17: Cerrar sesión)
       if (pathname === '/api/auth/logout' && method === 'POST') {
+        operationalSessions.delete((req.headers.authorization || '').replace(/^Bearer\s+/i,''));
         return sendJSON(res, 200, {
           success: true,
           message: 'Sesión finalizada exitosamente'
@@ -413,6 +426,11 @@ const server = http.createServer(async (req, res) => {
           if (users.some(u => u.id !== user.id && u.email.toLowerCase() === targetEmail)) {
             return sendJSON(res, 400, { success: false, error: 'Este correo electrónico ya está registrado por otra cuenta' });
           }
+          for (const order of orders) {
+            if (order.customer && !order.customer.userId && order.customer.email?.toLowerCase() === user.email.toLowerCase()) order.customer.userId = user.id;
+          }
+          saveOrders();
+          user.previousEmails = [...new Set([...(user.previousEmails || []), user.email.toLowerCase()])];
           user.email = targetEmail;
         }
 
@@ -499,6 +517,25 @@ const server = http.createServer(async (req, res) => {
 
       // DELETE /api/users/addresses/:id (US-23: Eliminar dirección)
       const deleteAddrMatch = pathname.match(/^\/api\/users\/addresses\/([A-Za-z0-9\-_]+)$/);
+      if (deleteAddrMatch && (method === 'PUT' || method === 'PATCH')) {
+        const body = await parseRequestBody(req);
+        const user = users.find(u => String(u.id) === String(body.userId));
+        const address = user?.addresses?.find(a => a.id === deleteAddrMatch[1]);
+        if (!address) return sendJSON(res, 404, { success: false, error: 'Dirección no encontrada' });
+        const fields = ['recipient', 'phone', 'department', 'city', 'neighborhood', 'address', 'complement', 'references'];
+        const next = { ...address };
+        for (const field of fields) if (body[field] !== undefined) {
+          if (typeof body[field] !== 'string') return sendJSON(res, 400, { success: false, error: 'Formato de dirección inválido' });
+          next[field] = body[field].trim();
+        }
+        if (!next.recipient || !next.city || !next.address) return sendJSON(res, 400, { success: false, error: 'Destinatario, ciudad y dirección son obligatorios' });
+        next.recipientName = next.recipient;
+        if (body.isDefault === true) { user.addresses.forEach(a => { a.isDefault = false; }); next.isDefault = true; }
+        Object.assign(address, next);
+        saveUsers();
+        return sendJSON(res, 200, { success: true, address, addresses: user.addresses });
+      }
+
       if (deleteAddrMatch && method === 'DELETE') {
         const addrId = deleteAddrMatch[1];
         const email = (parsedUrl.searchParams.get('email') || '').trim().toLowerCase();
@@ -535,10 +572,45 @@ const server = http.createServer(async (req, res) => {
         });
       }
 
+      // POST /api/products/upload-image (Subir fotografía de prenda desde panel admin)
+      if (pathname === '/api/products/upload-image' && method === 'POST') {
+        const body = await parseRequestBody(req);
+        const dataUrl = String(body.dataUrl || '').trim();
+        const match = dataUrl.match(/^data:image\/(png|jpeg|jpg|webp|avif);base64,([A-Za-z0-9+/=]+)$/);
+        if (!match) {
+          return sendJSON(res, 400, {
+            success: false,
+            error: 'Formato de imagen no válido. Usa PNG, JPG, WEBP o AVIF.'
+          });
+        }
+        const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
+        const buffer = Buffer.from(match[2], 'base64');
+        if (!buffer.length || buffer.length > 5 * 1024 * 1024) {
+          return sendJSON(res, 400, {
+            success: false,
+            error: 'La imagen no puede superar los 5 MB.'
+          });
+        }
+        const uploadsDir = path.join(PUBLIC_DIR, 'uploads');
+        fs.mkdirSync(uploadsDir, { recursive: true });
+        const safeBase = String(body.filename || 'prenda')
+          .replace(/\.[^.]+$/, '')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '')
+          .slice(0, 32) || 'prenda';
+        const fileName = `${safeBase}-${Date.now().toString(36)}.${ext}`;
+        fs.writeFileSync(path.join(uploadsDir, fileName), buffer);
+        return sendJSON(res, 201, {
+          success: true,
+          url: `/uploads/${fileName}`
+        });
+      }
+
       // POST /api/products (Crear nuevo slot de producto / prenda en inventario)
       if (pathname === '/api/products' && method === 'POST') {
         const body = await parseRequestBody(req);
-        const { name, category, price, description, image, icon } = body;
+        const { name, category, price, previousPrice, description, image, icon, colors, commercial } = body;
         const variants = parseVariants(body.variants || []);
 
         if (!name?.trim() || !variants) {
@@ -549,20 +621,25 @@ const server = http.createServer(async (req, res) => {
         }
 
         const newId = Math.max(0, ...products.map(p => p.id || 0)) + 1;
+        const numericPrice = Number(price) > 0 ? Number(price) : null;
+        const canSell = commercial !== undefined ? Boolean(commercial) : (numericPrice > 0 && variants.length > 0);
         const newProduct = {
           id: newId,
+          sku: String(body.sku || '').trim() || `SKU-${newId}`,
           name: name.trim(),
           category: category ? category.trim() : 'Camisetas',
           description: description ? description.trim() : '',
-          price: Number(price) > 0 ? Number(price) : null,
-          icon: icon || (category === 'Sudaderas' ? '🧥' : '👕'),
+          price: numericPrice,
+          previousPrice: Number(previousPrice) > 0 ? Number(previousPrice) : null,
+          colors: Array.isArray(colors) ? colors.map(c => String(c).trim()).filter(Boolean) : [],
+          icon: icon || '',
           image: image && image.trim() ? image.trim() : '',
           brand: String(body.brand || '').trim(),
           subcategory: String(body.subcategory || '').trim(),
           variants,
           sizes: variants.map(variant => variant.size),
           stock: variants.reduce((sum, variant) => sum + variant.stock, 0),
-          commercial: Number(price) > 0 && variants.length > 0,
+          commercial: canSell && numericPrice > 0 && variants.length > 0,
           active: true
         };
 
@@ -668,6 +745,8 @@ const server = http.createServer(async (req, res) => {
           product.stock = parsed.reduce((sum, variant) => sum + variant.stock, 0);
         }
         if (body.name !== undefined) product.name = body.name.trim();
+        if (body.brand !== undefined) product.brand = String(body.brand || '').trim();
+        if (body.subcategory !== undefined) product.subcategory = String(body.subcategory || '').trim();
         if (body.category !== undefined) product.category = body.category.trim();
         if (body.description !== undefined) product.description = body.description.trim();
         if (body.price !== undefined) product.price = Number(body.price) > 0 ? Number(body.price) : null;
@@ -764,9 +843,11 @@ const server = http.createServer(async (req, res) => {
         let filteredOrders = orders;
 
         if (clientEmail) {
-          filteredOrders = orders.filter(
-            o => o.customer?.email?.toLowerCase() === clientEmail.toLowerCase()
-          );
+          const owner = users.find(user => user.email.toLowerCase() === clientEmail.toLowerCase());
+          const emails = new Set([clientEmail.toLowerCase(), ...(owner?.previousEmails || [])]);
+          filteredOrders = orders.filter(o => o.customer?.userId != null
+            ? owner && String(o.customer.userId) === String(owner.id)
+            : emails.has(o.customer?.email?.toLowerCase()));
         }
 
         return sendJSON(res, 200, {
@@ -778,9 +859,14 @@ const server = http.createServer(async (req, res) => {
       // PATCH /api/orders/:id (Actualizar estado de pedido: En proceso, Enviado, Entregado, etc.)
       const orderMatch = pathname.match(/^\/api\/orders\/([A-Za-z0-9\-]+)$/);
       if (orderMatch && (method === 'PATCH' || method === 'PUT')) {
+        const token=(req.headers.authorization || '').replace(/^Bearer\s+/i,'');
+        const session=operationalSessions.get(token);
+        if (!session || session.expiresAt < Date.now()) return sendJSON(res,401,{success:false,error:'Inicia sesión de nuevo para actualizar pedidos'});
+        const operator=users.find(user=>String(user.id)===String(session.userId));
+        if (operator?.role !== 'admin') return sendJSON(res,403,{success:false,error:'Solo administración puede actualizar el estado y la guía del pedido'});
         const orderId = orderMatch[1];
         const body = await parseRequestBody(req);
-        const { orderStatus, note, location } = body;
+        const { orderStatus, note, location, shippingTracking } = body;
 
         const order = orders.find(o => o.orderId === orderId);
         if (!order) {
@@ -790,6 +876,25 @@ const server = http.createServer(async (req, res) => {
           });
         }
 
+        const allowedStatuses = ['Pendiente','Recibido','Aceptado','En proceso','En preparación','Enviado','En camino','Entregado','Cancelado'];
+        if (orderStatus !== undefined && !allowedStatuses.includes(orderStatus)) return sendJSON(res,400,{ success:false,error:'Estado de pedido inválido' });
+        let shipping;
+        if (shippingTracking !== undefined) {
+          if (!shippingTracking || typeof shippingTracking !== 'object' || Array.isArray(shippingTracking)) return sendJSON(res,400,{success:false,error:'Datos de guía inválidos'});
+          shipping = {};
+          for (const key of ['carrier','trackingNumber','trackingUrl']) {
+            if (typeof (shippingTracking[key] ?? '') !== 'string') return sendJSON(res,400,{success:false,error:'Datos de guía inválidos'});
+            shipping[key]=(shippingTracking[key] || '').trim();
+            if (shipping[key].length > (key === 'trackingUrl' ? 2048 : 120)) return sendJSON(res,400,{success:false,error:'Los datos de la guía son demasiado largos'});
+          }
+          if ((shipping.carrier || shipping.trackingUrl) && !shipping.trackingNumber) return sendJSON(res,400,{success:false,error:'El número de guía es obligatorio'});
+          if (shipping.trackingUrl) {
+            try { const url=new URL(shipping.trackingUrl);if(url.protocol !== 'https:' || url.username || url.password) throw new Error(); }
+            catch { return sendJSON(res,400,{success:false,error:'El enlace de seguimiento debe ser HTTPS válido'}); }
+          }
+          shipping.updatedAt=new Date().toISOString();
+        }
+        if (shipping) order.shippingTracking=shipping;
         if (orderStatus) {
           order.orderStatus = orderStatus;
           if (!Array.isArray(order.trackingHistory)) {
@@ -798,16 +903,16 @@ const server = http.createServer(async (req, res) => {
           order.trackingHistory.push({
             status: orderStatus,
             timestamp: new Date().toISOString(),
-            dateFormatted: new Date().toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' }),
+            dateFormatted: new Date().toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short', timeZone:'America/Bogota' }),
             note: note || `Estado actualizado a "${orderStatus}" por logística SAUZ`,
-            location: location || 'Centro de Operaciones SAUZ — Colombia'
+            location: location || ''
           });
         }
         saveOrders();
 
         return sendJSON(res, 200, {
           success: true,
-          message: `Estado del pedido ${orderId} actualizado a "${orderStatus}"`,
+          message: orderStatus ? `Estado del pedido ${orderId} actualizado a "${orderStatus}"` : `Guía del pedido ${orderId} actualizada`,
           order: order
         });
       }
@@ -1329,16 +1434,15 @@ const server = http.createServer(async (req, res) => {
           references: customer.references || ''
         });
 
-        const initialStatus = payment.method === 'cash' ? 'Pendiente' : 'En proceso';
-        const initialNote = payment.method === 'cash'
-          ? 'Pedido recibido con pago contra entrega. Nuestro equipo se comunicará para confirmar despacho.'
-          : 'Pago validado y aprobado exitosamente. Orden en alistamiento en bodega central.';
+        const initialStatus = 'Pendiente';
+        const initialNote = 'Pedido recibido por SAUZ. Pendiente de revisión y aceptación antes de preparar el despacho.';
 
         const order = {
           orderId,
           date: orderDate,
           timestamp: Date.now(),
           customer: {
+            userId: users.find(user => user.email.toLowerCase() === (customer.email || '').trim().toLowerCase())?.id || null,
             name: customer.name || 'Cliente Sauz Store',
             email: customer.email || '',
             phone: customer.phone || '',
