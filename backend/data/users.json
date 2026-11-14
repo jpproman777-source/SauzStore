@@ -18,6 +18,25 @@
     "phone": "+57 300 123 4567",
     "address": "Calle 10 # 42-15 Apto 502, El Poblado",
     "city": "Medellín"
+  },
+  {
+    "id": 3,
+    "name": "Juan camilo Tirado escobar",
+    "email": "juancamilotiradoescobar@gmail.com",
+    "password": "952812",
+    "role": "admin",
+    "phone": "+573104742509",
+    "address": "Calle 48B #107b46",
+    "city": "Medellín"
+  },
+  {
+    "id": 4,
+    "name": "maria alvarez",
+    "email": "maria@gmail.com",
+    "password": "123456",
+    "role": "cliente",
+    "phone": "3212121",
+    "address": "",
+    "city": "Medellín"
   }
 ]
-

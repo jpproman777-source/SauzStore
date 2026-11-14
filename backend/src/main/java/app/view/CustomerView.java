@@ -27,10 +27,9 @@ public class CustomerView {
         String address = FormTypeValidator.stringValidator("Ingrese la dirección del cliente");
         String password = FormTypeValidator.stringValidator("Ingrese la contraseña del cliente");
         Date birthDate = getBirthDateFromInput();
-        String customerType = FormTypeValidator.stringValidator("Ingrese el tipo de cliente (Premium, Regular, VIP)");
 
         try {
-            customerService.createCustomer(id, docType, name, lastName, phone, email, address, password, birthDate, customerType);
+            customerService.createCustomer(id, docType, name, lastName, phone, email, address, password, birthDate);
             System.out.println("Cliente registrado correctamente.");
         } catch (IllegalArgumentException e) {
             System.out.println("No se pudo registrar el cliente: " + e.getMessage());
@@ -49,8 +48,7 @@ public class CustomerView {
             System.out.println("ID: " + customer.getId()
                     + " | Nombre: " + customer.getName() + " " + customer.getLastName()
                     + " | Documento: " + customer.getDocType()
-                    + " | Correo: " + customer.getEmail()
-                    + " | Tipo: " + customer.getCustomerType());
+                    + " | Correo: " + customer.getEmail());
         }
     }
 

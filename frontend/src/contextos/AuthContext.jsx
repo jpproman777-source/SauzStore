@@ -38,6 +38,8 @@ export const AuthProvider = ({ children }) => {
         phone: user.phone || '',
         address: user.address || '',
         city: user.city || '',
+        docType: user.docType || '',
+        documentNumber: user.documentNumber || user.id || '',
         token: user.token,
       };
       localStorage.setItem('sauz_auth_user', JSON.stringify(safeUser));
@@ -156,4 +158,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-

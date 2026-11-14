@@ -13,7 +13,7 @@ export const authService = {
 
   /**
    * Registra un nuevo cliente en el backend
-   * @param {object} userData { name, email, password, phone, address, city }
+   * @param {object} userData { name, docType, documentNumber, email, password, phone, address, city }
    */
   async register(userData) {
     const res = await api.post('/api/auth/register', userData);

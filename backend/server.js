@@ -2,6 +2,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { randomBytes } = require('node:crypto');
+const bcrypt = require('bcryptjs');
+const mysqlStore = require('./mysqlStore');
 const operationalSessions = new Map();
 const createOperationalSession = user => {
   for (const [token,session] of operationalSessions) if (session.expiresAt < Date.now()) operationalSessions.delete(token);
@@ -160,12 +162,19 @@ function parseVariants(value) {
   const variants = value.map((variant, index) => ({
     id: String(variant?.id || `size-${index + 1}`),
     size: String(variant?.size || '').trim(),
+    color: String(variant?.color || '').trim(),
     stock: variant?.stock,
   }));
   if (variants.some(v => !v.size || !Number.isInteger(v.stock) || v.stock < 0) ||
       new Set(variants.map(v => v.id)).size !== variants.length ||
       new Set(variants.map(v => v.size.toLowerCase())).size !== variants.length) return null;
   return variants;
+}
+async function findDatabaseCustomer(id, email) {
+  if (id) return mysqlStore.getCustomerById(id);
+  if (!email) return null;
+  const row = await mysqlStore.findCustomerByEmail(email);
+  return row ? mysqlStore.getCustomerById(row.id_customer) : null;
 }
 function pruneCart() {
   cart = cart.filter(item => {
@@ -320,6 +329,22 @@ const server = http.createServer(async (req, res) => {
         }
 
         const normalizedEmail = email.trim().toLowerCase();
+        if (mysqlStore.mysqlEnabled) {
+          const user = await mysqlStore.authenticateCustomer(normalizedEmail, password, bcrypt);
+          if (!user) {
+            return sendJSON(res, 401, {
+              success: false,
+              error: 'Credenciales inválidas. Verifica tu correo y contraseña.'
+            });
+          }
+          user.token = createOperationalSession(user);
+          return sendJSON(res, 200, {
+            success: true,
+            message: `Bienvenido a Sauz Store, ${user.name}`,
+            user
+          });
+        }
+
         const user = users.find(u => u.email.toLowerCase() === normalizedEmail);
 
         if (!user || user.password !== password) {
@@ -341,16 +366,70 @@ const server = http.createServer(async (req, res) => {
       // POST /api/auth/register
       if (pathname === '/api/auth/register' && method === 'POST') {
         const body = await parseRequestBody(req);
-        const { name, email, password, phone, address, city } = body;
+        const { name, email, password, phone, address, city, docType } = body;
+        const documentNumber = String(body.documentNumber || '').replace(/\s/g, '').toUpperCase();
 
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !docType || !documentNumber) {
           return sendJSON(res, 400, {
             success: false,
-            error: 'Nombre, correo electrónico y contraseña son obligatorios'
+            error: 'Nombre, tipo y número de documento, correo y contraseña son obligatorios'
+          });
+        }
+        const allowedDocumentTypes = ['CC', 'CE', 'TI', 'PASAPORTE', 'PPT'];
+        if (!allowedDocumentTypes.includes(String(docType).trim().toUpperCase()) ||
+            !/^[A-Z0-9]{4,30}$/.test(documentNumber)) {
+          return sendJSON(res, 400, {
+            success: false,
+            error: 'Selecciona un tipo válido e ingresa un documento de 4 a 30 letras o números, sin puntos ni espacios'
           });
         }
 
         const normalizedEmail = email.trim().toLowerCase();
+        if (mysqlStore.mysqlEnabled) {
+          const existingCustomer = await mysqlStore.findCustomerByEmail(normalizedEmail);
+          if (existingCustomer) {
+            return sendJSON(res, 400, {
+              success: false,
+              error: 'Este correo electrónico ya se encuentra registrado'
+            });
+          }
+          const passwordHash = await bcrypt.hash(password, 12);
+          let newUser;
+          try {
+            newUser = await mysqlStore.createCustomer({
+              documentNumber,
+              docType: String(docType).trim().toUpperCase(),
+              name: name.trim(),
+              email: normalizedEmail,
+              phone: phone ? phone.trim() : '',
+              address: address ? address.trim() : '',
+              city: city ? city.trim() : ''
+            }, passwordHash);
+          } catch (error) {
+            if (error.code === 'ER_DUP_ENTRY') {
+              const duplicateDocument = await mysqlStore.getCustomerById(documentNumber);
+              if (duplicateDocument) {
+                return sendJSON(res, 400, {
+                  success: false,
+                  error: 'Ya existe una cuenta con ese número de documento'
+                });
+              }
+            }
+            if (error.code !== 'ER_DUP_ENTRY') throw error;
+            return sendJSON(res, 400, {
+              success: false,
+              error: 'Este correo electrónico ya se encuentra registrado'
+            });
+          }
+          newUser.token = createOperationalSession(newUser);
+          users = await mysqlStore.getCustomers();
+          return sendJSON(res, 201, {
+            success: true,
+            message: '¡Registro exitoso! Ya eres cliente de Sauz Store',
+            user: newUser
+          });
+        }
+
         if (users.some(u => u.email.toLowerCase() === normalizedEmail)) {
           return sendJSON(res, 400, {
             success: false,
@@ -359,11 +438,13 @@ const server = http.createServer(async (req, res) => {
         }
 
         const newUser = {
-          id: Math.max(0, ...users.map(u => u.id || 0)) + 1,
+          id: documentNumber,
           name: name.trim(),
           email: normalizedEmail,
           password: password,
           role: 'cliente',
+          docType: String(docType).trim().toUpperCase(),
+          documentNumber,
           phone: phone ? phone.trim() : '',
           address: address ? address.trim() : '',
           city: city ? city.trim() : 'Medellín'
@@ -391,6 +472,13 @@ const server = http.createServer(async (req, res) => {
 
       // GET /api/users/profile (US-16: Obtener perfil de usuario)
       if (pathname === '/api/users/profile' && method === 'GET') {
+        if (mysqlStore.mysqlEnabled) {
+          const userId = parsedUrl.searchParams.get('userId');
+          const email = (parsedUrl.searchParams.get('email') || '').trim().toLowerCase();
+          const user = await findDatabaseCustomer(userId, email);
+          if (!user) return sendJSON(res, 404, { success: false, error: 'Usuario no encontrado' });
+          return sendJSON(res, 200, { success: true, user });
+        }
         const email = (parsedUrl.searchParams.get('email') || '').trim().toLowerCase();
         const user = users.find(u => u.email.toLowerCase() === email);
         if (!user) {
@@ -403,6 +491,30 @@ const server = http.createServer(async (req, res) => {
       // PUT /api/users/profile (US-16: Editar datos personales)
       if (pathname === '/api/users/profile' && (method === 'PUT' || method === 'PATCH')) {
         const body = await parseRequestBody(req);
+        if (mysqlStore.mysqlEnabled) {
+          const current = body.userId
+            ? await mysqlStore.getCustomerById(body.userId)
+            : await mysqlStore.getCustomerById((await mysqlStore.findCustomerByEmail(body.email || ''))?.id_customer);
+          if (!current) return sendJSON(res, 404, { success: false, error: 'Usuario no encontrado' });
+          const nextEmail = String(body.newEmail || current.email).trim().toLowerCase();
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(nextEmail)) {
+            return sendJSON(res, 400, { success: false, error: 'El formato de correo no es válido' });
+          }
+          if (!body.name && !(body.firstName || body.lastName) && !current.name) {
+            return sendJSON(res, 400, { success: false, error: 'El nombre es obligatorio' });
+          }
+          const updated = await mysqlStore.updateCustomerProfile(current.id, body);
+          if (updated?.duplicateEmail) {
+            return sendJSON(res, 400, { success: false, error: 'Este correo electrónico ya está registrado por otra cuenta' });
+          }
+          users = await mysqlStore.getCustomers();
+          return sendJSON(res, 200, {
+            success: true,
+            message: 'Datos personales actualizados correctamente',
+            user: updated
+          });
+        }
         const currentEmail = (body.email || '').trim().toLowerCase();
         const user = users.find(u => u.email.toLowerCase() === currentEmail);
 
@@ -450,6 +562,17 @@ const server = http.createServer(async (req, res) => {
 
       // GET /api/users/addresses (US-23: Direcciones de entrega)
       if (pathname === '/api/users/addresses' && method === 'GET') {
+        if (mysqlStore.mysqlEnabled) {
+          const user = await findDatabaseCustomer(
+            parsedUrl.searchParams.get('userId'),
+            parsedUrl.searchParams.get('email')
+          );
+          if (!user) return sendJSON(res, 404, { success: false, error: 'Usuario no encontrado' });
+          return sendJSON(res, 200, {
+            success: true,
+            addresses: await mysqlStore.listAddresses(user.id)
+          });
+        }
         const email = (parsedUrl.searchParams.get('email') || '').trim().toLowerCase();
         const userId = parsedUrl.searchParams.get('userId');
         const user = users.find(u => (email && u.email.toLowerCase() === email) || (userId && String(u.id) === String(userId)));
@@ -465,6 +588,38 @@ const server = http.createServer(async (req, res) => {
       // POST /api/users/addresses (US-23: Registrar nueva dirección de entrega)
       if (pathname === '/api/users/addresses' && method === 'POST') {
         const body = await parseRequestBody(req);
+        if (mysqlStore.mysqlEnabled) {
+          const user = await findDatabaseCustomer(body.userId, body.email);
+          if (!user) return sendJSON(res, 404, { success: false, error: 'Usuario no encontrado' });
+          const recipient = String(body.recipient || body.recipientName || '').trim();
+          const address = String(body.address || '').trim();
+          const city = String(body.city || '').trim();
+          if (!recipient || !address || !city) {
+            return sendJSON(res, 400, {
+              success: false,
+              error: 'Destinatario, ciudad y dirección son campos requeridos'
+            });
+          }
+          const addresses = await mysqlStore.saveAddress(user.id, {
+            recipient,
+            phone: String(body.phone || user.phone || '').trim(),
+            department: String(body.department || 'Antioquia').trim(),
+            city,
+            neighborhood: String(body.neighborhood || '').trim(),
+            address,
+            complement: String(body.complement || '').trim(),
+            references: String(body.references || '').trim(),
+            isDefault: Boolean(body.isDefault)
+          });
+          return sendJSON(res, 201, {
+            success: true,
+            message: 'Dirección guardada exitosamente',
+            address: addresses.find(item =>
+              item.address === address && item.recipient === recipient
+            ),
+            addresses
+          });
+        }
         const email = (body.email || '').trim().toLowerCase();
         const userId = body.userId;
         const user = users.find(u => (email && u.email.toLowerCase() === email) || (userId && String(u.id) === String(userId)));
@@ -519,6 +674,34 @@ const server = http.createServer(async (req, res) => {
       const deleteAddrMatch = pathname.match(/^\/api\/users\/addresses\/([A-Za-z0-9\-_]+)$/);
       if (deleteAddrMatch && (method === 'PUT' || method === 'PATCH')) {
         const body = await parseRequestBody(req);
+        if (mysqlStore.mysqlEnabled) {
+          const user = await findDatabaseCustomer(body.userId, body.email);
+          if (!user) return sendJSON(res, 404, { success: false, error: 'Usuario no encontrado' });
+          const recipient = String(body.recipient || body.recipientName || '').trim();
+          const address = String(body.address || '').trim();
+          const city = String(body.city || '').trim();
+          if (!recipient || !address || !city) {
+            return sendJSON(res, 400, { success: false, error: 'Destinatario, ciudad y dirección son obligatorios' });
+          }
+          const currentAddresses = await mysqlStore.listAddresses(user.id);
+          const currentAddress = currentAddresses.find(item => item.id === deleteAddrMatch[1]);
+          const addresses = await mysqlStore.saveAddress(user.id, {
+            recipient,
+            phone: String(body.phone || '').trim(),
+            department: String(body.department || '').trim(),
+            city,
+            neighborhood: String(body.neighborhood || '').trim(),
+            address,
+            complement: String(body.complement || '').trim(),
+            references: String(body.references || '').trim(),
+            isDefault: body.isDefault === undefined
+              ? Boolean(currentAddress?.isDefault)
+              : Boolean(body.isDefault)
+          }, deleteAddrMatch[1]);
+          if (!addresses) return sendJSON(res, 404, { success: false, error: 'Dirección no encontrada' });
+          const updatedAddress = addresses.find(item => item.id === deleteAddrMatch[1]);
+          return sendJSON(res, 200, { success: true, address: updatedAddress, addresses });
+        }
         const user = users.find(u => String(u.id) === String(body.userId));
         const address = user?.addresses?.find(a => a.id === deleteAddrMatch[1]);
         if (!address) return sendJSON(res, 404, { success: false, error: 'Dirección no encontrada' });
@@ -537,6 +720,20 @@ const server = http.createServer(async (req, res) => {
       }
 
       if (deleteAddrMatch && method === 'DELETE') {
+        if (mysqlStore.mysqlEnabled) {
+          const user = await findDatabaseCustomer(
+            parsedUrl.searchParams.get('userId'),
+            parsedUrl.searchParams.get('email')
+          );
+          if (!user) return sendJSON(res, 404, { success: false, error: 'Usuario no encontrado' });
+          const removed = await mysqlStore.removeAddress(user.id, deleteAddrMatch[1]);
+          if (!removed) return sendJSON(res, 404, { success: false, error: 'Dirección no encontrada' });
+          return sendJSON(res, 200, {
+            success: true,
+            message: 'Dirección eliminada correctamente',
+            addresses: await mysqlStore.listAddresses(user.id)
+          });
+        }
         const addrId = deleteAddrMatch[1];
         const email = (parsedUrl.searchParams.get('email') || '').trim().toLowerCase();
         const userId = parsedUrl.searchParams.get('userId');
@@ -570,6 +767,13 @@ const server = http.createServer(async (req, res) => {
           success: true,
           products: products.filter(p => p.active !== false)
         });
+      }
+
+      const getProductMatch = pathname.match(/^\/api\/products\/(\d+)$/);
+      if (getProductMatch && method === 'GET') {
+        const product = products.find(item => String(item.id) === getProductMatch[1] && item.active !== false);
+        if (!product) return sendJSON(res, 404, { success: false, error: 'Producto no encontrado' });
+        return sendJSON(res, 200, { success: true, product });
       }
 
       // POST /api/products/upload-image (Subir fotografía de prenda desde panel admin)
@@ -613,10 +817,31 @@ const server = http.createServer(async (req, res) => {
         const { name, category, price, previousPrice, description, image, icon, colors, commercial } = body;
         const variants = parseVariants(body.variants || []);
 
-        if (!name?.trim() || !variants) {
+        if (!name?.trim() || !variants || variants.length === 0) {
           return sendJSON(res, 400, {
             success: false,
             error: 'Nombre y variantes válidas son obligatorios'
+          });
+        }
+
+        if (mysqlStore.mysqlEnabled) {
+          const numericPrice = Number(price) > 0 ? Number(price) : 0;
+          const product = await mysqlStore.createProduct({
+            name: name.trim(),
+            sku: String(body.sku || '').trim(),
+            brand: String(body.brand || '').trim(),
+            category: category ? category.trim() : 'Camisetas',
+            description: description ? description.trim() : '',
+            image: image && image.trim() ? image.trim() : '',
+            price: numericPrice,
+            previousPrice: Number(previousPrice) > 0 ? Number(previousPrice) : null
+          }, variants);
+          products = await mysqlStore.getProducts();
+          return sendJSON(res, 201, {
+            success: true,
+            message: `Nuevo slot creado: "${product.name}" agregado al inventario`,
+            product,
+            products
           });
         }
 
@@ -667,6 +892,26 @@ const server = http.createServer(async (req, res) => {
           });
         }
 
+        if (mysqlStore.mysqlEnabled) {
+          const currentProduct = products.find(item => Number(item.id) === productId);
+          const variantId = String(body.variantId || '');
+          if (!currentProduct || !currentProduct.variants.some(variant => variant.id === variantId)) {
+            return sendJSON(res, 404, { success: false, error: 'Variante de producto no encontrada' });
+          }
+          const updated = await mysqlStore.restockProduct(variantId, amount);
+          if (!updated) {
+            return sendJSON(res, 400, { success: false, error: 'No se pudo actualizar el stock solicitado' });
+          }
+          products = await mysqlStore.getProducts();
+          const product = products.find(item => Number(item.id) === productId);
+          return sendJSON(res, 200, {
+            success: true,
+            message: 'Inventario de variante actualizado',
+            product,
+            products
+          });
+        }
+
         const product = products.find(p => p.id === productId);
         if (!product) {
           return sendJSON(res, 404, {
@@ -701,6 +946,16 @@ const server = http.createServer(async (req, res) => {
       const deleteProductMatch = pathname.match(/^\/api\/products\/(\d+)$/);
       if (deleteProductMatch && method === 'DELETE') {
         const productId = parseInt(deleteProductMatch[1], 10);
+        if (mysqlStore.mysqlEnabled) {
+          const removed = await mysqlStore.archiveProduct(productId);
+          if (!removed) return sendJSON(res, 404, { success: false, error: 'Producto no encontrado' });
+          products = await mysqlStore.getProducts();
+          return sendJSON(res, 200, {
+            success: true,
+            message: 'Producto eliminado del catálogo',
+            products
+          });
+        }
         const idx = products.findIndex(p => p.id === productId);
 
         if (idx === -1) {
@@ -737,6 +992,30 @@ const server = http.createServer(async (req, res) => {
         }
 
         const body = await parseRequestBody(req);
+        if (mysqlStore.mysqlEnabled) {
+          const variants = body.variants === undefined ? undefined : parseVariants(body.variants);
+          if (body.variants !== undefined && (!variants || variants.length === 0)) {
+            return sendJSON(res, 400, { success: false, error: 'Variantes inválidas: usa talla única y stock entero no negativo' });
+          }
+          const product = await mysqlStore.updateProduct(productId, {
+            name: body.name === undefined ? undefined : String(body.name).trim(),
+            brand: body.brand === undefined ? undefined : String(body.brand || '').trim(),
+            category: body.category === undefined ? undefined : String(body.category).trim(),
+            description: body.description === undefined ? undefined : String(body.description).trim(),
+            price: body.price === undefined ? undefined : (Number(body.price) > 0 ? Number(body.price) : 0),
+            previousPrice: body.previousPrice === undefined ? undefined : (Number(body.previousPrice) > 0 ? Number(body.previousPrice) : null),
+            image: body.image === undefined ? undefined : String(body.image || '').trim(),
+            sku: body.sku === undefined ? undefined : String(body.sku || '').trim()
+          }, variants);
+          if (!product) return sendJSON(res, 404, { success: false, error: 'Producto no encontrado' });
+          products = await mysqlStore.getProducts();
+          return sendJSON(res, 200, {
+            success: true,
+            message: `Producto "${product.name}" actualizado correctamente`,
+            product,
+            products
+          });
+        }
         if (body.variants !== undefined) {
           const parsed = parseVariants(body.variants);
           if (!parsed) return sendJSON(res, 400, { success: false, error: 'Variantes inválidas: usa talla única y stock entero no negativo' });
@@ -856,8 +1135,14 @@ const server = http.createServer(async (req, res) => {
         });
       }
 
-      // PATCH /api/orders/:id (Actualizar estado de pedido: En proceso, Enviado, Entregado, etc.)
       const orderMatch = pathname.match(/^\/api\/orders\/([A-Za-z0-9\-]+)$/);
+      if (orderMatch && method === 'GET') {
+        const order = orders.find(item => item.orderId === orderMatch[1]);
+        if (!order) return sendJSON(res, 404, { success: false, error: 'Pedido no encontrado' });
+        return sendJSON(res, 200, { success: true, order });
+      }
+
+      // PATCH /api/orders/:id (Actualizar estado de pedido: En proceso, Enviado, Entregado, etc.)
       if (orderMatch && (method === 'PATCH' || method === 'PUT')) {
         const token=(req.headers.authorization || '').replace(/^Bearer\s+/i,'');
         const session=operationalSessions.get(token);
@@ -893,6 +1178,29 @@ const server = http.createServer(async (req, res) => {
             catch { return sendJSON(res,400,{success:false,error:'El enlace de seguimiento debe ser HTTPS válido'}); }
           }
           shipping.updatedAt=new Date().toISOString();
+        }
+        if (mysqlStore.mysqlEnabled) {
+          await mysqlStore.updateOrder(orderId, {
+            orderStatus,
+            shippingTracking: shipping,
+            timestamp: new Date().toISOString(),
+            dateFormatted: new Date().toLocaleString('es-CO', {
+              dateStyle: 'medium',
+              timeStyle: 'short',
+              timeZone: 'America/Bogota'
+            }),
+            note: note || `Estado actualizado a "${orderStatus}" por logística SAUZ`,
+            location
+          });
+          orders = await mysqlStore.getOrders();
+          const updatedOrder = orders.find(item => item.orderId === orderId);
+          return sendJSON(res, 200, {
+            success: true,
+            message: orderStatus
+              ? `Estado del pedido ${orderId} actualizado a "${orderStatus}"`
+              : `Guía del pedido ${orderId} actualizada`,
+            order: updatedOrder
+          });
         }
         if (shipping) order.shippingTracking=shipping;
         if (orderStatus) {
@@ -1434,6 +1742,37 @@ const server = http.createServer(async (req, res) => {
           references: customer.references || ''
         });
 
+        if (mysqlStore.mysqlEnabled) {
+          try {
+            const result = await mysqlStore.createOrder({
+              cart: cart.map(item => ({ ...item })),
+              customer,
+              shippingAddress,
+              paymentMethod: payment.method || 'card',
+              subtotal: summary.subtotal,
+              tax: summary.tax,
+              total: summary.total,
+              count: summary.count
+            });
+            products = await mysqlStore.getProducts();
+            orders = await mysqlStore.getOrders();
+            cart = [];
+            const order = orders.find(item => item.orderId === result.orderId);
+            return sendJSON(res, 200, {
+              success: true,
+              message: '¡Pedido guardado en SAUZ STORE! El inventario se actualizó.',
+              order,
+              cart: getCartSummary(),
+              products
+            });
+          } catch (error) {
+            if (error.code === 'INSUFFICIENT_STOCK') {
+              return sendJSON(res, 409, { success: false, error: error.message });
+            }
+            throw error;
+          }
+        }
+
         const initialStatus = 'Pendiente';
         const initialNote = 'Pedido recibido por SAUZ. Pendiente de revisión y aceptación antes de preparar el despacho.';
 
@@ -1521,11 +1860,27 @@ server.on('error', (err) => {
   process.exit(1);
 });
 
-server.listen(PORT, () => {
+async function startServer() {
+  if (mysqlStore.mysqlEnabled) {
+    const databaseState = await mysqlStore.initialize();
+    products = databaseState.products;
+    users = databaseState.users;
+    orders = databaseState.orders;
+    console.log(`🗄️  MySQL conectado: ${process.env.DB_NAME}`);
+  }
+
+  server.listen(PORT, () => {
   console.log(`👗 Servidor de Sauz Store iniciado en http://localhost:${PORT}`);
   console.log(`📦 Catálogo de moda cargado: ${products.length} prendas`);
   console.log(`👥 Usuarios registrados: ${users.length} (Admin & Clientes)`);
   console.log(`📋 Historial de pedidos cargados: ${orders.length} órdenes`);
+  });
+}
+
+startServer().catch(async error => {
+  console.error('No fue posible iniciar el backend:', error.message);
+  await mysqlStore.close();
+  process.exitCode = 1;
 });
 
 module.exports = server;

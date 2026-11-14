@@ -6,9 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 public interface CustomerService {
-    Customer createCustomer(int id, String docType, String name, String lastName, String phone, String email, String address, String password, Date birthDate, String customerType);
+    Customer createCustomer(int id, String docType, String name, String lastName, String phone, String email, String address, String password, Date birthDate);
     Customer selectCustomerById(int id);
     List<Customer> selectAllCustomers();
-    Customer updateCustomer(int id, String docType, String name, String lastName, String phone, String email, String address, String password, Date birthDate, String customerType);
+    Customer updateCustomer(int id, String docType, String name, String lastName, String phone, String email, String address, String password, Date birthDate);
     void deleteCustomer(int id);
 }

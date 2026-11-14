@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contextos/AuthContext';
 import { useCart } from '../../contextos/CartContext';
-import { Mail, Lock, Eye, EyeOff, ArrowLeft, AlertCircle, Loader2, User, Phone, MapPin, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowLeft, AlertCircle, Loader2, User, Phone, MapPin, CheckCircle2, CreditCard } from 'lucide-react';
 import { BrandLogo } from '../BarraNavegacion/BrandLogo';
 import { authService } from '../../servicios/authService';
 import './auth-premium.css';
@@ -14,6 +14,8 @@ export const AdminLogin = ({ setActivePage }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [docType, setDocType] = useState('CC');
+  const [documentNumber, setDocumentNumber] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('Medellín');
@@ -95,6 +97,11 @@ export const AdminLogin = ({ setActivePage }) => {
         setLocalError('El nombre completo es requerido.');
         return;
       }
+      const normalizedDocument = documentNumber.replace(/\s/g, '').toUpperCase();
+      if (!docType || !/^[A-Z0-9]{4,30}$/.test(normalizedDocument)) {
+        setLocalError('Ingresa un tipo y número de documento válido (4 a 30 letras o números, sin puntos ni espacios).');
+        return;
+      }
       if (!email.trim() || !email.includes('@')) {
         setLocalError('Ingrese un correo electrónico válido.');
         return;
@@ -107,6 +114,8 @@ export const AdminLogin = ({ setActivePage }) => {
       try {
         const newUser = await register({
           name: name.trim(),
+          docType,
+          documentNumber: normalizedDocument,
           email: email.trim(),
           password,
           phone: phone.trim(),
@@ -214,6 +223,48 @@ export const AdminLogin = ({ setActivePage }) => {
                     placeholder="Ej. Mateo Gómez"
                     disabled={authLoading}
                   />
+                </div>
+              </div>
+            )}
+
+            {mode === 'register' && (
+              <div className="sauz-auth-field-grid">
+                <div className="sauz-auth-field">
+                  <label htmlFor="auth-doc-type">Tipo de documento</label>
+                  <div className="sauz-auth-input-wrap">
+                    <CreditCard size={18} className="sauz-auth-input-icon" />
+                    <select
+                      id="auth-doc-type"
+                      autoComplete="off"
+                      required
+                      value={docType}
+                      onChange={(e) => setDocType(e.target.value)}
+                      disabled={authLoading}
+                    >
+                      <option value="CC">Cédula de ciudadanía</option>
+                      <option value="CE">Cédula de extranjería</option>
+                      <option value="TI">Tarjeta de identidad</option>
+                      <option value="PASAPORTE">Pasaporte</option>
+                      <option value="PPT">Permiso por protección temporal</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="sauz-auth-field">
+                  <label htmlFor="auth-document-number">Número de documento</label>
+                  <div className="sauz-auth-input-wrap">
+                    <input
+                      id="auth-document-number"
+                      type="text"
+                      autoComplete="off"
+                      inputMode="text"
+                      maxLength={30}
+                      required
+                      value={documentNumber}
+                      onChange={(e) => setDocumentNumber(e.target.value)}
+                      placeholder="Sin puntos ni espacios"
+                      disabled={authLoading}
+                    />
+                  </div>
                 </div>
               </div>
             )}

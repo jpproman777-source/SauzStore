@@ -15,14 +15,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer createCustomer(int id, String docType, String name, String lastName, String phone, String email, String address, String password, Date birthDate, String customerType) {
+    public Customer createCustomer(int id, String docType, String name, String lastName, String phone, String email, String address, String password, Date birthDate) {
         if (id <= 0) {
             throw new IllegalArgumentException("El ID del cliente debe ser mayor que cero.");
         }
         if (customerRepository.selectCustomerById(id) != null) {
             throw new IllegalArgumentException("Ya existe un cliente con ese ID.");
         }
-        Customer customer = new Customer(id, docType, name, lastName, phone, email, address, password, birthDate, customerType);
+        Customer customer = new Customer(id, docType, name, lastName, phone, email, address, password, birthDate);
         return customerRepository.saveCustomer(customer);
     }
 
@@ -37,8 +37,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer updateCustomer(int id, String docType, String name, String lastName, String phone, String email, String address, String password, Date birthDate, String customerType) {
-        Customer customer = new Customer(id, docType, name, lastName, phone, email, address, password, birthDate, customerType);
+    public Customer updateCustomer(int id, String docType, String name, String lastName, String phone, String email, String address, String password, Date birthDate) {
+        Customer customer = new Customer(id, docType, name, lastName, phone, email, address, password, birthDate);
         return customerRepository.updateCustomer(customer);
     }
 
